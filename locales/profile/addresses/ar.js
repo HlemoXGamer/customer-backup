@@ -1,0 +1,21 @@
+export default {
+    my_addresses: 'عناويني',
+    no_addresses: 'لا توجد عناوين',
+    create_new_address: 'إنشاء عنوان جديد',
+    city: 'المدينة',
+    area: 'المنطقة',
+    street_name: 'اسم الشارع',
+    building_number: 'رقم المبنى',
+    block_no: 'رقم البلوك',
+    floor: 'الطابق',
+    apartment_no: 'رقم الشقة',
+    additional_info: 'معلومات إضافية',
+    phone: 'رقم الهاتف',
+    create: 'إنشاء',
+    update: 'تحديث',
+    phone_placeholder: 'ادخل رقم الهاتف',
+    default: 'العنوان الأساسي',
+    default_address: 'العنوان الأساسي',
+    no_branches: 'لا يوجد افرع',
+    set_as_default: 'اختيار كرئيسي'
+}

@@ -1,0 +1,332 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap");
+
+@media (min-width: 1904px) {
+  .container {
+    max-width: 1350px !important;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0 !important;
+}
+
+.v-app-bar.main-app-bar {
+  transition: all 0.3s ease-in-out;
+}
+
+.v-app-bar.main-app-bar.v-app-bar--is-scrolled .v-toolbar__extension {
+  display: none;
+}
+
+.v-app-bar.main-app-bar .logo {
+  transition: all 0.3s ease-in-out;
+}
+
+.v-app-bar.main-app-bar.v-app-bar--is-scrolled .logo {
+  height: 50px !important;
+}
+
+.v-app-bar.main-app-bar.v-app-bar--is-scrolled {
+  height: 76px !important;
+}
+
+.v-app-bar.main-app-bar .v-app-bar__nav-icon {
+  display: none;
+}
+
+.v-app-bar.main-app-bar.v-app-bar--is-scrolled .v-app-bar__nav-icon {
+  display: none;
+}
+
+@media (min-width: 1264px) {
+  .v-app-bar.main-app-bar.v-app-bar--is-scrolled .v-app-bar__nav-icon {
+    display: block;
+  }
+}
+
+.v-expansion-panel.shadow-none::before {
+  box-shadow: none !important;
+}
+
+.navbar-tabs {
+  box-sizing: content-box;
+}
+
+.navbar-tabs .v-tab::before {
+  background: none !important;
+}
+
+.theme--light.v-tabs.navbar-tabs>.v-tabs-bar {
+  background: none !important;
+}
+
+.navbar-tabs .v-tabs-slider {
+  width: 16px !important;
+  margin: auto;
+  border-radius: 2px;
+}
+
+.navbar-tabs .v-tab {
+  text-transform: capitalize;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 19px;
+
+  padding: 0 !important;
+}
+
+.navbar-tabs .v-tab:not(.v-tab--active) {
+  color: #757575;
+}
+
+.navbar-tabs .v-slide-group__content {
+  flex: 0;
+}
+
+.v-text-field.bold-placeholder input::placeholder {
+  color: #757575 !important;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-indent: 10px;
+}
+
+.v-application .v-btn.disabled {
+  background-color: gray !important;
+  pointer-events: none;
+}
+
+.v-data-table.hover-0 tbody tr:hover {
+  background: transparent !important;
+}
+
+.main-menu {
+  z-index: 9999 !important;
+  width: 54% !important;
+  box-shadow: none !important;
+
+  left: 0 !important;
+
+  min-width: 90% !important;
+  margin: auto;
+  right: 0;
+  box-shadow: none;
+}
+
+.main-menu ul {
+  list-style: none;
+  padding: 0 !important;
+}
+
+.main-menu ul li {
+  margin-bottom: 10px;
+}
+
+.main-menu ul li a {
+  text-decoration: none;
+  position: relative;
+}
+
+.main-menu ul li a::before {
+  position: absolute;
+  bottom: -5px;
+  content: "";
+  height: 2px;
+  width: 0;
+  background-color: #65382c;
+  transition: 0.5s ease;
+}
+
+.main-menu ul li a:hover {
+  text-decoration: underline;
+}
+
+.main-menu ul li a:hover:before {
+  width: 100%;
+  height: 2px;
+}
+
+.main-menu-links a {
+  color: #757575;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 10px 5px;
+}
+
+.main-menu-links a::after {
+  display: inline-block;
+  font: normal normal normal 24px/1 "Material Design Icons";
+  font-size: inherit;
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  content: "\F0140";
+  margin-left: 5px;
+}
+
+.main-menu-links a:hover {
+  color: #65382c;
+}
+
+.product-tabs {
+  /* border-bottom: 1px solid #d7d4d4; */
+}
+
+div.product-tabs .v-tab--active {
+  border: 1px solid #d7d4d4 !important;
+  border-top: 5px solid #65382c !important;
+  border-bottom: none !important;
+}
+
+.product-tabs .v-tab {
+  font-weight: bold;
+  color: black !important;
+}
+
+div.v-card.border-grey {
+  border: 2px solid !important;
+  border-color: #ececec !important;
+}
+
+div.v-card.border-red {
+  border: 2px solid !important;
+  border-color: #65382c !important;
+}
+
+.v-card.card-selected::after {
+  content: "\F0142";
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(30deg, transparent 50%, #65382c 50%);
+  width: 75px;
+  height: 45px;
+  font: normal normal normal 24px/1 "Material Design Icons";
+}
+
+.opacity--medium {
+  opacity: 0.5;
+}
+
+.text-white-space {
+  white-space: initial !important;
+}
+
+.fill-width {
+  width: 100%;
+}
+
+.custom-radio {
+  font-weight: bold;
+}
+
+.custom-radio .label {
+  display: flex;
+}
+
+.custom-radio .v-radio {
+  border: 1px solid #dddada;
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+  margin-bottom: 15px !important;
+  padding: 20px;
+}
+
+.custom-radio .v-radio:hover,
+.custom-radio .v-radio.v-item--active {
+  border: 1px solid #65382c !important;
+  background-color: rgba(255, 102, 102, 0.1);
+}
+
+.custom-radio span {
+  margin-left: 10px;
+}
+
+.custom-radio svg * {
+  fill: #65382c !important;
+}
+
+.product-category-filter a {
+  text-decoration: none !important;
+  color: #1c49c2;
+  font-size: 16px !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.product-category-filter .v-expansion-panel-content__wrap {
+  padding: 0 !important;
+}
+
+.product-category-filter a:hover {
+  text-decoration: underline;
+}
+
+.product-category-filter .v-expansion-panel-header,
+.product-category-filter .v-list-item {
+  min-height: 40px !important;
+}
+
+.product-category-filter .v-expansion-panel-header--active a,
+.product-category-filter .v-list-item a.active {
+  font-weight: bold;
+}
+
+.bg-transparent {
+  background: transparent !important;
+}
+
+.country-container {
+  color: rgba(0, 0, 0, 0.38);
+  min-width: 50px;
+  text-align: center;
+  max-height: 50px;
+  line-height: 60px;
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.vue-tel-input-vuetify {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.vue-tel-input-vuetify .country-code {
+  width: 50px !important;
+}
+
+.vue-tel-input-vuetify .v-text-field--outlined .v-select__selections .vti__flag,
+.vue-tel-input-vuetify .v-text-field .v-select__selections .vti__flag,
+.vti__flag {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+
+.vue-tel-input-vuetify .v-select__selections {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+
+
+.v-stepper--alt-labels .v-stepper__step.mobile-step {
+  justify-content: center !important;
+  align-items: center !important;
+  flex-direction: row !important;
+}
+
+.mobile-stepper.v-stepper .mobile-step .v-stepper__step__step {
+  margin-bottom: 0px !important;
+}
+
+.dialog-open-body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden
+}
+
+.guest-mobile .v-menu__content.theme--light.rounded-lg.v-menu__content--fixed.menuable__content__active {
+  left: 0px !important;
+}

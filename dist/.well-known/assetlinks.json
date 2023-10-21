@@ -1,0 +1,5 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : { "namespace": "android_app", "package_name": "com.sublecustomer.app",
+                 "sha256_cert_fingerprints": ["F4:F9:1D:8E:45:89:CA:3A:82:67:2B:B8:F1:6B:EF:49:A2:42:54:18:18:CC:2F:E9:75:6C:C1:88:A3:9A:B7:A7"] }
+}]

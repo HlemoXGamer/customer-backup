@@ -1,0 +1,6 @@
+{
+  "appId": "com.sublecustomer.app",
+  "appName": "Sablè customer",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

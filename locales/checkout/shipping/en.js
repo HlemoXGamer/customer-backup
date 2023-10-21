@@ -1,0 +1,20 @@
+export default {
+  shipping: "Shipping",
+  payment_methods: "Payment Methods",
+  shipping_label: "How do you want to get your order?",
+  full_name: "Full Name",
+  phone_number: "Phone Number",
+  email: "Email",
+  city_label: "Where should we send your order?",
+  city: "city",
+  area: "area",
+  address: "Address",
+  building_floor_apartment: "Building/Floor/Apartment/Villa no",
+  continue: "Continue to Payment",
+  back: "RETURN TO CART",
+  errors: {
+    required: "Required",
+    email_invalid: "Wrong email format",
+    invalid_phone_number: "Invalid phone number",
+  },
+};

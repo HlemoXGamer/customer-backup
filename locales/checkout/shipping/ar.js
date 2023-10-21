@@ -1,0 +1,20 @@
+export default {
+  shipping: "التوصيل",
+  payment_methods: "طرق الدفع",
+  shipping_label: "كيف تريد إن تحصل على طلبك",
+  full_name: "الإسم بالكامل",
+  phone_number: "رقم الهاتف",
+  email: "البريد",
+  city_label: "أين تريد أن تستلم طلبك؟",
+  city: "المدينة",
+  area: "المنطقة",
+  address: "العنوان",
+  building_floor_apartment: "المبنى/الطابق/رقم الشقة/رقم الفيلا",
+  continue: "الذهاب إلى الدفع",
+  back: "الرجوع إلى سلة التسويق",
+  errors: {
+    required: "مطلوب",
+    email_invalid: "طريقة كتابة البريد الإلكتروني غير صحيحة",
+    invalid_phone_number: "رقم الهاتف غير صحيح",
+  },
+};

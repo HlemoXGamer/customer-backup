@@ -1,0 +1,9 @@
+import client from './_client';
+
+export function get() {
+    return client.get("/banners");
+}  
+
+export function post() {
+  return client.post("/banners");
+}

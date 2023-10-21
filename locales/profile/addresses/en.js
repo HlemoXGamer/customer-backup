@@ -1,0 +1,21 @@
+export default {
+    my_addresses: 'My Addresses',
+    no_addresses: 'No Addresses',
+    create_new_address: 'Create New Address',
+    city: 'City',
+    area: 'Area',
+    street_name: 'Street Name',
+    building_number: 'Building Number',
+    block_no: 'Block Number',
+    floor: 'Floor',
+    apartment_no: 'Apartment No.',
+    additional_info: 'Additional Info',
+    phone: 'Phone',
+    create: 'CREATE',
+    update: 'UPDATE',
+    phone_placeholder: 'Enter a phone number',
+    default: 'Default',
+    default_address: 'Default Address',
+    no_branches: 'No Branch',
+    set_as_default: 'Set As Default'
+}
