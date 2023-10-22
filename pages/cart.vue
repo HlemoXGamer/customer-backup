@@ -18,7 +18,7 @@
           </v-col>
           <div class="d-flex align-center justify-center">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0" @click="changeCount(1, product.product_id, product.quantity)">
-              <v-icon small class="mx-0 my-0 rounded" style="background: #fff; color: #65382c;">mdi-plus</v-icon>
+              <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">mdi-plus</v-icon>
             </v-btn>
             <input class="rounded text-center px-0 font-weight-bold" type="text" min="1" :value="product.quantity" readonly style="text-align: center; outline: none; width: 25px; color: #65382c;">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0" @click="changeCount(-1, product.product_id, product.quantity)">
@@ -71,8 +71,8 @@
       </v-row>
       <v-divider style="color: grey" class="my-3"/>
       <v-row no-gutters class="mt-3 mb-0 align-center justify-space-around">
-        <v-btn class="rounded-lg" elevation="0" color="#ecbaa8">{{ $t("cart.pay_now") }}</v-btn>
-        <v-btn class="rounded-lg" elevation="0" text style="border: 1px solid grey">{{ $t("cart.continue_shopping") }}</v-btn>
+        <v-btn class="rounded-lg" elevation="0" color="#ecbaa8" @click="toCheckout()">{{ $t("cart.pay_now") }}</v-btn>
+        <v-btn class="rounded-lg" elevation="0" text style="border: 1px solid grey" :to="localePath('/products')">{{ $t("cart.continue_shopping") }}</v-btn>
       </v-row>
     </v-col>
   </div>
@@ -102,7 +102,8 @@ export default {
       );
     },
     async fetch() {
-      await this.$store.dispatch("cart/get").then(() => {
+      const area = JSON.parse(localStorage.getItem("default_area"));
+      await this.$store.dispatch("cart/get", { branch: area.branches[0] }).then(() => {
         this.products = this.$store.state.cart.items;
         this.subTotal = this.$store.state.cart.total;
         this.delivery_cost = this.$store.state.cart.delivery_cost;

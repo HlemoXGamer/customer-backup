@@ -86,7 +86,7 @@
                   </div>
                 </v-menu>
                 <!-- change language -->
-                <v-menu offset-y>
+                <v-menu offset-y transition="slide-y-transition" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
                       <v-icon color="#65382c">mdi-web</v-icon>
@@ -111,7 +111,7 @@
                 </v-menu>
 
                 <!-- edit profile -->
-                <v-menu offset-y rounded="lg" min-width="400" v-if="$auth.loggedIn">
+                <v-menu offset-y min-width="100px" rounded="lg" v-if="$auth.loggedIn" transition="slide-y-transition" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
                       <v-icon color="#65382c">mdi-account</v-icon>
@@ -146,20 +146,20 @@
                     </v-list>
                   </div>
                 </v-menu>
-                <v-menu offset-y rounded="lg" min-width="400" ref="cart" :close-on-content-click="false">
-                  <template v-slot:activator="{ on, attrs }">
+                <!-- <v-menu offset-y rounded="lg" min-width="400" ref="cart" :close-on-content-click="false"> -->
+                  <!-- <template v-slot:activator="{ on, attrs }"> -->
                     <v-badge :content="count" :value="count" overlap offset-y="20" color="#65382c" class="white--text">
-                      <v-btn icon color="dark" elevation="0" v-bind="attrs" v-on="on">
+                      <v-btn icon color="dark" elevation="0" :to="localePath('/cart')">
                         <v-icon color="#65382c">mdi-cart</v-icon>
                       </v-btn>
                     </v-badge>
-                  </template>
-                  <div class="white">
+                  <!-- </template> -->
+                  <!-- <div class="white">
                     <miniCart :sub_total.sync="total" :delivery_fee.sync="delivery_fee"
                       :delivery_cost.sync="delivery_cost" :minimum_charge.sync="minimum_charge" :items.sync="getItems"
                       @close="closeCart" @click.stop.prevent />
-                  </div>
-                </v-menu>
+                  </div> -->
+                <!-- </v-menu> -->
               </div>
             </v-col>
           </v-row>
@@ -184,7 +184,7 @@
             $i18n.locale === 'ar',
         }">
           <div class="icons-container">
-            <v-menu offset-y>
+            <v-menu offset-y transition="slide-y-transition" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
                   <v-icon>mdi-web</v-icon>

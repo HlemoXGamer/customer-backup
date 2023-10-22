@@ -36,7 +36,7 @@
       </v-col>
       <v-col cols="12" class="mt-3">
         <v-row no-gutters class="justify-center flex-wrap">
-          <commonCategory v-for="(category, index) in categories" :key="index" :category="category" @selected="handleSelection" />
+          <commonCategory v-for="(category, index) in categories" :key="index" :category="category" />
           <p v-if="!categories.length" class="font-primary">
             {{ $t("categories.not_found") }}
           </p>
@@ -70,9 +70,6 @@
       },
     },
     methods: {
-      handleSelection(id) {
-        console.log(id);
-      },
       i18n_me(ar, en) {
         if (this.$i18n.locale === "en") {
           return en;

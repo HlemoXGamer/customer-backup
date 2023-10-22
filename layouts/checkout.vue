@@ -1,6 +1,7 @@
 <template>
   <v-app :dir="dir" :class="{ 'checkout-page': true, 'dialog-open': dialog }">
-    <v-app-bar hide-on-scroll color="#ecbaa8" elevation="0" app height="80">
+    <productHeader />
+  <!--   <v-app-bar hide-on-scroll color="#ecbaa8" elevation="0" app height="80">
       <div class="d-flex flex-grow-1 align-center justify-space-around py-5">
         <v-btn
           nuxt
@@ -61,7 +62,7 @@
           </v-btn>
         </v-badge>
       </div>
-    </v-app-bar>
+    </v-app-bar> -->
     <v-main>
       <v-container class="py-16">
         <Nuxt />

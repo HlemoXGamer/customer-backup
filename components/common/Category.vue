@@ -27,7 +27,8 @@ export default {
     },
     methods: {
         categoryViewed(id) {
-            console.log(id);
+            localStorage.setItem("selected_category", id);
+            this.$router.push("/products")
         },
         i18n_me(ar, en) {
             if (this.$i18n.locale === "en") {

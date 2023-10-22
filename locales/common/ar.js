@@ -1,4 +1,5 @@
 export default {
+  choose_service: "إختر خدمة",
   important_links: "روابط هامة",
   contact_us: "تواصل معنا",
   about_us: "عنا",

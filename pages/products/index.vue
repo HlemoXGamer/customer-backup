@@ -5,7 +5,7 @@
     </v-col>
 
     <v-col cols="12">
-      <MobileCategories :categories="categories" v-model="filter.categories" />
+      <MobileCategories :categories="categories" :value="category" @input="handleCategoryChange" />
     </v-col>
     <v-col cols="12" class="mt-1">
       <v-text-field :value="searchItem" @input="debounceSearch" hide-details clearable flat solo :placeholder="$t('products.search_placeholder')" color="#65382c" style="border-radius: 12px;" background-color="#ededed" dense prepend-inner-icon="mdi-magnify" height="50" />
@@ -85,6 +85,7 @@ export default {
       categories: [],
       products: [],
       searchItem: null,
+      category: [],
       filter: {
         categories: [],
         price_from: 0,
@@ -146,20 +147,17 @@ export default {
       });
       this.$root.$emit("product:search", this.searchItem);
     },
-    getProducts(filterData) {
+    getProducts() {
       window.scrollTo({
         top: 520,
         behavior: 'smooth'
       });
-      if (filterData) {
-        filterData = { category: this.category_filter, ...filterData };
-      }
       get(
         {
-          ...filterData,
           name: this.searchItem,
           page: this.page,
           branch_id: this.branch_id,
+          category: this.category.pop()
         },
         this.guest
       ).then((data) => {
@@ -198,12 +196,23 @@ export default {
         }
       }
     },
+    handleCategoryChange(id){
+      localStorage.setItem("selected_category", id);
+      let currentCategory = localStorage.getItem("selected_category");
+      this.category = [currentCategory];
+      this.getProducts();
+      this.key += 1;
+    }
   },
   created() {
     this.guest = !this.$auth.loggedIn;
     this.branch_id = this.guest ? this.getBranchFromStorage() : null;
-    this.getProducts();
     this.getCategories();
+    this.getProducts();
+    let currentCategory = localStorage.getItem("selected_category");
+    if(currentCategory !== null){
+      this.category = [currentCategory];
+    }
   },
 };
 </script>
