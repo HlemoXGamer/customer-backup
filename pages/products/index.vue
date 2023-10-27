@@ -5,7 +5,7 @@
     </v-col>
 
     <v-col cols="12">
-      <MobileCategories :categories="categories" :value="category" @input="handleCategoryChange" />
+      <MobileCategories :categories="categories" :selected_category="$store.state.category.selected_category" @input="handleCategoryChange" />
     </v-col>
     <v-col cols="12" class="mt-1">
       <v-text-field :value="searchItem" @input="debounceSearch" hide-details clearable flat solo :placeholder="$t('products.search_placeholder')" color="#65382c" style="border-radius: 12px;" background-color="#ededed" dense prepend-inner-icon="mdi-magnify" height="50" />
@@ -13,55 +13,17 @@
     <v-col cols="12" class="mt-3">
       <v-row no-gutters class="justify-center flex-wrap">
         <commonProduct v-for="(product, index) in products" :key="index" :product="product" @updateShow="updateDialogShow" @updateData="updateDialogData" />
-        <p v-if="!products.length" class="font-primary">
+        <v-progress-circular
+          :size="50"
+          color="#65382c"
+          v-if="loading"
+          indeterminate
+        ></v-progress-circular>
+        <p v-if="!products.length && !loading" class="font-primary">
           {{ $t("products.not_found") }}
         </p>
       </v-row>
     </v-col>
-
-    <!-- <v-col cols="12" md="3" sm="12">
-      <v-card outlined elevation="0" class="products pt-5 pb-5" v-if="!$vuetify.breakpoint.mobile">
-        <v-card-text>
-          <h3 class="font-primary">{{ $t("products.categories") }}</h3>
-          <v-checkbox v-model="filter.categories" class="p-0" v-for="category in categories" :key="category.id"
-            :label="i18n_me(category.name_ar, category.name_en)" :value="category.id"
-            @click="categoryViewed(category.id)"></v-checkbox>
-
-          <v-divider class="my-4"></v-divider>
-        </v-card-text>
-
-        <v-card-actions class="d-flex products justify-center">
-          <v-btn @click="resetFilter" class="action-filter" elevation="0" color="Newprimary">{{ $t("products.reset")
-          }}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col cols="12" md="9" sm="12">
-      <h2 class="mb-2 font-primary" v-if="!$vuetify.breakpoint.mobile">
-        {{ $t("products.menu") }}
-      </h2>
-      <v-text-field v-if="!$vuetify.breakpoint.mobile ||
-        ($vuetify.breakpoint.mobile && !$auth.loggedIn)
-        " solo :placeholder="$t('products.search_placeholder')" :value="searchItem" @input="debounceSearch"
-        append-icon="mdi-magnify" class="searchHear"></v-text-field>
-      <v-row v-if="products.length > 0">
-        <v-col cols="12" v-for="product in products" :key="product.id" align-self="center">
-          <mobileProduct v-if="$vuetify.breakpoint.mobile" :product="product" @updateShow="updateDialogShow"
-            @updateData="updateDialogData"></mobileProduct>
-          <commonProduct v-else :product="product"></commonProduct>
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <h2 class="font-primary text-center mr-auto ml-auto">
-          {{ $t("products.not_found") }}
-        </h2>
-      </v-row> -->
-      <MobileProductDialog :product="mobileProductDialogData" v-model="mobileProductDialog"
-        @update="(value) => (this.mobileProductDialog = value)" />
-      <v-pagination class="mt-5 w-100 mx-auto" v-if="products.length > 0" v-model="page" :total-visible="$vuetify.breakpoint.xs ? 5 : 10"
-        :length="pagination_total_items" color="#65382c" />
-
-    <!-- </v-col> -->
   </v-row>
 </template>
 
@@ -85,7 +47,7 @@ export default {
       categories: [],
       products: [],
       searchItem: null,
-      category: [],
+      loading: false,
       filter: {
         categories: [],
         price_from: 0,
@@ -148,6 +110,8 @@ export default {
       this.$root.$emit("product:search", this.searchItem);
     },
     getProducts() {
+      this.products = [];
+      this.loading = true;
       window.scrollTo({
         top: 520,
         behavior: 'smooth'
@@ -157,7 +121,7 @@ export default {
           name: this.searchItem,
           page: this.page,
           branch_id: this.branch_id,
-          category: this.category.pop()
+          category: this.$store.state.category.selected_category[0]
         },
         this.guest
       ).then((data) => {
@@ -165,6 +129,8 @@ export default {
         if (data.meta) {
           this.pagination_total_items = data.meta.last_page;
         }
+      }).finally(() => {
+        this.loading = false;
       });
     },
     getCategories() {
@@ -198,21 +164,19 @@ export default {
     },
     handleCategoryChange(id){
       localStorage.setItem("selected_category", id);
-      let currentCategory = localStorage.getItem("selected_category");
-      this.category = [currentCategory];
+      this.$store.dispatch("category/setCategory", id[0]);
       this.getProducts();
-      this.key += 1;
     }
   },
-  created() {
+  mounted() {
     this.guest = !this.$auth.loggedIn;
     this.branch_id = this.guest ? this.getBranchFromStorage() : null;
     this.getCategories();
-    this.getProducts();
     let currentCategory = localStorage.getItem("selected_category");
     if(currentCategory !== null){
-      this.category = [currentCategory];
+      this.$store.dispatch("category/setCategory", Number(currentCategory));
     }
+    this.getProducts();
   },
 };
 </script>

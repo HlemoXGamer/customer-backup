@@ -12,7 +12,7 @@
             </v-row>
             <v-spacer />
             <v-row no-gutters class="justify-end align-center">
-              <strong style="color:#65382c">{{ area.name ?? '---' }}</strong>
+              <strong style="color:#65382c">{{ default_location == "area" ? address.name ?? "---" : address.area_name ?? "---" }}</strong>
               <v-icon :class="i18n_me('mr-1', 'ml-1')" color="#65382c">mdi-chevron-{{i18n_me('left', 'right')}}</v-icon>
             </v-row>
           </v-btn>
@@ -37,7 +37,13 @@
       <v-col cols="12" class="mt-3">
         <v-row no-gutters class="justify-center flex-wrap">
           <commonCategory v-for="(category, index) in categories" :key="index" :category="category" />
-          <p v-if="!categories.length" class="font-primary">
+            <v-progress-circular
+              :size="50"
+              color="#65382c"
+              v-if="loading"
+              indeterminate
+            ></v-progress-circular>
+          <p v-if="!categories.length && !loading" class="font-primary">
             {{ $t("categories.not_found") }}
           </p>
         </v-row>
@@ -58,7 +64,9 @@
         categories: [],
         searchItem: "",
         page: 1,
-        area: JSON.parse(localStorage.getItem("default_area"))
+        default_location: localStorage.getItem("default_location"),
+        address: {},
+        loading: false
       };
     },
     watch: {
@@ -81,6 +89,7 @@
         this.getCategories();
       }, 500),
       getCategories() {
+        this.loading = true;
         window.scrollTo({
           top: 520,
           behavior: 'smooth'
@@ -97,6 +106,8 @@
           if (data.meta) {
             this.pagination_total_items = data.meta.last_page;
           }
+        }).finally(() => {
+          this.loading = false;
         });
       },
     },
@@ -104,6 +115,9 @@
       this.guest = !this.$auth.loggedIn;
       this.getCategories();
     },
+    mounted(){
+      this.address = JSON.parse(localStorage.getItem(`default_${this.default_location}`));
+    }
   };
   </script>
   

@@ -192,7 +192,7 @@ export default {
       // this.loading = true;
     },
     back() {
-      this.$store.commit("checkout/SHOW_SHIPPING");
+      this.$store.commit("checkout/SHOW_TIME");
     },
   },
 };

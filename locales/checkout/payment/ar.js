@@ -6,7 +6,7 @@ export default {
     expiration_date: 'تاريخ الإنتهاء',
     cvc: 'CVC',
     confirm: 'تأكيد',
-    return: 'العودة',
+    return: 'العودة إلي الوقت',
     confirm_opt: {
       confirm_credit: 'تأكيد بطاقة الإئتمان',
       pay: 'ادفع',

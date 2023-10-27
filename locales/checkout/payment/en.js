@@ -6,7 +6,7 @@ export default {
   expiration_date: 'Expiration Date',
   cvc: 'CVC',
   confirm: 'CONFIRM',
-  return: 'RETURN TO SHIPPING',
+  return: 'Return to Time',
   confirm_opt: {
     confirm_credit: 'Confirm Credit',
     pay: 'Pay',

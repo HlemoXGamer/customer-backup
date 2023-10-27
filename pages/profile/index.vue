@@ -11,9 +11,7 @@
         <div class="d-block align-center justify-space-between">
           <form class="updateImg mt-5">
             <label>
-              <img
-                :src="image"
-              />
+              <img :src="image" />
               <input type="file" @change="previewThumbnail" />
             </label>
           </form>
@@ -26,60 +24,29 @@
               <p class="text-subtitle-1 font-weight-bold mb-1 font-primary">
                 {{ $t("profile.profile.username") }}<Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                solo
-                v-model="form.name"
-                name="name"
-                :error-messages="$validationMsgs($v.form.name)"
-                @input="$v.form.name.$touch()"
-                label="Full Name"
-                required
-              ></v-text-field>
+              <v-text-field outlined solo v-model="form.name" name="name" :error-messages="$validationMsgs($v.form.name)"
+                @input="$v.form.name.$touch()" label="Full Name" required></v-text-field>
             </v-col>
             <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6">
               <p class="text-subtitle-1 font-weight-bold mb-1 font-primary">
                 {{ $t("profile.profile.email") }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                solo
-                v-model="form.email"
-                label="E-mail"
-                :error-messages="$validationMsgs($v.form.email)"
-                @input="$v.form.email.$touch()"
-                name="email"
-                required
-              ></v-text-field>
+              <v-text-field outlined solo v-model="form.email" label="E-mail"
+                :error-messages="$validationMsgs($v.form.email)" @input="$v.form.email.$touch()" name="email"
+                required></v-text-field>
             </v-col>
             <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6">
               <p class="text-subtitle-1 font-weight-bold mb-1 font-primary">
                 {{ $t("profile.profile.phone") }} <Sup>*</Sup>
               </p>
               <div class="d-flex align-start">
-                <div
-                  class="country-container"
-                  style="max-height: 56px; line-height: 66px"
-                >
-                  <img
-                    width="20"
-                    height="20"
-                    src="https://img.icons8.com/color/48/null/kuwait.png"
-                  />
+                <div class="country-container" style="max-height: 56px; line-height: 66px">
+                  <img width="20" height="20" src="https://img.icons8.com/color/48/null/kuwait.png" />
                 </div>
                 <div style="width: 100%">
-                  <v-text-field
-                    dir="ltr"
-                    outlined
-                    class="rounded-lg"
-                    flat
-                    height="50"
-                    v-model="form.phone"
-                    :error-messages="$validationMsgs($v.form.phone)"
-                    @input="$v.form.phone.$touch()"
-                    label=""
-                    :placeholder="phone_placeholder"
-                  ></v-text-field>
+                  <v-text-field dir="ltr" outlined class="rounded-lg" flat height="50" v-model="form.phone"
+                    :error-messages="$validationMsgs($v.form.phone)" @input="$v.form.phone.$touch()" label=""
+                    :placeholder="phone_placeholder"></v-text-field>
                 </div>
               </div>
               <!-- <vue-tel-input-vuetify
@@ -98,24 +65,15 @@
                 :placeholder="phone_placeholder"
               ></vue-tel-input-vuetify> -->
             </v-col>
-            <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6">
-              <nuxt-link
-                :to="localePath('/profile/change-password')"
-                class="font-primary-Password text-center d-block"
-                >{{ $t("profile.profile.change_password") }}</nuxt-link
-              >
+            <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 6" class="d-flex align-center justify-center">
+              <nuxt-link :to="localePath('/profile/change-password')" class="font-primary-Password text-center d-block">{{
+                $t("profile.profile.change_password") }}</nuxt-link>
             </v-col>
           </v-row>
 
           <v-card-actions>
-            <v-btn
-              elevation="0"
-              x-large
-              color="primary"
-              @click="update"
-              :loading="loading"
-              >{{ $t("profile.profile.save") }}</v-btn
-            >
+            <v-btn elevation="0" x-large color="primary" @click="update" :loading="loading">{{ $t("profile.profile.save")
+            }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -150,7 +108,7 @@ export default {
       },
     };
   },
-  
+
   methods: {
     async getProfile() {
       const {
@@ -184,7 +142,7 @@ export default {
         if (keys.includes(key)) {
           if (key === 'phone' && this.form.phone.length === 8) {
             form_data.append('phone', "965" + this.form.phone)
-          }else {
+          } else {
             form_data.append(key, this.form[key]);
           }
           data[key] = this.form[key];
@@ -248,10 +206,10 @@ export default {
     phone_placeholder() {
       return this.$t("profile.addresses.phone_placeholder");
     },
-    image () {
-      if (this.imageData.length > 0)  {
+    image() {
+      if (this.imageData.length > 0) {
         return this.imageData
-      }else if (!this.form.image) {
+      } else if (!this.form.image) {
         return '/images/upload.png'
       }
       return this.form.image
@@ -297,11 +255,13 @@ export default {
     display: block;
     transform: scale(1.2);
     width: 20px;
-    & + input {
+
+    &+input {
       display: none;
     }
   }
 }
+
 // .profile-dialog {
 //   top:0;
 //   position:fixed;

@@ -3,70 +3,46 @@
     <v-row :class="$vuetify.breakpoint.mobile ? 'flex-column-reverse' : ''">
       <v-col :cols="step < 4 && !$vuetify.breakpoint.mobile ? 8 : 12">
         <v-stepper :value="step" elevation="0">
-          <v-card
-            elevation="0"
-            color="#fff6ee"
-            class="rounded-lg mb-10"
-            v-if="step < 4"
-          >
-            <v-card-text
-              class="pt-0 pb-5 d-flex align-center justify-space-around"
-              :class="{ 'px-16': !$vuetify.breakpoint.mobile }"
-            >
-              <div class="d-flex flex-column align-center justify-center pt-15">
-                <div
-                  class="step-btn"
-                  :class="{ active: step == 1, complete: step > 1 }"
-                >
+          <v-card elevation="0" color="#fff6ee" class="rounded-lg mb-10" v-if="step < 4">
+            <v-card-text class="pt-0 pb-5 d-flex align-center justify-space-around"
+              :class="{ 'px-16': !$vuetify.breakpoint.mobile }">
+              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
+                <div class="step-btn" :class="{ active: step == 1, complete: step > 1 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 1">mdi-check</v-icon>
                     <ShippingIcon v-else />
                   </v-btn>
                 </div>
-                <p
-                  class="font-weight-bold mt-5"
-                  :class="[step >= 1 ? 'brown--text' : 'grey--text']"
-                >
+                <p class="font-weight-bold mt-5" :class="[step >= 1 ? 'brown--text' : 'grey--text']">
                   {{ $t("checkout.shipping.shipping") }}
                 </p>
               </div>
               <v-divider></v-divider>
-              <div class="d-flex flex-column align-center justify-center pt-15">
-                <div
-                  class="step-btn"
-                  :class="{ active: step == 2, complete: step > 2 }"
-                >
+              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
+                <div class="step-btn" :class="{ active: step == 2, complete: step > 2 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 2">mdi-check</v-icon>
+
+                    <v-icon v-else>mdi-clock</v-icon>
+                  </v-btn>
+                </div>
+                <p class="font-weight-bold mt-5" :class="[step >= 2 ? 'brown--text' : 'grey--text']">
+                  {{ $t("checkout.shipping.time") }}
+                </p>
+              </div>
+              <v-divider></v-divider>
+              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
+                <div class="step-btn" :class="{ active: step == 3, complete: step > 3 }">
+                  <v-btn :ripple="false" fab elevation="0">
+                    <v-icon v-if="step > 3">mdi-check</v-icon>
 
                     <PaymentIcon v-else />
                   </v-btn>
                 </div>
-                <p
-                  class="font-weight-bold mt-5"
-                  :class="[step >= 2 ? 'red--text' : 'grey--text']"
-                >
+                <p class="font-weight-bold mt-5" :class="[step >= 3 ? 'brown--text' : 'grey--text']">
                   {{ $t("checkout.shipping.payment_methods") }}
                 </p>
               </div>
-              <!-- <v-divider></v-divider>
-              <div class="d-flex flex-column align-center justify-center pt-15">
-                <div
-                  class="step-btn"
-                  :class="{ active: step == 3, complete: step > 3 }"
-                >
-                  <v-btn fab :ripple="false" elevation="0">
-                    <v-icon v-if="step > 3">mdi-check</v-icon>
-                    <SecurityIcon v-else />
-                  </v-btn>
-                </div>
-                <p
-                  class="font-weight-bold mt-5"
-                  :class="[step >= 3 ? 'red--text' : 'grey--text']"
-                >
-                  Review
-                </p>
-              </div> -->
             </v-card-text>
           </v-card>
           <v-stepper-items>
@@ -74,12 +50,12 @@
               <CheckoutShipping />
             </v-stepper-content>
             <v-stepper-content step="2">
-              <CheckoutPayment />
+              <CheckoutPickTime />
             </v-stepper-content>
 
-            <!-- <v-stepper-content step="3">
-              <CheckoutReview />
-            </v-stepper-content> -->
+            <v-stepper-content step="3">
+              <CheckoutPayment />
+            </v-stepper-content>
             <v-stepper-content step="4">
               <CheckoutSuccess />
             </v-stepper-content>
@@ -125,7 +101,7 @@ export default {
   async fetch() {
     try {
       await this.$store.dispatch("checkout/get");
-    } catch (error) {}
+    } catch (error) { }
   },
   computed: {
     ...mapFields("checkout", ["step", "form.address_id", "selectedShipping"]),

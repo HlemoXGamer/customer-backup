@@ -1,7 +1,6 @@
 <template>
   <v-app :dir="dir">
-    <productHeader />
-    <!-- <VmHeader /> -->
+    <VmHeader />
     <v-main>
       <v-overlay :value="navOpen || megaMenuOpen" z-index="20"></v-overlay>
       <div style="padding-bottom: 50px; padding-top: 50px">
@@ -18,25 +17,6 @@
       </v-list>
     </v-navigation-drawer>
 
-    <!-- <div class="fixed-footer">
-      <nuxt-link to="/login" class="logo fixed-footer-item">
-        <v-icon large>mdi-home</v-icon>
-        <span class="fixed-footer-text">
-          Home
-        </span>
-      </nuxt-link>
-      <nuxt-link to="/products" class="profile fixed-footer-item">
-       <v-icon large color="">mdi-magnify</v-icon> 
-       <span class="fixed-footer-text">
-        Search
-       </span>
-      </nuxt-link>
-      <nuxt-link to="/profile" class="orders fixed-footer-item">
-       <v-icon large color="">mdi-account</v-icon> <span class="fixed-footer-text">
-        Account
-       </span>
-      </nuxt-link>
-    </div> -->
   </v-app>
 </template>
 
@@ -45,7 +25,6 @@ import { mapGetters } from "vuex";
 import { guest } from "@/apis/auth";
 import VmFooter from "./footer.vue";
 import VmHeader from "./header.vue";
-import { mapFields } from 'vuex-map-fields';
 
 export default {
   head () {

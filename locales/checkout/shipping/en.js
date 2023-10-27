@@ -10,8 +10,9 @@ export default {
   area: "area",
   address: "Address",
   building_floor_apartment: "Building/Floor/Apartment/Villa no",
-  continue: "Continue to Payment",
+  continue: "Continue to Time",
   back: "RETURN TO CART",
+  time: "Time",
   errors: {
     required: "Required",
     email_invalid: "Wrong email format",

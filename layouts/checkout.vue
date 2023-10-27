@@ -1,6 +1,6 @@
 <template>
   <v-app :dir="dir" :class="{ 'checkout-page': true, 'dialog-open': dialog }">
-    <productHeader />
+    <VmHeader />
   <!--   <v-app-bar hide-on-scroll color="#ecbaa8" elevation="0" app height="80">
       <div class="d-flex flex-grow-1 align-center justify-space-around py-5">
         <v-btn
@@ -155,11 +155,13 @@
 <script>
 import { mapGetters } from "vuex";
 import VmFooter from "./footer.vue";
+import VmHeader from "./header.vue";
 import miniCart from "@/pages/miniCart.vue";
 
 export default {
   components: {
     VmFooter,
+    VmHeader,
     miniCart,
   },
   data() {

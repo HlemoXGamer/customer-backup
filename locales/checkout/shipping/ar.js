@@ -10,8 +10,9 @@ export default {
   area: "المنطقة",
   address: "العنوان",
   building_floor_apartment: "المبنى/الطابق/رقم الشقة/رقم الفيلا",
-  continue: "الذهاب إلى الدفع",
+  continue: "الذهاب إلى الوقت",
   back: "الرجوع إلى سلة التسويق",
+  time: "الوقت",
   errors: {
     required: "مطلوب",
     email_invalid: "طريقة كتابة البريد الإلكتروني غير صحيحة",

@@ -5,7 +5,7 @@
         v-for="category in categories"
         :key="category.id"
         :class="`category-slider-wrapper ${
-          value.includes(String(category.id)) ? 'category-slider-wrapper--active' : ''
+          selected_category.includes(category.id) ? 'category-slider-wrapper--active' : ''
         }`"
         @click="
           category.name_en === 'Photo Print Cake'
@@ -591,7 +591,7 @@ export default {
       type: Array,
       default: [],
     },
-    value: {
+    selected_category: {
       type: Array,
       default: [],
     },
@@ -725,7 +725,7 @@ export default {
       this.categoryViewed(id);
     },
     update(category) {
-      if (this.value.includes(category.id)) {
+      if (this.selected_category.includes(category.id)) {
         this.$emit("input", []);
       } else {
         this.$emit("input", [category.id]);
@@ -826,7 +826,7 @@ export default {
       addToWishList(this.product.id);
       this.$toast.success("Added To WishList");
     },
-  }
+  },
 };
 </script>
 <style lang="scss">

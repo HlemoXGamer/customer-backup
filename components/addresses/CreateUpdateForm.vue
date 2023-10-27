@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="py-5">
     <v-card-text>
       <CommonCountryCityCombo
         :hide-city="true"
@@ -299,6 +299,12 @@ export default {
         //   ),
         // },
         block_no: {
+          numeric: helpers.withParams(
+            {
+              lang: this.$i18n.locale,
+            },
+            numeric
+          ),
           required: helpers.withParams(
             {
               lang: this.$i18n.locale,

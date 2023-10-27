@@ -1,12 +1,13 @@
 import payment from './payment/ar';
 import shipping from './shipping/ar';
-
+import time from './time/ar'
 export default {
     voucher_code: "كود القسيمة",
   shipping,
+  time,
   payment,
   "minimum_subtotal": "أقل مبلغ للإجمالي ",
-  summary: "ملخص",
+  summary: "ملخص الطلب",
   delivery_date: "تاريخ التوصيل",
   estimated_message : 'الوقت المقدر للتوصيل خلال',
   day:'يوم',

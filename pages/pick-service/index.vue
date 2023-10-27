@@ -4,48 +4,93 @@
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
       <v-row no-gutters class="justify-center align-center py-2">
         <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn plain class="py-0" value="deliver_now" @click="isToggle('pre_order')">
-            Deliver Now
+          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now" @click="isToggle('pre_order')">
+            Deliver now
           </v-btn>
-          <v-btn plain value="pre_order" @click="isToggle('deliver_now')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order" @click="isToggle('deliver_now')">
             Pre Order
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-row no-gutters class="align-center justify-center w-75">
-        <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
-        <scroll-picker :options="days" v-model="currentDay" />
-          <scroll-picker :options="hours" v-model="currentHour" />
-          <scroll-picker :options="minutes" v-model="currentMinute" />
-          <scroll-picker :options="['AM', 'PM']" v-model="current" />
-        </scroll-picker-group>
-      </v-row>
-      <v-col cols="12" class="mt-1 px-0">
-        <v-text-field v-model="searchTerm" @input="search()" hide-details clearable flat solo :placeholder="$t('common.areas.search_placeholder')" color="#65382c" style="border-radius: 12px;" background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
-      </v-col>
-      <v-col class="mx-0 mt-2 px-0 py-0">
-        <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%" height="40px" style="border-bottom: 1px solid gray" class="py-2 px-2 d-flex flex-row align-center justify-space-between rounded-0">
-            <p style="color: #65382c;" class="mb-0">
-              {{ area[`name_${$i18n.locale}`] }}
-            </p>
-            <v-icon>
-              mdi-chevron-down
-            </v-icon>
-        </v-card>
-      </v-col>
+      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;"
+        class="align-center justify-start d-flex mt-6">
+        <v-tabs-slider></v-tabs-slider>
+        <v-tab value="areas" style="width: 200px" class="rounded-lg">
+          {{ $t("location.select_your_area") }}
+        </v-tab>
+        <v-tab value="addresses" style="width: 200px" :disabled="!$auth.loggedIn">
+          {{ $t("location.saved_addresses") }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="currentTab">
+        <v-tab-item key="areas">
+          <v-col cols="12" class="mt-4 px-0">
+            <v-text-field v-model="searchTerm" @input="search()" hide-details clearable flat solo
+              :placeholder="$t('common.areas.search_placeholder')" color="#65382c" style="border-radius: 12px;"
+              background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
+          </v-col>
+          <v-col class="mx-0 mt-2 px-0 py-0">
+            <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
+              height="40px" style="border-bottom: 1px solid gray"
+              class="py-2 px-2 d-flex flex-row align-center justify-space-between rounded-0">
+              <p style="color: #65382c;" class="mb-0">
+                {{ area[`name_${$i18n.locale}`] }}
+              </p>
+              <v-icon>
+                mdi-chevron-down
+              </v-icon>
+            </v-card>
+            <v-col cols="12" class="d-flex align-center justify-center">
+              <v-progress-circular
+              :size="50"
+              color="#65382c"
+              v-if="loading"
+              indeterminate
+            ></v-progress-circular>
+            </v-col>
+          </v-col>
+        </v-tab-item>
+        <v-tab-item key="addresses">
+          <v-item-group v-model="currentAddress" class="mt-4">
+            <v-col v-for="address in addresses" :key="address.id" cols="12">
+              <v-item v-slot="{ active, toggle }">
+                <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
+                  :color="active ? '#65382c' : ''" @click="toggle">
+                  <v-card-text>
+                    <v-scroll-y-transition>
+                      <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
+                        }`">
+                        <p>{{ address.address }}</p>
+                        <p>
+                          {{ address.country_name }}
+                          {{ address.city_name }}
+                          {{ address.area_name }}
+                        </p>
+                        <p>{{ address.address_info }}</p>
+                        <p>{{ address.description }}</p>
+                      </div>
+                    </v-scroll-y-transition>
+                  </v-card-text>
+                </v-card>
+              </v-item>
+            </v-col>
+          </v-item-group>
+        </v-tab-item>
+      </v-tabs-items>
     </v-col>
   </v-row>
 </template>
 <script>
 import { get } from "@/apis/areas";
-import { setDefault } from "@/apis/addresses";
+import { get as getAddresses, setDefault } from "@/apis/addresses";
 export default {
   data() {
     return {
       toggle: "deliver_now",
+      currentTab: "areas",
       currentDay: new Date().getDate(),
-      currentHour:"",
-      currentMinute:"",
+      currentHour: "",
+      currentMinute: "",
       current: [],
       days: [],
       hours: [],
@@ -53,6 +98,9 @@ export default {
       searchTerm: "",
       areas: [],
       filteredAreas: [],
+      addresses: [],
+      currentAddress: "",
+      loading: false
     };
   },
   methods: {
@@ -72,57 +120,71 @@ export default {
       }
     },
     search() {
-      if(this.searchTerm !== null){
+      if (this.searchTerm !== null) {
         this.filteredAreas = this.areas.filter(area => String(area.name).toLowerCase().includes(String(this.searchTerm).toLowerCase()));
-      }else {
+      } else {
         this.filteredAreas = this.areas;
       }
     },
     getAreas() {
-      get().then(({data}) => {
+      this.loading = true;
+      get().then(({ data }) => {
         this.areas = data;
         this.filteredAreas = data;
+      }).finally(() => {
+        this.loading = false;
       })
     },
-    isDateTodayWithoutYear(targetDate) {
-      const currentDate = new Date();
-      const currentDay = currentDate.getDate();
-      const currentDayName = currentDate.toLocaleString('default', { weekday: 'short' });
-
-      return targetDate.includes(currentDay) && targetDate.includes(currentDayName);
+    async getAddresses() {
+      const { data } = await getAddresses();
+      this.addresses = data.map(this.transformAddress);
     },
-    updateTime(){},
-    getHoursToEndOfDay(notToday) {
-      let currentHour, endHour = 20, currentMinute;
-      if(!notToday){
-        currentHour = new Date().getHours();
-        currentMinute = new Date().getMinutes();
-      }else{
-        currentMinute = 1;
-        currentHour = 8;
-      }
-      let isAM = currentHour < 12;
-      let hoursArray = [];
-      
-      for (let i = currentHour; i < endHour; i++) {
-        const hour = i % 12 || 12;
-        const period = isAM ? 'AM' : 'PM';
-        hoursArray.push(hour);
-        isAM = !isAM;
+    transformAddress(address) {
+      const address_info = [];
+
+      if (address.street_name) {
+        address_info.push(
+          this.$t("profile.addresses.street_name") + " " + address.street_name
+        );
       }
 
-      if(currentHour <= endHour){
-        for (let i = currentMinute; i < 60; i++){
-          this.minutes.push(`${String(i).length === 1 ? '0'+i : i}`);
-        }
-      }else{
-        this.minutes = [];
+      if (address.floor) {
+        address_info.push(
+          this.$t("profile.addresses.floor") + " " + address.floor
+        );
       }
-    
-      return hoursArray;
+
+      if (address.apartment) {
+        address_info.push(
+          this.$t("profile.addresses.apartment_no") + " " + address.apartment
+        );
+      }
+
+      if (address.block_no) {
+        address_info.push(
+          this.$t("profile.addresses.block_no") + " " + address.block_no
+        );
+      }
+
+      if (address.building_no) {
+        address_info.push(
+          this.$t("profile.addresses.building_number") + " " + address.block_no
+        );
+      }
+
+      return { ...address, address_info: address_info.join(", ") };
+    },
+    async setDefaultAddress(address) {
+      this.loading = true;
+      localStorage.setItem("default_location", "address");
+      localStorage.setItem("default_address", JSON.stringify(address));
+      await setDefault({ address_id: address.id });
+      this.$router.replace(this.localePath("/categories"));
+      this.$store.dispatch("cart/get");
+      this.loading = false;
     },
     async setDefaultBranch(area) {
-      if(this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
+      if (this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
       const { branches } = area;
       localStorage.setItem("default_location", "area");
       localStorage.setItem("default_area", JSON.stringify(area));
@@ -134,7 +196,7 @@ export default {
           localStorage.setItem(
             "guest_branch",
             JSON.parse(localStorage.getItem("default_area"))["branches"][0][
-              "id"
+            "id"
             ]
           );
           localStorage.setItem(
@@ -144,7 +206,7 @@ export default {
           localStorage.setItem(
             "guest_city_id",
             JSON.parse(localStorage.getItem("default_area"))["branches"][0][
-              "city_id"
+            "city_id"
             ]
           );
           localStorage.setItem(
@@ -162,28 +224,20 @@ export default {
     },
   },
   watch: {
-    currentDay(newValue, oldValue){
-      if(newValue !== null){
-        if(this.isDateTodayWithoutYear(newValue)){
-          this.hours = this.getHoursToEndOfDay(false);
-        }else{
-          this.hours = this.getHoursToEndOfDay(true);
-          this.currentHour = 8;
-        }
-      }
+    toggle(newValue, oldValue) {
+      this.$store.commit("checkout/SET_TYPE", newValue);
     },
-    toggle(newValue, oldValue){
-      if(newValue == "deliver_now"){
-        this.addDaysToDate(new Date(), 1);
-      }else if(newValue == "pre_order"){
-        this.addDaysToDate(new Date(), 365);
-        this.days.splice(0, 1);
-      }
-    }
+    currentAddress(newValue, oldValue) {
+        this.setDefaultAddress(this.addresses[newValue]);
+    },
   },
   mounted() {
-    this.addDaysToDate(new Date(), 1);
+    localStorage.removeItem("default_location");
+    localStorage.removeItem("default_address");
+    localStorage.removeItem("default_area");
+    // this.addDaysToDate(new Date(), 1);
     this.getAreas();
+    this.getAddresses();
   }
 }
 </script>
@@ -192,6 +246,6 @@ export default {
 .isPicked {
   background-color: #ecbaa8;
   color: #65382c !important;
+  font-weight: bold;
 }
-
 </style>

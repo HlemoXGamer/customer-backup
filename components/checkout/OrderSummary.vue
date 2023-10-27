@@ -9,41 +9,6 @@
       <p class="text-h6 font-weight-bold grey--text text--darken-1">
         {{ $t("checkout.summary") }}
       </p>
-      <v-checkbox
-        v-model="is_picked"
-        :disabled="disabled || same_day"
-        @click="reverseCheckbox('same_day')"
-      >
-        <template v-slot:label>
-          <div class="ml-3">
-            <p class="mb-0 grey--text text-subtitle-2">
-              {{ $t("checkout.schedule") }}
-            </p>
-          </div>
-        </template>
-      </v-checkbox>
-      <v-checkbox
-        v-model="same_day"
-        :disabled="is_picked"
-        @click="reverseCheckbox('is_picked')"
-      >
-        <template v-slot:label>
-          <div class="ml-3">
-            <p class="mb-0 grey--text text-subtitle-2">
-              {{ $t("checkout.schedule_same_day") }}
-            </p>
-          </div>
-        </template>
-      </v-checkbox>
-      <p v-if="label" class="mb-0 primary--text text-subtitle-2">
-        {{ $t("checkout.closed_branch") }}
-      </p>
-      <CheckoutSchedule
-        v-if="is_picked || same_day"
-        :same_day="same_day"
-        :branch="branch"
-        :same_date_branch="same_date_branch"
-      ></CheckoutSchedule>
       <template v-if="items && items.length > 0">
         <div v-for="item in items" :key="item.id" class="dropcart__product">
           <div class="dropcart__product-info">
@@ -140,29 +105,6 @@
         </p>
       </div> -->
 
-      <v-row align="center" class="mt-6" :class="$vuetify.breakpoint.smAndDown ? 'flex-column' : '' ">
-        <v-text-field
-          v-model="voucher_code"
-          :hide-details="true"
-          dense
-          :label="$t('checkout.enter_voucher')"
-          outlined
-          :style="$vuetify.breakpoint.smAndDown ? 'width: 100%;' : '' "
-        ></v-text-field>
-        <v-btn
-          color="#65382c"
-          elevation="0"
-          d-block
-          class="white--text text-center"
-          :class="$vuetify.breakpoint.smAndDown ? 'mt-3' : 'ml-2'"
-          :loading="loading"
-          :disabled="!voucher_code.length"
-          @click="applyVoucher"
-          :style="$vuetify.breakpoint.smAndDown ? 'width: 100%;' : '' "
-          >{{ $t("checkout.apply") }}</v-btn
-        >
-      </v-row>
-
       <!-- <v-expansion-panels accordion v-if="step == 3">
         <v-expansion-panel class="shadow-none">
           <v-expansion-panel-header color="grey lighten-2">
@@ -221,7 +163,6 @@
 import { mapState, mapGetters } from "vuex";
 import { mapFields } from "vuex-map-fields";
 import { show as getBranch } from "@/apis/branches";
-import { checkVoucher } from "~/apis/checkout";
 export default {
   computed: {
     ...mapState("cart", [
@@ -246,11 +187,6 @@ export default {
       branch: "",
       same_date_branch: {},
       loading: false,
-      voucher_code: "",
-      discount: "",
-      discount_type: "",
-      discount_rate: "",
-      newSubTotal: "",
       // quantity: 1,
       // totals: [],
       // total: 0,
@@ -329,44 +265,6 @@ export default {
         return en;
       }
       return ar;
-    },
-
-    applyVoucher() {
-      // this.$store.dispatch("checkout/applyCoupon");
-      this.loading = true;
-      checkVoucher({ v_code: this.voucher_code, total: this.total })
-        .then((res) => {
-          this.discount_rate = res.discount_rate;
-          this.discount_type = res.discount_type;
-          const types = {
-            fixed: "KWD",
-            percentage: "%",
-            free_delivevery: "FD",
-          };
-          this.discount = res.discount_rate + types[this.discount_type];
-
-          if (this.discount_type == "fixed") {
-            this.newSubTotal = Number(this.total - Number(this.discount_rate));
-          } else if (this.discount_type == "percentage") {
-            this.newSubTotal =
-              this.total - this.total * (Number(this.discount_rate) / 100);
-          } else if (this.discount_type == "free_delivevery") {
-            this.delivery_cost = 0;
-          }
-
-          this.$store.commit("checkout/SET_V_CODE", this.voucher_code);
-          this.loading = false;
-          this.$toast.success(res.message);
-        })
-        .catch((err) => {
-          this.loading = false;
-        });
-    },
-    removeDiscount(index, id) {
-      this.$store.dispatch("checkout/removeDiscount", {
-        index,
-        id,
-      });
     },
     setPicked() {
       let branch_id = 0;

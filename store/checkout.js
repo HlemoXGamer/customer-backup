@@ -8,6 +8,7 @@ import {
 import { getField, updateField } from 'vuex-map-fields';
 
 export const state = () => ({
+  type: "deliver_now",
   step: 1,
   selectedTip: 3,
   checkout_loading: false,
@@ -210,6 +211,9 @@ export const mutations = {
     state.step = 1;
   },
   SHOW_PAYMENT(state) {
+    state.step = 3;
+  },
+  SHOW_TIME(state) {
     state.step = 2;
   },
   SHOW_REVIEW(state) {
@@ -217,6 +221,9 @@ export const mutations = {
   },
   SHOW_SUCCESS(state) {
     state.step = 4;
+  },
+  SET_TYPE(state, type){
+    state.type = type;
   },
   SET_TIP(state, tip) {
     state.form.tipping = tip;

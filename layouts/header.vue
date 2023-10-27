@@ -1,54 +1,56 @@
 <template>
   <div id="app">
-    <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = true" class="d-flex d-sm-none"></v-app-bar-nav-icon>
-      <v-row>
-        <v-col :cols="$vuetify.breakpoint.mobile ? 4 : 2" class="d-flex align-center p-0">
-          <nuxt-link :to="localePath('/location')">
-            <v-img height="80" max-width="120" contain src="/images/logo.svg" class="logo"></v-img>
+    <!-- :style="isLocation ? 'pointer-events:none;' : ''" -->
+    <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
+      <v-row class="align-center justify-space-between pb-0 mb-0">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 4 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
+          <nuxt-link :to="goToHome" class="py-2">
+            <v-img :height="$vuetify.breakpoint.xs ? 40 : 50" :max-width="$vuetify.breakpoint.mobile ? 65 : 100" contain src="/images/big-logo.png" class="logo"></v-img>
           </nuxt-link>
         </v-col>
-        <v-col :cols="$vuetify.breakpoint.mobile ? 8 : 10">
-          <v-row>
-            <v-col cols="6" class="d-none d-lg-block">
-              <v-row>
-                <v-col cols="4" class="d-none d-lg-block" v-for="(item, index) in menu" :key="index">
-                  <v-menu offset-y v-if="$auth.loggedIn">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" nuxt :to="item.link" icon>
-                        {{ item.title }}
-                      </v-btn>
-                    </template>
-                  </v-menu>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="6" :class="text_dir">
-              <div class="d-lg-block d-none">
-                <v-menu offset-y v-if="$auth.loggedIn">
+        <v-col  class="pb-0 pt-0 mb-0">
+          <v-row class="d-flex align-center justify-end pt-0">
+            <v-col :class="`pb-0 mb-0 ${text_dir}`">
+              <div>
+                <!-- notifications -->
+                <v-menu offset-x origin="top right" offset-y v-if="$auth.loggedIn" min-width="300" max-height="300">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
-                      <v-icon>mdi-bell</v-icon>
+                    <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon @click="updateNotification">
+                      <v-badge offset-y="0" v-if="notificationTotal > 0" overlap :value="notificationTotal"
+                        color="#65382c" class="white--text">
+                        <span slot="badge">{{ notificationTotal }}</span>
+                      </v-badge>
+                      <v-icon color="#65382c">mdi-bell</v-icon>
                     </v-btn>
                   </template>
                   <div class="white">
                     <v-list class="">
-                      <v-list-item-title class="px-2">notification</v-list-item-title>
-                      <v-list-item class="py-1 px-2" v-for="notification in notifications" :key="notification.id"
-                        :to="switchLocalePath('en')">
-                        <v-list-item-content style="max-width: 300px">
-                          <h6 class="pb-2">{{ notification.title }}</h6>
-                          <p>{{ notification.body }}</p>
-                          <p>{{ notification.time }}</p>
-                        </v-list-item-content>
+                      <v-list-item-title class="px-4 py-2" style="border-bottom: 1px solid #eee">
+                        <h3>
+                          {{ $t("common.notifications") }}
+                        </h3>
+                      </v-list-item-title>
+                      <v-list-item v-if="notifications.length === 0">
+                        <v-list-item-title class="px-4 mb-2">
+                          <h2>
+                            {{ $t("common.no_notifications") }}
+                          </h2>
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="notifications.length !== 0" @click="$router.push(localePath('/profile/orders/' + notification.order_id))" class="pb-1 px-4" v-for="notification in notifications" :key="notification.id">
+                        <v-list-item-title>
+                          {{ $t("profile.orders.orders_details.order") }} #{{notification.order_id}}{{ $i18n.locale === "en" ? "is " : "" }}
+                          {{ $t(`profile.orders.orders_details.${notification.status}`) }}
+                        </v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </div>
                 </v-menu>
-                <v-menu offset-y>
+                <!-- change language -->
+                <v-menu offset-y transition="slide-y-transition" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
-                      <v-icon>mdi-web</v-icon>
+                      <v-icon color="#65382c">mdi-web</v-icon>
                     </v-btn>
                   </template>
                   <div class="white">
@@ -62,33 +64,38 @@
                     </v-list>
                   </div>
                 </v-menu>
-                <v-menu offset-y v-if="isLogin">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs" v-on="on" color="primary" @click="goToLogin" small elevation="0"
-                      class="rounded-sm">{{ $t("common.sign_in_up") }}</v-btn>
-                  </template>
-                </v-menu>
 
-                <v-menu offset-y rounded="lg" min-width="400" v-if="$auth.loggedIn">
+
+                <!-- edit profile -->
+                <v-menu offset-y min-width="100px" rounded="lg" v-if="$auth.loggedIn && !$vuetify.breakpoint.mobile" transition="slide-y-transition"
+                  bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
-                      <v-icon>mdi-account</v-icon>
+                      <v-icon color="#65382c">mdi-account</v-icon>
                     </v-btn>
                   </template>
 
                   <div class="white">
                     <v-list>
-                      <v-list-item :to="localePath('/profile')">
+                      <v-list-item exact-path nuxt :to="localePath('/profile')">
                         <v-list-item-content>
                           {{ $t("common.edit_profile") }}
                         </v-list-item-content>
                       </v-list-item>
-                      <v-list-item :to="localePath('/profile/orders')">
+
+                      <v-list-item exact-path nuxt :to="localePath('/profile/addresses')">
+                        <v-list-item-content>
+                          {{ $t("common.my_address") }}
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item nuxt exact-path :to="localePath('/profile/orders')">
                         <v-list-item-content>
                           {{ $t("common.my_orders") }}
                         </v-list-item-content>
                       </v-list-item>
-                      <v-list-item :to="localePath('/profile/orders')">
+
+                      <v-list-item @click="logout">
                         <v-list-item-content>
                           {{ $t("common.logout") }}
                         </v-list-item-content>
@@ -96,80 +103,68 @@
                     </v-list>
                   </div>
                 </v-menu>
-                <v-menu offset-y rounded="lg" min-width="400" v-if="$auth.loggedIn" ref="cart"
-                  :close-on-content-click="false">
+                <v-badge v-if="$auth.loggedIn ? !$vuetify.breakpoint.mobile : !$vuetify.breakpoint.xs" :content="count" :value="count" overlap offset-y="20" color="#65382c" class="white--text">
+                  <v-btn icon color="dark" elevation="0" :to="localePath('/cart')">
+                    <v-icon color="#65382c">mdi-cart</v-icon>
+                  </v-btn>
+                </v-badge>
+
+                <v-menu offset-y v-if="isLogin">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-badge v-if="$auth.loggedIn" :content="count" :value="count" overlap offset-y="20" color="primary">
-                      <v-btn icon color="dark" elevation="0" v-bind="attrs" v-on="on">
-                        <v-icon>mdi-cart</v-icon>
-                      </v-btn>
-                    </v-badge>
+                    <v-btn v-bind="attrs" v-on="on" color="primary" @click="goToLogin" small elevation="0"
+                      class="rounded-sm">{{ $t("common.sign_in_up") }}</v-btn>
                   </template>
-                  <div class="white">
-                    <miniCart :items.sync="getItems" @click.stop.prevent />
-                  </div>
                 </v-menu>
               </div>
             </v-col>
           </v-row>
         </v-col>
+        <v-app-bar-nav-icon @click="drawer = true" class="d-flex d-sm-none mt-2"></v-app-bar-nav-icon>
+
+        <v-col cols="12" style="background-color: #ecbaa8;" v-if="$route.path.includes('/pick-service')">
+          <p class="mb-0 font-weight-bold text-center text-h7" style="color: #65382c;">
+            {{ $t("common.sweet_moments") }}
+          </p>
+        </v-col>
+
       </v-row>
     </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" fixed temporary>
+    <v-navigation-drawer :right="$i18n.locale === 'ar'" v-model="drawer" fixed temporary>
       <v-list nav dense>
         <v-list-item-group>
-          <v-list-item v-for="(item, index) in menu" :key="index">
+          <v-list-item v-if="$auth.loggedIn" v-for="(item, index) in menu" :key="index">
             <v-list-item-title @click="$router.push(item.link)">{{
               item.title
+            }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item v-if="!$auth.loggedIn">
+            <v-list-item-title @click="$router.push(menu[0].link)">{{
+              menu[0].title
             }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
-    <!-- <v-content>
-        <v-main>
-            <div>
-                <v-container class="pa-lg-0">
-                    <Nuxt />
-                </v-container>
-            </div>
-        </v-main>
-    </v-content> -->
+    <!-- <v-dialog v-model="dialogSearch" transition="dialog-bottom-transition">
+      <div class="dialogSearch">
+        <v-text-field outlined :placeholder="$t('common.search_here')" :value="text" @input="(value) => (text = value)" />
+      </div>
+    </v-dialog> -->
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { get } from "@/apis/notification";
 import { guest } from "@/apis/auth";
-import miniCart from "@/pages/miniCart.vue";
+import { mapFields } from "vuex-map-fields";
+
 export default {
-  components: {
-    miniCart,
-  },
   data(vm) {
     return {
       drawer: false,
+      dialogSearch: vm.$route.query.search ? true : false,
       tab: null,
-      notifications: [],
-      menu: [
-        {
-          icon: "home",
-          title: vm.$t("common.menu"),
-          link: vm.localePath("/products"),
-        },
-        {
-          icon: "Order",
-          title: vm.$t("common.orders"),
-          link: vm.localePath("/profile/orders"),
-        },
-        {
-          icon: "warning",
-          link: vm.localePath("/contact-us"),
-          title: vm.$t("common.contact_us"),
-        },
-      ],
+      totalN: 0,
       navigation: [],
       activeNav: {},
       activeMegaMenu: 0,
@@ -180,7 +175,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("cart", ["count", "getItems"]),
+    isLocation() {
+      return this.$route.path.includes("location");
+    },
+    ...mapGetters("cart", [
+      "getItems",
+      "total",
+      "delivery_fee",
+      "count",
+      "delivery_cost",
+      "minimum_charge",
+    ]),
+    ...mapGetters("notification", {
+      notifications: "items",
+      notificationTotal: "total",
+    }),
+    ...mapFields("search", ["text"]),
     isLogin() {
       return (
         !this.$auth.loggedIn &&
@@ -192,32 +202,77 @@ export default {
     text_dir() {
       return this.$i18n.locale === "ar" ? "text-left" : "text-right";
     },
-  },
-  created() {
-    this.getNotication();
+    goToHome() {
+      return this.localePath("/pick-service");
+      const default_location = localStorage.getItem("default_location");
+      if (!default_location) {
+        return this.localePath("/location");
+      } else {
+        return this.localePath("/products");
+      }
+    },
+    menu() {
+      return [
+        {
+          icon: "location",
+          title: this.$t("common.location"),
+          link: this.localePath("/location"),
+        },
+        {
+          icon: "home",
+          title: this.$t("common.menu"),
+          link: this.localePath("/products"),
+        },
+        {
+          icon: "Order",
+          title: this.$t("common.orders"),
+          link: this.localePath("/profile/orders"),
+        },
+        {
+          icon: "warning",
+          link: this.localePath("/contact-us"),
+          title: this.$t("common.contact_us"),
+        },
+      ];
+    },
   },
   methods: {
+    updateNotification() {
+      this.$store.dispatch("notification/updateNotifications");
+    },
     goToLogin() {
       this.$router.push(this.localePath("/login"));
     },
     async logout() {
       this.$store.commit("cart/CLEAR_ALL");
+      // window.localStorage.removeItem('auth._token.laravelJWT')
+      // window.localStorage.removeItem('auth.strategy')
+      // window.localStorage.removeItem('auth._token_expiration.laravelJWT')
+      // window.localStorage.removeItem('token')
+      // window.localStorage.removeItem('user')
 
       await this.$auth.logout();
+      this.$router.replace(this.localePath("/login"));
+
       guest();
     },
-    async getNotication() {
-      const { data } = await get();
-      this.notifications = data;
-    },
-    search(e) {
-      this.$router.push({
-        path: this.localePath("/products"),
-        query: {
-          search: e.target.value,
-        },
-      });
-      this.$root.$emit("product:search", e.target.value);
+    showSearch(e) {
+      this.dialogSearch = true;
+      if (!this.$route.path.includes("products")) {
+        this.$router.push({
+          path: this.localePath("/products"),
+          query: {
+            search: true,
+          },
+        });
+      }
+      // this.$router.push({
+      //   path: this.localePath("/products"),
+      //   query: {
+      //     search: e.target.value,
+      //   },
+      // });
+      // this.$root.$emit("product:search", e.target.value);
     },
     navigate(nav) {
       const paths = {
@@ -226,19 +281,40 @@ export default {
 
       this.$router.push(`/collection/${nav.navigable.id}`);
     },
+    closeCart() {
+      try {
+        this.$refs.cart.save();
+      } catch { }
+    },
   },
-  // async fetch() {
-  //   this.navigation = (await get()).data;
-  // },
 };
 </script>
 
 <style scoped>
 header {
-  height: 70px !important;
-  background: #ecbaa8 !important;
-  padding: 1rem 0rem;
+  /* box-sizing: content-box; */
+  /* height: 70px !important; */
+  background: #fff !important;
+  /* padding: 1rem 0rem; */
 }
+
+[dir="rtl"] .search-icon-header {
+  text-align: left;
+}
+
+.search-icon-header {
+  display: block;
+  font-size: 30px;
+  color: #65382c;
+  text-align: right;
+}
+
+@media screen and (min-width: 960px) {
+  .search-icon-header {
+    display: none;
+  }
+}
+
 
 .theme--light.v-btn.v-btn--icon {
   color: #65382c !important;
@@ -251,5 +327,35 @@ header {
 .v-application .primary {
   background: transparent !important;
   border: 1px solid #65382c !important;
+  color: #65382c !important;
+}
+
+.dialogSearch {
+  background: rgb(238, 235, 235) !important;
+  height: 55px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+</style>
+
+<style>
+.guest-login .v-toolbar__content {
+  display: block !important;
+}
+
+.fix-image {
+  position: relative;
+  left: 25px;
+}
+
+[dir="rtl"] .fix-image {
+  left: unset;
+  right: 25px;
+}
+
+:deep(.v-toolbar__content) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 </style>

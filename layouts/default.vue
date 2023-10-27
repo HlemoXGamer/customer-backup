@@ -1,6 +1,6 @@
 <template>
   <v-app :dir="dir" :class="{ 'guest-mobile': $vuetify.breakpoint.mobile && !$auth.loggedIn }">
-    <productHeader />
+    <VmHeader />
     <!-- <Soon /> -->
     <v-main>
       <v-overlay :value="navOpen || megaMenuOpen" z-index="20"></v-overlay>
@@ -32,7 +32,7 @@
 import { mapGetters } from "vuex";
 import { guest } from "@/apis/auth";
 import VmFooter from "./footer.vue";
-// import VmHeader from "./header.vue";
+import VmHeader from "./header.vue";
 import FixedFooter from "@/components/mobile/FixedFooter.vue";
 import Soon from "@/components/home/Soon.vue";
 import { LocalNotifications } from "@capacitor/local-notifications";
@@ -43,7 +43,7 @@ export default {
   },
   components: {
     FixedFooter,
-    // VmHeader,
+    VmHeader,
     VmFooter,
     Soon,
   },
