@@ -45,6 +45,8 @@
         flat
         height="57"
         v-model="form.building_num"
+        :error-messages="$validationMsgs($v.form.building_num)"
+        @input="$v.form.building_num.$touch()"
       ></v-text-field>
 
       <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
@@ -81,6 +83,8 @@
         flat
         height="57"
         v-model="form.description"
+        :error-messages="$validationMsgs($v.form.description)"
+        @input="$v.form.description.$touch()"
       ></v-text-field>
       <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
         {{ $t("profile.addresses.phone") }}
@@ -290,14 +294,20 @@ export default {
             required
           ),
         },
-        // building_num: {
-        //   required: helpers.withParams(
-        //     {
-        //       lang: this.$i18n.locale,
-        //     },
-        //     required: requiredIf(())
-        //   ),
-        // },
+        building_num: {
+          numeric: helpers.withParams(
+            {
+              lang: this.$i18n.locale,
+            },
+            numeric
+          ),
+          required: helpers.withParams(
+            {
+              lang: this.$i18n.locale,
+            },
+            required
+          ),
+        },
         block_no: {
           numeric: helpers.withParams(
             {
@@ -341,6 +351,14 @@ export default {
             },
             numeric
           ),
+          required: helpers.withParams(
+            {
+              lang: this.$i18n.locale,
+            },
+            required
+          ),
+        },
+        description: {
           required: helpers.withParams(
             {
               lang: this.$i18n.locale,
