@@ -1,7 +1,8 @@
 <template>
   <div class="pt-5">
+    <v-progress-circular :size="50" color="#65382c" v-if="productsLoading" indeterminate></v-progress-circular>
     <p class="text-h7 font-weight-bold mb-5 mx-auto"
-      style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
+    style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index">
       <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
@@ -121,7 +122,8 @@ export default {
       discount_type: "",
       discount_rate: "",
       newSubTotal: "",
-      loading: false
+      loading: false,
+      productsLoading: false,
     };
   },
   computed: {
@@ -133,6 +135,7 @@ export default {
       );
     },
     async fetch() {
+      this.productsLoading = true;
       const area = JSON.parse(localStorage.getItem(`default_${localStorage.getItem("default_location")}`));
       await this.$store.dispatch("cart/get", { branch: area.branches ? area.branches[0] : area.branch_id }).then(() => {
         this.products = this.$store.state.cart.items;
@@ -140,6 +143,7 @@ export default {
         this.delivery_cost = this.$store.state.cart.delivery_cost;
         this.total = this.subTotal + this.delivery_cost
       });
+      this.productsLoading = false;
     },
     i18n_me(ar, en) {
       if (this.$i18n.locale === "en") {
