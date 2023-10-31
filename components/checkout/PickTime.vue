@@ -1,12 +1,19 @@
 <template>
     <v-col cols="12">
-        <v-row no-gutters class="align-center justify-center">
+        <v-row v-if="this.$store.state.checkout.type == 'deliver_now'" class="align-center justify-space-between" style="padding-bottom: 50px;">
+            <v-btn @click="isPreOrder = false" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
+            <v-btn @click="isPreOrder = true" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
+        </v-row>
+        <v-row v-if="isPreOrder" v-row no-gutters class="align-center justify-center">
             <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
                 <scroll-picker :options="['AM', 'PM']" v-model="current" />
             </scroll-picker-group>
+        </v-row>
+        <v-row v-if="!isPreOrder" v-row no-gutters class="align-center justify-center">
+            <p>Delivery will arrive after 40 min from pay</p>
         </v-row>
         <v-card>
             <v-card-actions class="justify-space-between px-0">
@@ -17,8 +24,8 @@
                     </v-icon>
                     {{ $t("checkout.time.return") }}
                 </v-btn>
-                <v-btn x-large class="rounded-lg to-payment" height="57" color="#65382c" elevation="0"
-                    dark :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showPayment">
+                <v-btn x-large class="rounded-lg to-payment" height="57" color="#65382c" elevation="0" dark
+                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showPayment">
                     {{ $t("checkout.time.continue") }}
                 </v-btn>
             </v-card-actions>
@@ -38,6 +45,7 @@ export default {
             days: [],
             hours: [],
             minutes: [],
+            isPreOrder: this.$store.state.checkout.type == 'deliver_now' ? false : true,
         }
     },
     methods: {
@@ -110,8 +118,8 @@ export default {
         if (this.$store.state.checkout.type == "deliver_now") {
             this.addDaysToDate(new Date(), 1);
         } else if (this.$store.state.checkout.type == "pre_order") {
-          this.addDaysToDate(new Date(), 365);
-          this.days.splice(0, 1);
+            this.addDaysToDate(new Date(), 365);
+            this.days.splice(0, 1);
         }
     }
 }
