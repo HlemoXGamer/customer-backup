@@ -1,164 +1,181 @@
 <template>
-    <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
-        :disabled="checkout_loading">
-        <v-card-text class="pa-8">
-            <p class="text-h6 font-weight-bold grey--text text--darken-1">
-                {{ $t("checkout.summary") }}
-            </p>
-            <template v-if="items && items.length > 0">
-                <div v-for="item in items" :key="item.id" class="dropcart__product">
-                    <div class="dropcart__product-info">
-                        <div class="dropcart__product-name row">
-                            <span class="col-8 font-primary">
-                                {{ i18n_me(item.product.name_ar, item.product.name_en) }} x
-                                {{ item.quantity }}
-                            </span>
-                            <span class="col-4 dropcart__product-price">
-                                KWD {{ item.price }}</span>
+    <div>
+        <v-card>
+            <h1>Customer Details</h1>
+            <p>Name:{{ user?.name }}</p>
+            <p>Email:{{ user?.email }}</p>
+            <p>Phone:{{ user?.phone }}</p>
+            <p>Address:{{ user?.address }}</p>
+
+            <div v-for="product in products" :key="product.id">
+                <div v-for="image in product.images" :key="image.id">
+                    <img v-if="image?.file" :src="image.file" alt="Product Image" />
+                </div>
+            </div>
+
+        </v-card>
+
+        <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
+            :disabled="checkout_loading">
+            <v-card-text class="pa-8">
+                <p class="text-h6 font-weight-bold grey--text text--darken-1">
+                    {{ $t("Customer Details") }}
+                </p>
+                <template v-if="items && items.length > 0">
+                    <div v-for="item in items" :key="item.id" class="dropcart__product">
+                        <div class="dropcart__product-info">
+                            <div class="dropcart__product-name row">
+                                <span class="col-8 font-primary">
+                                    {{ user?.name }}
+                                </span>
+                                <span class="col-4 dropcart__product-price">
+                                    {{ user?.email }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div :class="`dropcart__totals text-${$i18n.locale === 'ar' ? 'right' : 'left'
-                    } font-primary`">
-                    <table>
-                        <tbody>
-                            <template>
+                    <div :class="`dropcart__totals text-${$i18n.locale === 'ar' ? 'right' : 'left'
+                        } font-primary`">
+                        <table>
+                            <tbody>
+                                <template>
+                                    <tr>
+                                        <th>{{ $t("checkout.sub_total") }}</th>
+                                        <td>KWD {{ total }}</td>
+                                    </tr>
+                                    <tr v-if="newSubTotal">
+                                        <th>{{ $t("checkout.new_sub_total") }}</th>
+                                        <td>KWD {{ newSubTotal }}</td>
+                                    </tr>
+                                    <tr v-if="discount">
+                                        <th>{{ $t("checkout.discount") }}</th>
+                                        <td class="font-weight-bold green--text text--lighten-1">
+                                            {{ discount }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ $t("checkout.delivery_cost") }}</th>
+                                        <td>KWD {{ delivery_cost }}</td>
+                                    </tr>
+                                </template>
                                 <tr>
-                                    <th>{{ $t("checkout.sub_total") }}</th>
-                                    <td>KWD {{ total }}</td>
+                                    <th colspan="2" style="background-color: #99999930; height: 1px"></th>
                                 </tr>
-                                <tr v-if="newSubTotal">
-                                    <th>{{ $t("checkout.new_sub_total") }}</th>
-                                    <td>KWD {{ newSubTotal }}</td>
+
+                                <tr class="mt-5">
+                                    <th>{{ $t("checkout.total") }}</th>
+                                    <td v-if="!newSubTotal">KWD {{ total + delivery_fee }}</td>
+                                    <td v-else>KWD {{ newSubTotal + delivery_fee }}</td>
                                 </tr>
-                                <tr v-if="discount">
-                                    <th>{{ $t("checkout.discount") }}</th>
-                                    <td class="font-weight-bold green--text text--lighten-1">
-                                        {{ discount }}
+                                <tr>
+                                    <td colspan="2" class="text-center font-weight-bold pt-5">
+                                        {{ $t("checkout.estimated_message") }}
+
+                                        <span style="display: block">{{
+                                            calculateEstimatedTime(
+                                                est_time,
+                                                $t("checkout.day"),
+                                                $t("checkout.hour"),
+                                                $t("checkout.minute")
+                                            )
+                                        }}</span>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>{{ $t("checkout.delivery_cost") }}</th>
-                                    <td>KWD {{ delivery_cost }}</td>
-                                    <!-- <td>KWD {{ delivery_fee }}</td> -->
-                                </tr>
-                                <!-- <tr>
-                    <th>{{ $t("common.service_cost") }}</th>
-                    <td>KWD 0.450</td>
-                  </tr> -->
-                            </template>
-                            <tr>
-                                <th colspan="2" style="background-color: #99999930; height: 1px"></th>
-                            </tr>
-
-                            <tr class="mt-5">
-                                <th>{{ $t("checkout.total") }}</th>
-                                <td v-if="!newSubTotal">KWD {{ total + delivery_fee }}</td>
-                                <td v-else>KWD {{ newSubTotal + delivery_fee }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="text-center font-weight-bold pt-5">
-                                    {{ $t("checkout.estimated_message") }}
-
-                                    <span style="display: block">{{
-                                        calculateEstimatedTime(
-                                            est_time,
-                                            $t("checkout.day"),
-                                            $t("checkout.hour"),
-                                            $t("checkout.minute")
-                                        )
-                                    }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </template>
-            <!-- <div class="d-flex align-center justify-space-between">
-              <p class="text-subtitle-1">Subtotal:</p>
-              <p class="text-subtitle-1 font-weight-bold black--text">
-                  {{ sub_total }} KWD
-              </p>
-          </div>
-          <div class="d-flex align-center justify-space-between">
-              <p class="text-subtitle-1">Shipping:</p>
-              <p class="text-subtitle-1 font-weight-bold green--text text--lighten-1">
-                  {{ shipping == 0 ? "Calculated Later" : shipping + " KWD" }}
-              </p>
-          </div> -->
-            <!-- <div class="d-flex align-center justify-space-between">
-          <p class="text-subtitle-1">{{ $t("checkout.discount") }}:</p>
-          <p class="text-subtitle-1 font-weight-bold green--text text--lighten-1">
-            {{ discount }} KWD
-          </p>
-        </div> -->
-
-            <!-- <v-expansion-panels accordion v-if="step == 3">
-          <v-expansion-panel class="shadow-none">
-            <v-expansion-panel-header color="grey lighten-2">
-              Do You Have Coupon ?
-            </v-expansion-panel-header>
-            <v-expansion-panel-content color="grey lighten-2" class="pt-3 pb-1">
-              <v-text-field solo label="Coupon code" flat class="rounded-lg" outlined v-model="coupon">
-                <template #append>
-                  <v-btn elevation="0" @click="applyCoupon">apply</v-btn>
+                            </tbody>
+                        </table>
+                    </div>
                 </template>
-              </v-text-field>
-  
-              <v-list rounded dense v-if="checkout.discounts && checkout.discounts.length">
-                <v-list-item v-for="(discount, index) in checkout.discounts" :key="discount.id" dense>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="discount.code"></v-list-item-title>
-                  </v-list-item-content>
-  
-                  <v-list-item-action>
-                    <v-btn icon>
-                      <v-icon :disabled="loading" color="red lighten-1"
-                        @click="removeDiscount(index, discount.id)">mdi-delete</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels> -->
-        </v-card-text>
+            </v-card-text>
+        </v-card>
 
-        <!-- <v-card-actions class="pa-8 pb-3">
-        <div class="flex-grow-1"> -->
-        <!-- <div class="d-flex justify-space-between font-weight-bold text-h6">
-                  <p>Total</p>
-                  <p>{{ total }} KWD</p>
-              </div> -->
+        <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
+            :disabled="checkout_loading">
+            <v-card-text class="pa-8">
+                <p class="text-h6 font-weight-bold grey--text text--darken-1">
+                    {{ $t("checkout.summary") }}
+                </p>
+                <template v-if="items && items.length > 0">
+                    <div v-for="item in items" :key="item.id" class="dropcart__product">
+                        <div class="dropcart__product-info">
+                            <div class="dropcart__product-name row">
+                                <span class="col-8 font-primary">
+                                    {{ i18n_me(item.product.name_ar, item.product.name_en) }} x
+                                    {{ item.quantity }}
+                                </span>
+                                <span class="col-4 dropcart__product-price">
+                                    KWD {{ item.price }}</span>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- <v-btn
-            x-large
-            class="rounded-lg"
-            height="57"
-            color="light-blue darken-3"
-            elevation="0"
-            dark
-            block
-          >
-            Place Order
-          </v-btn> -->
-        <!-- </div>
-      </v-card-actions> -->
-        <v-card-actions class="justify-space-between px-0">
-            <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/cart" elevation="0" text color="grey" large dark
-                style="visibility: hidden">
-                <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
-                    mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
-                </v-icon>
-                {{ $t("checkout.shipping.back") }}
-            </v-btn>
-            <v-btn :loading="loading" x-large class="rounded-lg to-payment" height="57" color="dark" elevation="0" dark
-                :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showTime">
-                {{ $t("checkout.shipping.continue") }}
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+                    <div :class="`dropcart__totals text-${$i18n.locale === 'ar' ? 'right' : 'left'
+                        } font-primary`">
+                        <table>
+                            <tbody>
+                                <template>
+                                    <tr>
+                                        <th>{{ $t("checkout.sub_total") }}</th>
+                                        <td>KWD {{ total }}</td>
+                                    </tr>
+                                    <tr v-if="newSubTotal">
+                                        <th>{{ $t("checkout.new_sub_total") }}</th>
+                                        <td>KWD {{ newSubTotal }}</td>
+                                    </tr>
+                                    <tr v-if="discount">
+                                        <th>{{ $t("checkout.discount") }}</th>
+                                        <td class="font-weight-bold green--text text--lighten-1">
+                                            {{ discount }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ $t("checkout.delivery_cost") }}</th>
+                                        <td>KWD {{ delivery_cost }}</td>
+                                    </tr>
+                                </template>
+                                <tr>
+                                    <th colspan="2" style="background-color: #99999930; height: 1px"></th>
+                                </tr>
+
+                                <tr class="mt-5">
+                                    <th>{{ $t("checkout.total") }}</th>
+                                    <td v-if="!newSubTotal">KWD {{ total + delivery_fee }}</td>
+                                    <td v-else>KWD {{ newSubTotal + delivery_fee }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-center font-weight-bold pt-5">
+                                        {{ $t("checkout.estimated_message") }}
+
+                                        <span style="display: block">{{
+                                            calculateEstimatedTime(
+                                                est_time,
+                                                $t("checkout.day"),
+                                                $t("checkout.hour"),
+                                                $t("checkout.minute")
+                                            )
+                                        }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+            </v-card-text>
+        </v-card>
+        <v-card>
+            <v-card-actions class="justify-space-between px-0">
+                <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/cart" elevation="0" text color="grey" large dark>
+                    <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
+                        mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
+                    </v-icon>
+                    {{ $t("checkout.shipping.back") }}
+                </v-btn>
+                <v-btn :loading="loading" x-large class="rounded-lg to-payment" height="57" color="dark" elevation="0" dark
+                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showTime">
+                    {{ $t("checkout.shipping.continue") }}
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </div>
 </template>
   
 <script>
@@ -189,6 +206,8 @@ export default {
             branch: "",
             same_date_branch: {},
             loading: false,
+            products: [],
+            user: JSON.parse(localStorage.getItem('shipping_address')),
             // quantity: 1,
             // totals: [],
             // total: 0,
@@ -219,7 +238,9 @@ export default {
     mounted() {
         // this.calculateTotals();
         this.setPicked();
+        this.products = this.$store.state.cart.items
         this.get_branch();
+        console.log(this.products);
     },
     methods: {
         showTime() {

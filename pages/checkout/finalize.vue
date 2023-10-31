@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <v-row :class="$vuetify.breakpoint.mobile ? 'flex-column-reverse' : ''">
-      <v-col :cols="step < 5 && !$vuetify.breakpoint.mobile ? 8 : 12">
+      <v-col :cols="step < 5 && !$vuetify.breakpoint.mobile ? 12 : 12">
         <v-stepper :value="step" elevation="0">
           <v-card elevation="0" color="#fff6ee" class="rounded-lg mb-10" v-if="step < 5">
             <v-card-text class="pt-0 pb-5 d-flex align-center justify-space-around"
