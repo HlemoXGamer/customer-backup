@@ -39,7 +39,8 @@
               <v-icon>
                 mdi-chevron-down
               </v-icon>
-            </v-card>
+            </v-card> 
+            <GoogleMap @set-address="setDefaultBranch" />
             <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular
               :size="50"
@@ -184,6 +185,7 @@ export default {
       this.loading = false;
     },
     async setDefaultBranch(area) {
+      console.log(area);
       if (this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
       const { branches } = area;
       localStorage.setItem("default_location", "area");
