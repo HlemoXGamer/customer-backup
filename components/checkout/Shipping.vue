@@ -217,7 +217,7 @@
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
           @click="showTime"
         >
-          {{ $t("checkout.shipping.continue") }}
+          {{ $t("Continue To Summary") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -344,7 +344,7 @@ export default {
         "shipping_address",
         JSON.stringify(this.local.address)
       );
-      this.$store.commit("checkout/SHOW_TIME");
+      this.$store.commit("checkout/SHOW_SUMMARY");
     },
     transformAddress(address) {
       const address_info = [];

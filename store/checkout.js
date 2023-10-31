@@ -211,16 +211,19 @@ export const mutations = {
     state.step = 1;
   },
   SHOW_PAYMENT(state) {
-    state.step = 3;
+    state.step = 4;
   },
-  SHOW_TIME(state) {
+  SHOW_SUMMARY(state) {
     state.step = 2;
   },
-  SHOW_REVIEW(state) {
+  SHOW_TIME(state) {
     state.step = 3;
   },
-  SHOW_SUCCESS(state) {
+  SHOW_REVIEW(state) {
     state.step = 4;
+  },
+  SHOW_SUCCESS(state) {
+    state.step = 5;
   },
   SET_TYPE(state, type){
     state.type = type;
