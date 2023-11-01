@@ -1,8 +1,8 @@
 <template>
     <v-col cols="12">
         <v-row v-if="this.$store.state.checkout.type == 'deliver_now'" class="align-center justify-space-between" style="padding-bottom: 50px;">
-            <v-btn @click="isPreOrder = false" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
-            <v-btn @click="isPreOrder = true" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
+            <v-btn @click="orderStatus2" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
+            <v-btn @click="orderStatus" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
         </v-row>
         <v-row v-if="isPreOrder" v-row no-gutters class="align-center justify-center">
             <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
@@ -88,6 +88,7 @@ export default {
         },
         showPayment() {
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
+            this.$store.commit("checkout/SHOW_SUMMARY");
         },
         back() {
             this.$store.commit("checkout/SHOW_SHIPPING");
@@ -100,6 +101,14 @@ export default {
                 this.days.push(newDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' }));
             }
         },
+        orderStatus2() {
+            this.isPreOrder = false;
+            this.$store.commit('checkout/SET_IS_PICKUP', false)
+        },
+        orderStatus() {
+            this.isPreOrder = true;
+            this.$store.commit('checkout/SET_IS_PICKUP', true)
+        }
     },
     watch: {
         currentDay(newValue, oldValue) {

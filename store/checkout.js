@@ -214,10 +214,10 @@ export const mutations = {
     state.step = 4;
   },
   SHOW_SUMMARY(state) {
-    state.step = 2;
+    state.step = 3;
   },
   SHOW_TIME(state) {
-    state.step = 3;
+    state.step = 2;
   },
   SHOW_REVIEW(state) {
     state.step = 4;

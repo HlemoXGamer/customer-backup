@@ -344,7 +344,7 @@ export default {
         "shipping_address",
         JSON.stringify(this.local.address)
       );
-      this.$store.commit("checkout/SHOW_SUMMARY");
+      this.$store.commit("checkout/SHOW_TIME");
     },
     transformAddress(address) {
       const address_info = [];

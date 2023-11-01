@@ -27,7 +27,7 @@
                   </v-btn>
                 </div>
                 <p class="font-weight-bold mt-5" :class="[step >= 2 ? 'brown--text' : 'grey--text']">
-                  {{ $t("Summary") }}
+                  {{ $t("checkout.shipping.time") }}
                 </p>
               </div>
               <v-divider></v-divider>
@@ -40,7 +40,7 @@
                   </v-btn>
                 </div>
                 <p class="font-weight-bold mt-5" :class="[step >= 3 ? 'brown--text' : 'grey--text']">
-                  {{ $t("checkout.shipping.time") }}
+                  {{ $t("Summary") }}
                 </p>
               </div>
               <v-divider></v-divider>
@@ -64,11 +64,11 @@
             </v-stepper-content>
 
             <v-stepper-content step="2">
-              <CheckoutSummary />
-            </v-stepper-content>
-
-            <v-stepper-content step="3">
               <CheckoutPickTime />
+            </v-stepper-content>
+            
+            <v-stepper-content step="3">
+              <CheckoutSummary />
             </v-stepper-content>
 
             <v-stepper-content step="4">

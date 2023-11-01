@@ -154,7 +154,7 @@ export default {
       this.$store.commit("checkout/SET_TIP", parseInt(this.customTip));
     },
     async confirm() {
-      console.log(this.form.is_pickup);
+      console.log(this.form);
       if (this.form.is_pickup && this.form.is_pickup !== false) {
         let time = this.form.delivery_time;
         console.log(time);

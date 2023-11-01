@@ -1,10 +1,11 @@
 <template>
     <div>
-        <v-card class="guest" v-if="!$auth.loggedIn">
-            <v-card-title>
+        <v-card class="guest mb-8" v-if="!$auth.loggedIn" :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
+            :disabled="checkout_loading">
+            <v-card-title class="pa-8">
                 Customer Details
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pa-8">
                 <v-row>
                     <v-col cols="6">
                         <p>Name: {{ user?.name }}</p>
@@ -21,20 +22,22 @@
                 </v-row>
             </v-card-text>
             <v-card-text>
+                <v-card-title class="pb-6">Product Details</v-card-title>
                 <v-row>
                     <v-col v-for="product in products" :key="product.id" cols="4">
                         <v-card>
                             <v-img v-if="product.images.length > 0" :src="product.images[0].file" alt="Product Image"
                                 height="200"></v-img>
-                            <v-card-title>{{ product.name }}</v-card-title>
-                            <v-card-text>
-                                Price: {{ product.price }}
+                            <v-card-title class="pa-4">{{ product.product.name_en }}</v-card-title>
+                            <v-card-text class="pb-4">
+                                Price: {{ product.price }} KWD
                             </v-card-text>
                         </v-card>
                     </v-col>
                 </v-row>
             </v-card-text>
         </v-card>
+
         <v-card class="authed-user" v-if="$auth.loggedIn">
             <v-card-title>
                 Customer Details
@@ -68,79 +71,6 @@
                         </v-card>
                     </v-col>
                 </v-row>
-            </v-card-text>
-        </v-card>
-
-        <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
-            :disabled="checkout_loading">
-            <v-card-text class="pa-8">
-                <p class="text-h6 font-weight-bold grey--text text--darken-1">
-                    {{ $t("Customer Details") }}
-                </p>
-                <template v-if="items && items.length > 0">
-                    <div v-for="item in items" :key="item.id" class="dropcart__product">
-                        <div class="dropcart__product-info">
-                            <div class="dropcart__product-name row">
-                                <span class="col-8 font-primary">
-                                    {{ user?.name }}
-                                </span>
-                                <span class="col-4 dropcart__product-price">
-                                    {{ user?.email }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div :class="`dropcart__totals text-${$i18n.locale === 'ar' ? 'right' : 'left'
-                        } font-primary`">
-                        <table>
-                            <tbody>
-                                <template>
-                                    <tr>
-                                        <th>{{ $t("checkout.sub_total") }}</th>
-                                        <td>KWD {{ total }}</td>
-                                    </tr>
-                                    <tr v-if="newSubTotal">
-                                        <th>{{ $t("checkout.new_sub_total") }}</th>
-                                        <td>KWD {{ newSubTotal }}</td>
-                                    </tr>
-                                    <tr v-if="discount">
-                                        <th>{{ $t("checkout.discount") }}</th>
-                                        <td class="font-weight-bold green--text text--lighten-1">
-                                            {{ discount }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ $t("checkout.delivery_cost") }}</th>
-                                        <td>KWD {{ delivery_cost }}</td>
-                                    </tr>
-                                </template>
-                                <tr>
-                                    <th colspan="2" style="background-color: #99999930; height: 1px"></th>
-                                </tr>
-
-                                <tr class="mt-5">
-                                    <th>{{ $t("checkout.total") }}</th>
-                                    <td v-if="!newSubTotal">KWD {{ total + delivery_fee }}</td>
-                                    <td v-else>KWD {{ newSubTotal + delivery_fee }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="text-center font-weight-bold pt-5">
-                                        {{ $t("checkout.estimated_message") }}
-
-                                        <span style="display: block">{{
-                                            calculateEstimatedTime(
-                                                est_time,
-                                                $t("checkout.day"),
-                                                $t("checkout.hour"),
-                                                $t("checkout.minute")
-                                            )
-                                        }}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </template>
             </v-card-text>
         </v-card>
 
@@ -300,7 +230,7 @@ export default {
     },
     methods: {
         showTime() {
-            this.$store.commit("checkout/SHOW_TIME");
+            this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
         },
         get_branch() {
             getBranch(localStorage.getItem("guest_branch")).then(({ data }) => {
