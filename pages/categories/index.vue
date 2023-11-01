@@ -66,7 +66,8 @@
         page: 1,
         default_location: localStorage.getItem("default_location"),
         address: {},
-        loading: false
+        loading: false,
+        area_id: JSON.parse(localStorage.getItem('default_area')).id,
       };
     },
     watch: {
@@ -98,7 +99,7 @@
           {
             name: this.searchItem,
             page: this.page,
-            branch_id: this.branch_id,
+            area: this.area_id,
           },
           this.guest
         ).then((data) => {
