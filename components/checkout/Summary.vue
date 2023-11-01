@@ -1,18 +1,74 @@
 <template>
     <div>
-        <v-card>
-            <h1>Customer Details</h1>
-            <p>Name:{{ user?.name }}</p>
-            <p>Email:{{ user?.email }}</p>
-            <p>Phone:{{ user?.phone }}</p>
-            <p>Address:{{ user?.address }}</p>
-
-            <div v-for="product in products" :key="product.id">
-                <div v-for="image in product.images" :key="image.id">
-                    <img v-if="image?.file" :src="image.file" alt="Product Image" />
-                </div>
-            </div>
-
+        <v-card class="guest" v-if="!$auth.loggedIn">
+            <v-card-title>
+                Customer Details
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="6">
+                        <p>Name: {{ user?.name }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Email: {{ user?.email }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Phone: {{ user?.phone }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Address: {{ user?.address }}</p>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-text>
+                <v-row>
+                    <v-col v-for="product in products" :key="product.id" cols="4">
+                        <v-card>
+                            <v-img v-if="product.images.length > 0" :src="product.images[0].file" alt="Product Image"
+                                height="200"></v-img>
+                            <v-card-title>{{ product.name }}</v-card-title>
+                            <v-card-text>
+                                Price: {{ product.price }}
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+        <v-card class="authed-user" v-if="$auth.loggedIn">
+            <v-card-title>
+                Customer Details
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="6">
+                        <p>Name: {{ user?.name }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Email: {{ user?.email }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Phone: {{ user?.phone }}</p>
+                    </v-col>
+                    <v-col cols="6">
+                        <p>Address: {{ user?.address }}</p>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-text>
+                <v-row>
+                    <v-col v-for="product in products" :key="product.id" cols="4">
+                        <v-card>
+                            <v-img v-if="product.images.length > 0" :src="product.images[0].file" alt="Product Image"
+                                height="200"></v-img>
+                            <v-card-title>{{ product.name }}</v-card-title>
+                            <v-card-text>
+                                Price: {{ product.price }}
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-card-text>
         </v-card>
 
         <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
