@@ -78,7 +78,7 @@
             :disabled="checkout_loading">
             <v-card-text class="pa-8">
                 <p class="text-h6 font-weight-bold grey--text text--darken-1">
-                    {{ $t("checkout.summary") }}
+                    {{ $t("checkout.summary.title") }}
                 </p>
                 <template v-if="items && items.length > 0">
                     <div v-for="item in items" :key="item.id" class="dropcart__product">
@@ -153,11 +153,11 @@
                     <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
                         mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
                     </v-icon>
-                    {{ $t("checkout.shipping.back") }}
+                    {{ $t("checkout.summary.return") }}
                 </v-btn>
                 <v-btn :loading="loading" x-large class="rounded-lg to-payment" height="57" color="dark" elevation="0" dark
-                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showTime">
-                    {{ $t("checkout.shipping.continue") }}
+                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showPayment">
+                    {{ $t("checkout.summary.continue") }}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -226,10 +226,9 @@ export default {
         this.setPicked();
         this.products = this.$store.state.cart.items
         this.get_branch();
-        console.log(this.products);
     },
     methods: {
-        showTime() {
+        showPayment() {
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
         },
         get_branch() {

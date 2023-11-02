@@ -39,5 +39,6 @@ export default {
     areas: {
         search_placeholder: "Search for an Area"
     },
-    sweet_moments: "Sweet Moments Since 1992"
+    sweet_moments: "Sweet Moments Since 1992",
+    no_addresses: "There are currently no saved Addresses"
 }

@@ -217,7 +217,7 @@
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
           @click="showTime"
         >
-          {{ $t("Continue To Summary") }}
+          {{ $t("checkout.shipping.continue") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -445,19 +445,14 @@ export default {
           },
           name: {
             required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
+              { lang: this.$i18n.locale },
+              requiredIf(function (value, parentVm) {
+                return this.$auth.isLoggedIn;
+              })
             ),
           },
           email: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
-            ),
+            required: requiredIf(!this.$auth.loggedIn),
             email,
           },
           floor: {

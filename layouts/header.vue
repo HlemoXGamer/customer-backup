@@ -103,7 +103,7 @@
                     </v-list>
                   </div>
                 </v-menu>
-                <v-badge v-if="!$auth.loggedIn" :content="count" :value="count" overlap offset-y="20" color="#65382c" class="white--text">
+                <v-badge :content="count" :value="count" overlap offset-y="20" color="#65382c" class="white--text">
                   <v-btn icon color="dark" elevation="0" :to="localePath('/cart')">
                     <v-icon color="#65382c">mdi-cart</v-icon>
                   </v-btn>

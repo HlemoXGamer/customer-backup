@@ -8,7 +8,6 @@ export default {
   shipping,
     payment,
     "minimum_subtotal" : "Minimum subtotal is ",
-    summary: 'Summary',
     estimated_message : 'Estimated delivery time within',
     day:'day',
     hour:'hour',

@@ -1,10 +1,10 @@
 <template>
     <v-col cols="12">
-        <v-row v-if="this.$store.state.checkout.type == 'deliver_now'" class="align-center justify-space-between" style="padding-bottom: 50px;">
+        <!-- <v-row v-if="this.$store.state.checkout.type == 'deliver_now'" class="align-center justify-space-around mb-0 pb-0" style="padding-bottom: 50px;">
             <v-btn @click="orderStatus2" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
             <v-btn @click="orderStatus" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
-        </v-row>
-        <v-row v-if="isPreOrder" v-row no-gutters class="align-center justify-center">
+        </v-row> -->
+        <v-row v-if="isPreOrder" v-row no-gutters class="align-center justify-center mb-5 mt-0 pt-0">
             <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
@@ -12,8 +12,8 @@
                 <scroll-picker :options="['AM', 'PM']" v-model="current" />
             </scroll-picker-group>
         </v-row>
-        <v-row v-if="!isPreOrder" v-row no-gutters class="align-center justify-center">
-            <p>Delivery will arrive after 40 min from pay</p>
+        <v-row v-if="!isPreOrder" v-row no-gutters class="align-center justify-center text-h6">
+            <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">Delivery will arrive after 40 min from Pay time</p>
         </v-row>
         <v-card>
             <v-card-actions class="justify-space-between px-0">
@@ -45,7 +45,6 @@ export default {
             days: [],
             hours: [],
             minutes: [],
-            isPreOrder: this.$store.state.checkout.type == 'deliver_now' ? false : true,
         }
     },
     methods: {
@@ -101,14 +100,14 @@ export default {
                 this.days.push(newDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' }));
             }
         },
-        orderStatus2() {
-            this.isPreOrder = false;
-            this.$store.commit('checkout/SET_IS_PICKUP', false)
-        },
-        orderStatus() {
-            this.isPreOrder = true;
-            this.$store.commit('checkout/SET_IS_PICKUP', true)
-        }
+        // orderStatus2() {
+        //     this.isPreOrder = false;
+        //     this.$store.commit('checkout/SET_IS_PICKUP', false)
+        // },
+        // orderStatus() {
+        //     this.isPreOrder = true;
+        //     this.$store.commit('checkout/SET_IS_PICKUP', true)
+        // }
     },
     watch: {
         currentDay(newValue, oldValue) {
@@ -122,11 +121,19 @@ export default {
             }
         },
     },
+    computed: {
+        isPreOrder(){
+            return this.$store.state.checkout.type == 'pre_order';
+        },
+        isDeliveryNow(){
+            return this.$store.state.checkout.type == 'delivery_now';
+        }
+    },
     mounted() {
         this.addDaysToDate(new Date(), 1);
-        if (this.$store.state.checkout.type == "deliver_now") {
+        if (this.isDeliveryNow) {
             this.addDaysToDate(new Date(), 1);
-        } else if (this.$store.state.checkout.type == "pre_order") {
+        } else if (this.isPreOrder) {
             this.addDaysToDate(new Date(), 365);
             this.days.splice(0, 1);
         }

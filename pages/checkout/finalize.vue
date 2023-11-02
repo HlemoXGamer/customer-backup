@@ -23,7 +23,7 @@
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 2">mdi-check</v-icon>
 
-                    <v-icon v-else>mdi-clock</v-icon>
+                    <v-icon v-else>mdi-clock-outline</v-icon>
                   </v-btn>
                 </div>
                 <p class="font-weight-bold mt-5" :class="[step >= 2 ? 'brown--text' : 'grey--text']">
@@ -36,7 +36,7 @@
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 3">mdi-check</v-icon>
 
-                    <v-icon v-else>mdi-clock</v-icon>
+                    <v-icon v-else>mdi-script-text-outline</v-icon>
                   </v-btn>
                 </div>
                 <p class="font-weight-bold mt-5" :class="[step >= 3 ? 'brown--text' : 'grey--text']">

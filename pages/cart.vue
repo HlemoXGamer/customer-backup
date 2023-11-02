@@ -1,8 +1,7 @@
 <template>
   <div class="pt-5">
-    <v-progress-circular :size="50" color="#65382c" v-if="productsLoading" indeterminate></v-progress-circular>
     <p class="text-h7 font-weight-bold mb-5 mx-auto"
-    style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
+      style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index">
       <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
@@ -35,9 +34,13 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <p v-if="!products.length" class="text-center font-weight-bold text-h6" style="height: 100%; color: #65382c;">
+    <p v-if="!products.length && !productsLoading" class="text-center font-weight-bold text-h6"
+      style="height: 100%; color: #65382c;">
       {{ $t("cart.no_products") }}
     </p>
+    <v-row no-gutters class="justify-center flex-wrap">
+      <v-progress-circular :size="50" color="#65382c" v-if="productsLoading" indeterminate></v-progress-circular>
+    </v-row>
     <v-divider style="color: grey" class="my-3" />
     <v-col class="mx-0 my-0 pa-0 px-0 d-flex flex-column align-start">
       <p class="font-weight-bold text-h7 pb-0 mb-0" style="color: #65382c;">{{ $t("checkout.voucher_code") }}</p>

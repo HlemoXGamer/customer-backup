@@ -7,7 +7,6 @@ export default {
   time,
   payment,
   "minimum_subtotal": "أقل مبلغ للإجمالي ",
-  summary: "ملخص الطلب",
   delivery_date: "تاريخ التوصيل",
   estimated_message : 'الوقت المقدر للتوصيل خلال',
   day:'يوم',

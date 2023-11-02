@@ -39,5 +39,6 @@ export default {
   areas: {
     search_placeholder: "إبحث عن منطقة"
   },
-  sweet_moments: "لحظات حلوة منذ عام 1992"
+  sweet_moments: "لحظات حلوة منذ عام 1992",
+  no_addresses: "لا يوجد حاليا أي عناوين محفوظة"
 };

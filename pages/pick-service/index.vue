@@ -4,10 +4,10 @@
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
       <v-row no-gutters class="justify-center align-center py-2">
         <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now" @click="isToggle('pre_order')">
+          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now" @click="isToggle('deliver_now')">
             Deliver now
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order" @click="isToggle('deliver_now')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order" @click="isToggle('pre_order')">
             Pre Order
           </v-btn>
         </v-btn-toggle>
@@ -51,6 +51,9 @@
           </v-col>
         </v-tab-item>
         <v-tab-item key="addresses">
+          <p v-if="!addresses.length" style="font-size: 20px;" class="font-primary font-weight-bold text-center my-5">
+            {{ $t("common.no_addresses") }} 
+          </p>
           <v-item-group v-model="currentAddress" class="mt-4">
             <v-col v-for="address in addresses" :key="address.id" cols="12">
               <v-item v-slot="{ active, toggle }">
@@ -86,7 +89,7 @@ import { get as getAddresses, setDefault } from "@/apis/addresses";
 export default {
   data() {
     return {
-      toggle: "deliver_now",
+      toggle: this.$store.state.checkout.type || "deliver_now",
       currentTab: "areas",
       currentDay: new Date().getDate(),
       currentHour: "",
@@ -110,14 +113,6 @@ export default {
           this.toggle = value;
         }
       }, 100);
-    },
-    addDaysToDate(startDate, days) {
-      this.days = [];
-      for (let i = 0; i < days; i++) {
-        const newDate = new Date(startDate);
-        newDate.setDate(startDate.getDate() + i);
-        this.days.push(newDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' }));
-      }
     },
     search() {
       if (this.searchTerm !== null) {
@@ -228,14 +223,13 @@ export default {
       this.$store.commit("checkout/SET_TYPE", newValue);
     },
     currentAddress(newValue, oldValue) {
-        this.setDefaultAddress(this.addresses[newValue]);
+      this.setDefaultAddress(this.addresses[newValue]);
     },
   },
   mounted() {
     localStorage.removeItem("default_location");
     localStorage.removeItem("default_address");
     localStorage.removeItem("default_area");
-    // this.addDaysToDate(new Date(), 1);
     this.getAreas();
     this.getAddresses();
   }
