@@ -8,7 +8,7 @@ import {
 import { getField, updateField } from 'vuex-map-fields';
 
 export const state = () => ({
-  type: "deliver_now",
+  type: "asap",
   step: 1,
   selectedTip: 3,
   checkout_loading: false,

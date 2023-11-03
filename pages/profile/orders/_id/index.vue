@@ -23,26 +23,17 @@
                       {{ order.id }}
                     </p>
                   </v-col>
-                  <v-col
-                    :cols="!$vuetify.breakpoint.mobile ? 4 : 6"
-                    v-if="order.status !== 'created'"
-                  >
+                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.status !== 'created'">
                     <p class="font-weight-bold text-subtitle-1 font-primary">
                       {{ $t("profile.orders.orders_details.status") }}:
                       {{ $t(`profile.orders.orders_details.${order.status}`) }}
                       <!-- {{ order.status }} -->
                     </p>
                   </v-col>
-                  <v-col
-                    :cols="!$vuetify.breakpoint.mobile ? 4 : 6"
-                    v-if="order.status === 'created'"
-                  >
+                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.status === 'created'">
                     <p class="font-weight-bold text-subtitle-1 font-primary">
                       {{ $t("profile.orders.orders_details.status") }}:
-                      <span
-                        style="color: red; font-weight: 700; font-size: 20px"
-                        >Payment Failed</span
-                      >
+                      <span style="color: red; font-weight: 700; font-size: 20px">Payment Failed</span>
                       <!-- {{ order.status }} -->
                     </p>
                   </v-col>
@@ -93,77 +84,41 @@
               </v-col>
               <v-col :cols="!$vuetify.breakpoint.mobile ? 2 : 12">
                 <div>
-                  <v-btn
-                    color="primary"
-                    @click="rateDialog = true"
-                    dark
-                    block
-                    :class="!canRate ? 'disabled' : ''"
-                    >{{ $t("profile.orders.orders_details.rate.rate") }}</v-btn
-                  >
+                  <v-btn color="primary" @click="rateDialog = true" dark block :class="!canRate ? 'disabled' : ''">{{
+                    $t("profile.orders.orders_details.rate.rate") }}</v-btn>
                 </div>
                 <div>
-                  <v-btn
-                    color="primary"
-                    @click="complaintDialog = true"
-                    dark
-                    block
-                    :class="`mt-5 ${
-                      order.can_complain !== 1 ? 'disabled' : ''
-                    }`"
-                    >{{
-                      $t("profile.orders.orders_details.complaint.complaint")
-                    }}</v-btn
-                  >
+                  <v-btn color="primary" @click="complaintDialog = true" dark block :class="`mt-5 ${order.can_complain !== 1 ? 'disabled' : ''
+                    }`">{{
+    $t("profile.orders.orders_details.complaint.complaint")
+  }}</v-btn>
                 </div>
-                <orderRate
-                  @changeRate="
-                    (value) => {
-                      order.review = {
-                        comment: value.comment,
-                        rate: value.rate,
-                      };
-                    }
-                  "
-                  v-model="rateDialog"
-                  :order="order"
-                />
-                <orderComplaint
-                  @changeComplain="(value) => (order.complain = value)"
-                  v-model="complaintDialog"
-                  :order="order"
-                />
+                <orderRate @changeRate="(value) => {
+                    order.review = {
+                      comment: value.comment,
+                      rate: value.rate,
+                    };
+                  }
+                  " v-model="rateDialog" :order="order" />
+                <orderComplaint @changeComplain="(value) => (order.complain = value)" v-model="complaintDialog"
+                  :order="order" />
                 <div>
-                  <v-btn
-                    color="Newprimary"
-                    dark
-                    block
-                    :class="`mt-5 ${!canCancel ? 'disabled' : isDisabled}`"
-                    @click="dialog = true"
-                  >
+                  <v-btn color="#65382c" dark block :class="`mt-5 ${!canCancel ? 'disabled' : isDisabled}`"
+                    @click="dialog = true">
                     {{
                       $t("profile.orders.orders_details.cancel_order")
-                    }}</v-btn
-                  >
+                    }}</v-btn>
                 </div>
                 <v-dialog v-model="dialog" max-width="500">
                   <v-card class="pa-2">
-                    <v-btn
-                      color="Newprimary"
-                      icon
-                      @click="dialog = false"
-                      class="float-right"
-                    >
+                    <v-btn color="#65382c" icon @click="dialog = false" class="float-right">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-card-title
-                      class="text-h5 text-center font-primary d-block font-weight-bold"
-                    >
+                    <v-card-title class="text-h5 text-center font-primary d-block font-weight-bold">
                       <span>
                         {{
                           $t("profile.orders.orders_details.cancel_order")
-                        }}</span
-                      >
+                        }}</span>
                     </v-card-title>
                     <v-card-text class="pa-5 font-primary font-weight-bold">
                       <p>
@@ -175,22 +130,12 @@
                         }}
                       </p>
                     </v-card-text>
-                    <v-card-actions
-                      class="d-block align-center text-center pa-3"
-                    >
-                      <v-btn
-                        color="btn-cancel-order"
-                        rounded
-                        @click="cancelOrder"
-                      >
+                    <v-card-actions class="d-block align-center text-center pa-3">
+                      <v-btn color="btn-cancel-order" rounded @click="cancelOrder">
                         {{ $t("profile.orders.orders_details.yes") }}
                       </v-btn>
 
-                      <v-btn
-                        color="btn-cancel-order"
-                        rounded
-                        @click="dialog = false"
-                      >
+                      <v-btn color="btn-cancel-order" rounded @click="dialog = false">
                         {{ $t("profile.orders.orders_details.no") }}
                       </v-btn>
                     </v-card-actions>
@@ -210,11 +155,7 @@
         </p>
         <v-divider class="my-5"></v-divider>
         <v-list class="rounded-lg" elevation="0">
-          <v-card
-            rounded="lg"
-            v-for="product in order.products"
-            :key="product.id"
-          >
+          <v-card rounded="lg" v-for="product in order.products" :key="product.id">
             <v-list-item three-line class="rounded-lg font-primary">
               <v-list-item-content>
                 <v-list-item-title class="text-h6 text-white-space">
@@ -228,14 +169,10 @@
                       </v-col>
                       <v-col cols="12" sm="4">
                         <ul>
-                          <li
-                            style="
+                          <li style="
                               display: inline-block;
                               margin: 10px 0 10px 10px;
-                            "
-                            v-for="note in product.cart_notes"
-                            :key="note.id"
-                          >
+                            " v-for="note in product.cart_notes" :key="note.id">
                             {{ note.note }}
                           </li>
                         </ul>
@@ -254,27 +191,14 @@
             <v-divider class="mt-4 mb-10"></v-divider>
           </v-card>
         </v-list>
-        <v-btn
-          class="float-right px-5"
-          color="Newprimary"
-          dark
-          @click="reOrder"
-          :loading="loading_reorder"
-          v-if="order.status === 'delivered'"
-        >
+        <v-btn class="float-right px-5" color="#65382c" dark @click="reOrder" :loading="loading_reorder"
+          v-if="order.status === 'delivered'">
           {{ $t("profile.orders.orders_details.reorder") }}
         </v-btn>
-        <v-btn
-          v-else
-          :to="localePath(`/profile/orders/${this.order.id}/track`)"
-          color="Newprimary"
-          dark
-          :class="{
-            'float-right px-5': true,
-            disabled: order.status === 'cancelled',
-          }"
-          >{{ $t("profile.orders.orders_details.track_my_order") }}</v-btn
-        >
+        <v-btn v-else :to="localePath(`/profile/orders/${this.order.id}/track`)" color="#65382c" dark :class="{
+          'float-right px-5': true,
+          disabled: order.status === 'cancelled',
+        }">{{ $t("profile.orders.orders_details.track_my_order") }}</v-btn>
       </v-card>
     </v-col>
   </v-row>

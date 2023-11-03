@@ -3,18 +3,15 @@
     <v-col cols="12">
       <v-card rounded="lg" class="pa-4">
         <div class="d-flex align-center justify-space-between">
-          <h3
-            :class="{
-              'font-weight-bold font-primary ': true,
-              'font--size__30': $vuetify.breakpoint.mobile,
-              'font--size__40': !$vuetify.breakpoint.mobile,
-            }"
-          >
+          <h3 :class="{
+            'font-weight-bold font-primary ': true,
+            'font--size__30': $vuetify.breakpoint.mobile,
+            'font--size__40': !$vuetify.breakpoint.mobile,
+          }">
             {{ $t("profile.orders.my_orders") }}
           </h3>
-          <span class="font-primary font-weight-bold text-right"
-            >{{ orders.length }} {{ $t("profile.orders.order.plural") }}</span
-          >
+          <span class="font-primary font-weight-bold text-right">{{ orders.length }} {{ $t("profile.orders.order.plural")
+          }}</span>
         </div>
         <!-- <v-row>
           <v-col :cols="!$vuetify.breakpoint.mobile ? 10 : 12" />
@@ -33,7 +30,7 @@
         <v-divider class="mt-4 mb-10"></v-divider>
         <v-row>
           <v-col cols="12" v-for="order in orders" :key="order.id">
-            <v-card rounded="lg">
+            <v-card rounded="lg" class="py-3" :style="order.isSuccess === 0 ? 'border: 3px solid #fb8c00;' : 'border: 2px solid #65382c;'">
               <v-card-text>
                 <v-row>
                   <v-col :cols="!$vuetify.breakpoint.mobile ? 10 : 12">
@@ -44,25 +41,28 @@
                           {{ order.id }}
                         </p>
                       </v-col>
-                      <v-col cols="6" v-if="order.status !== 'created'">
+                      <v-col cols="6" v-if="order.isSuccess === 0">
                         <p class="font-weight-bold text-subtitle-1">
                           {{ $t("profile.orders.orders_details.status") }}:
-                          {{
-                            $t(`profile.orders.orders_details.${order.status}`)
-                          }}
+                          <span class="warning--text">
+                            {{ $t(`profile.orders.orders_details.hold`)}}
+                          </span>
+                        </p>
+                      </v-col>
+                      <v-col cols="6" v-if="order.status !== 'created' && order.isSuccess === 1">
+                        <p class="font-weight-bold text-subtitle-1">
+                          {{ $t("profile.orders.orders_details.status") }}:
+                          {{ $t(`profile.orders.orders_details.${order.status}`)}}
                         </p>
                       </v-col>
                       <v-col cols="6" v-if="order.status === 'created'">
                         <p class="font-weight-bold text-subtitle-1">
                           {{ $t("profile.orders.orders_details.status") }}:
-                          <span
-                            style="
+                          <span style="
                               color: red;
                               font-weight: 700;
                               font-size: 20px;
-                            "
-                            >{{ $t("profile.orders.payment_failed") }}</span
-                          >
+                            ">{{ $t("profile.orders.payment_failed") }}</span>
                         </p>
                       </v-col>
                       <v-col cols="6">
@@ -80,15 +80,8 @@
                     </v-row>
                   </v-col>
                   <v-col cols="2">
-                    <v-btn
-                      color="Newprimary"
-                      dark
-                      nuxt
-                      link
-                      :to="localePath('/profile/orders/' + order.id)"
-                    >
-                      {{ $t("profile.orders.show_details") }}</v-btn
-                    >
+                    <v-btn color="#65382c" dark nuxt link :to="localePath('/profile/orders/' + order.id)">
+                      {{ $t("profile.orders.show_details") }}</v-btn>
                   </v-col>
                   <!-- <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6">
                                     <p class="font-weight-bold text-subtitle-1">#Items</p>
@@ -96,25 +89,13 @@
                                 </v-col> -->
                 </v-row>
               </v-card-text>
-              <v-divider class="mt-4 mb-4 font-primary"></v-divider>
             </v-card>
           </v-col>
         </v-row>
-
-        <CommonEmptyPage
-          icon="mdi-shopping"
-          :text="$t('profile.orders.no_orders')"
-          v-if="!orders.length && !this.loading"
-        >
-          <v-btn
-            x-large
-            elevation="0"
-            class="mt-10"
-            nuxt
-            color="Newprimary"
-            to="/products"
-            >{{ $t("profile.orders.shop_now") }}</v-btn
-          >
+        <CommonEmptyPage icon="mdi-shopping" :text="$t('profile.orders.no_orders')"
+          v-if="!orders.length && !this.loading">
+          <v-btn x-large elevation="0" class="mt-10" nuxt color="Newprimary" to="/products">{{
+            $t("profile.orders.shop_now") }}</v-btn>
         </CommonEmptyPage>
       </v-card>
     </v-col>

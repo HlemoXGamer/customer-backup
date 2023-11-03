@@ -4,16 +4,21 @@
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
       <v-row no-gutters class="justify-center align-center py-2">
         <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now" @click="isToggle('deliver_now')">
+          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
+            @click="isToggle('asap')">
             Deliver now
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order" @click="isToggle('pre_order')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same_day"
+            @click="isToggle('same_day')">
+            Later Today
+          </v-btn>
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order"
+            @click="isToggle('pre_order')">
             Pre Order
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;"
-        class="align-center justify-start d-flex mt-6">
+      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
         <v-tabs-slider></v-tabs-slider>
         <v-tab value="areas" style="width: 200px" class="rounded-lg">
           {{ $t("location.select_your_area") }}
@@ -41,18 +46,13 @@
               </v-icon>
             </v-card>
             <v-col cols="12" class="d-flex align-center justify-center">
-              <v-progress-circular
-              :size="50"
-              color="#65382c"
-              v-if="loading"
-              indeterminate
-            ></v-progress-circular>
+              <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col>
           </v-col>
         </v-tab-item>
         <v-tab-item key="addresses">
           <p v-if="!addresses.length" style="font-size: 20px;" class="font-primary font-weight-bold text-center my-5">
-            {{ $t("common.no_addresses") }} 
+            {{ $t("common.no_addresses") }}
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
             <v-col v-for="address in addresses" :key="address.id" cols="12">
@@ -89,7 +89,7 @@ import { get as getAddresses, setDefault } from "@/apis/addresses";
 export default {
   data() {
     return {
-      toggle: this.$store.state.checkout.type || "deliver_now",
+      toggle: this.$store.state.checkout.type || "asap",
       currentTab: "areas",
       currentDay: new Date().getDate(),
       currentHour: "",

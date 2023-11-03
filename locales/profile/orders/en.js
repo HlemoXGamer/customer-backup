@@ -9,7 +9,7 @@ export default {
   order_total_cost: "Order Total Cost",
   payment_failed:"Payment Failed",
   subtotal: "SubTotal",
-  show_details: "SHOW DETALIS",
+  show_details: "SHOW DETAILS",
   range: {
     range: 'range',
     past: "Past",

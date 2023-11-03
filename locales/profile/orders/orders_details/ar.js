@@ -7,6 +7,7 @@ export default {
   map_disabled: 'ستكون الخريطة متاحة عندما يكون الطلب في الطريق',
   status: "حالة الطلب",
   in_progress: "قيد التقدم",
+  hold: "يحتاج إلى قرار",
   ready_for_delivery: "جاهز للشحن",
   on_the_way: "في الطريق",
   delivered: "تم التوصيل",

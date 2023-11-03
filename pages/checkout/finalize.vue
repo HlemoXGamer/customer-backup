@@ -35,7 +35,6 @@
                 <div class="step-btn" :class="{ active: step == 3, complete: step > 3 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 3">mdi-check</v-icon>
-
                     <v-icon v-else>mdi-script-text-outline</v-icon>
                   </v-btn>
                 </div>
@@ -48,7 +47,6 @@
                 <div class="step-btn" :class="{ active: step == 4, complete: step > 4 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 4">mdi-check</v-icon>
-
                     <PaymentIcon v-else />
                   </v-btn>
                 </div>
@@ -64,9 +62,9 @@
             </v-stepper-content>
 
             <v-stepper-content step="2">
-              <CheckoutPickTime />
+              <CheckoutPickTime v-if="step == 2" />
             </v-stepper-content>
-            
+
             <v-stepper-content step="3">
               <CheckoutSummary />
             </v-stepper-content>

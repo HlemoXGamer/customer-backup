@@ -7,10 +7,9 @@
                 </v-card-title>
                 <v-card-text>
                     <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
-                        <scroll-picker :options="[]" />
-                        <scroll-picker :options="[]" />
-                        <scroll-picker :options="[]" />
-                        <scroll-picker :options="[]" />
+                        <scroll-picker :options="days" v-model="currentDay" />
+                        <scroll-picker :options="hours" v-model="currentHour" />
+                        <scroll-picker :options="minutes" v-model="currentMinute" />
                     </scroll-picker-group>
                 </v-card-text>
                 <v-card-actions class="d-flex align-center justify-end">
@@ -23,6 +22,7 @@
     </v-row>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
     props: {
         dialog: {
@@ -32,13 +32,18 @@ export default {
     },
     data() {
         return {
-            enableTime: false
+            currentDay: "",
+            currentHour: "",
+            currentMinute: "",
         }
     },
+    computed: {
+        ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"])
+    },
     methods: {
-        closeDialog(){
+        closeDialog() {
             this.$emit("close");
         }
-    }
+    },
 }
 </script>

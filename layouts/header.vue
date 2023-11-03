@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <commonReSchedule :dialog="rescheduleDialog" @close="rescheduleDialog = false"/>
-    <!-- :style="isLocation ? 'pointer-events:none;' : ''" -->
+    {{ payment }}
+    <commonReSchedule :dialog="!payment" @close="rescheduleDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
         <v-col :cols="$vuetify.breakpoint.mobile ? 4 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
           <nuxt-link :to="goToHome" class="py-2">
-            <v-img :height="$vuetify.breakpoint.xs ? 40 : 50" :max-width="$vuetify.breakpoint.mobile ? 65 : 100" contain src="/images/big-logo.png" class="logo"></v-img>
+            <v-img :height="$vuetify.breakpoint.xs ? 40 : 50" :max-width="$vuetify.breakpoint.mobile ? 65 : 100" contain
+              src="/images/big-logo.png" class="logo"></v-img>
           </nuxt-link>
         </v-col>
-        <v-col  class="pb-0 pt-0 mb-0">
+        <v-col class="pb-0 pt-0 mb-0">
           <v-row class="d-flex align-center justify-end pt-0">
             <v-col :class="`pb-0 mb-0 ${text_dir}`">
               <div>
@@ -38,9 +39,12 @@
                           </h2>
                         </v-list-item-title>
                       </v-list-item>
-                      <v-list-item v-if="notifications.length !== 0" @click="$router.push(localePath('/profile/orders/' + notification.order_id))" class="pb-1 px-4" v-for="notification in notifications" :key="notification.id">
+                      <v-list-item v-if="notifications.length !== 0"
+                        @click="$router.push(localePath('/profile/orders/' + notification.order_id))" class="pb-1 px-4"
+                        v-for="notification in notifications" :key="notification.id">
                         <v-list-item-title>
-                          {{ $t("profile.orders.orders_details.order") }} #{{notification.order_id}}{{ $i18n.locale === "en" ? "is " : "" }}
+                          {{ $t("profile.orders.orders_details.order") }} #{{ notification.order_id }}{{ $i18n.locale ===
+                            "en" ? "is " : "" }}
                           {{ $t(`profile.orders.orders_details.${notification.status}`) }}
                         </v-list-item-title>
                       </v-list-item>
@@ -68,8 +72,8 @@
 
 
                 <!-- edit profile -->
-                <v-menu offset-y min-width="100px" rounded="lg" v-if="$auth.loggedIn && !$vuetify.breakpoint.mobile" transition="slide-y-transition"
-                  bottom>
+                <v-menu offset-y min-width="100px" rounded="lg" v-if="$auth.loggedIn && !$vuetify.breakpoint.mobile"
+                  transition="slide-y-transition" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn color="dark" elevation="0" v-bind="attrs" v-on="on" icon>
                       <v-icon color="#65382c">mdi-account</v-icon>
@@ -155,9 +159,12 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { guest } from "@/apis/auth";
 import { mapFields } from "vuex-map-fields";
+import { getServerTime } from "@/apis/time";
+import { timeChecker } from "@/helpers/timeChecker";
+let timeUpdateInterval;
 
 export default {
   data(vm) {
@@ -173,7 +180,6 @@ export default {
       navOpen: false,
       drawer: false,
       items: [],
-      rescheduleDialog: false,
     };
   },
   computed: {
@@ -188,6 +194,8 @@ export default {
       "delivery_cost",
       "minimum_charge",
     ]),
+    ...mapState("timer", ["time", "timePeriod", "payment"]),
+    ...mapState("checkout", ["type"]),
     ...mapGetters("notification", {
       notifications: "items",
       notificationTotal: "total",
@@ -238,6 +246,18 @@ export default {
       ];
     },
   },
+  watch: {
+    type(newValue, oldValue) {
+      const data = timeChecker(newValue, this.time);
+      this.$store.dispatch("timer/setData", data);
+    },
+    payment(newValue, oldValue) {
+      if(this.payment == false){
+        const data = timeChecker("pre_order", this.time);
+        this.$store.dispatch("timer/setData", data);
+      }
+    }
+  },
   methods: {
     updateNotification() {
       this.$store.dispatch("notification/updateNotifications");
@@ -247,11 +267,6 @@ export default {
     },
     async logout() {
       this.$store.commit("cart/CLEAR_ALL");
-      // window.localStorage.removeItem('auth._token.laravelJWT')
-      // window.localStorage.removeItem('auth.strategy')
-      // window.localStorage.removeItem('auth._token_expiration.laravelJWT')
-      // window.localStorage.removeItem('token')
-      // window.localStorage.removeItem('user')
 
       await this.$auth.logout();
       this.$router.replace(this.localePath("/login"));
@@ -268,13 +283,6 @@ export default {
           },
         });
       }
-      // this.$router.push({
-      //   path: this.localePath("/products"),
-      //   query: {
-      //     search: e.target.value,
-      //   },
-      // });
-      // this.$root.$emit("product:search", e.target.value);
     },
     navigate(nav) {
       const paths = {
@@ -287,17 +295,31 @@ export default {
       try {
         this.$refs.cart.save();
       } catch { }
-    },
+    }
   },
+  async mounted() {
+    await getServerTime().then((response) => {
+      this.$store.dispatch("timer/setTime", response.timer);
+      const data = timeChecker(this.type, response.timer);
+      this.$store.dispatch("timer/setData", data);
+    });
+    timeUpdateInterval = setInterval(async () => {
+      await getServerTime().then((response) => {
+        this.$store.dispatch("timer/setTime", response.timer);
+        const data = timeChecker(this.type, response.timer);
+        this.$store.dispatch("timer/setData", data);
+      })
+    }, this.timePeriod);
+  },
+  beforeDestroy() {
+    clearInterval(timeUpdateInterval);
+  }
 };
 </script>
 
 <style scoped>
 header {
-  /* box-sizing: content-box; */
-  /* height: 70px !important; */
   background: #fff !important;
-  /* padding: 1rem 0rem; */
 }
 
 [dir="rtl"] .search-icon-header {

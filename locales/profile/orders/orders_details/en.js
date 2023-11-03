@@ -8,6 +8,7 @@ export default {
   paid: "Paid",
   in_progress: "In progress",
   ready_for_delivery: "Ready For Delivery",
+  hold: "Needs Action",
   on_the_way: "On the Way",
   delivered: "Delivered",
   cancelled: "Cancelled",

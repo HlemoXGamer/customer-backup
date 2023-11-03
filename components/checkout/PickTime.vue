@@ -4,16 +4,17 @@
             <v-btn @click="orderStatus2" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
             <v-btn @click="orderStatus" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
         </v-row> -->
-        <v-row v-if="isPreOrder" v-row no-gutters class="align-center justify-center mb-5 mt-0 pt-0">
+        <v-row v-if="isPreOrder || isSameDay" v-row no-gutters class="align-center justify-center mb-5 mt-0 pt-0">
             <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
-                <scroll-picker :options="['AM', 'PM']" v-model="current" />
             </scroll-picker-group>
         </v-row>
-        <v-row v-if="!isPreOrder" v-row no-gutters class="align-center justify-center text-h6">
-            <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">Delivery will arrive after 40 min from Pay time</p>
+        <v-row v-if="isAsap" v-row no-gutters class="align-center justify-center text-h6">
+            <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
+                Delivery will arrive after 40 min from Pay time
+            </p>
         </v-row>
         <v-card>
             <v-card-actions class="justify-space-between px-0">
@@ -34,109 +35,57 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
     data() {
         return {
-            currentTab: "areas",
-            currentDay: new Date().getDate(),
+            currentDay: "",
             currentHour: "",
             currentMinute: "",
-            current: [],
-            days: [],
-            hours: [],
-            minutes: [],
         }
     },
     methods: {
-        isDateTodayWithoutYear(targetDate) {
-            const currentDate = new Date();
-            const currentDay = currentDate.getDate();
-            const currentDayName = currentDate.toLocaleString('default', { weekday: 'short' });
-
-            return targetDate.includes(currentDay) && targetDate.includes(currentDayName);
-        },
-        updateTime() { },
-        getHoursToEndOfDay(notToday) {
-            let currentHour, endHour = 20, currentMinute;
-            if (!notToday) {
-                currentHour = new Date().getHours();
-                currentMinute = new Date().getMinutes();
-            } else {
-                currentMinute = 1;
-                currentHour = 8;
-            }
-            let isAM = currentHour < 12;
-            let hoursArray = [];
-
-            for (let i = currentHour; i < endHour; i++) {
-                const hour = i % 12 || 12;
-                const period = isAM ? 'AM' : 'PM';
-                hoursArray.push(hour);
-                isAM = !isAM;
-            }
-
-            if (currentHour <= endHour) {
-                for (let i = currentMinute; i < 60; i++) {
-                    this.minutes.push(`${String(i).length === 1 ? '0' + i : i}`);
-                }
-            } else {
-                this.minutes = [];
-            }
-
-            return hoursArray;
-        },
         showPayment() {
+            if (!this.currentDay || !this.currentHour || this.currentMinute) return this.$toast.error(this.$t("checkout.delivery_time_required"))
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
             this.$store.commit("checkout/SHOW_SUMMARY");
         },
         back() {
             this.$store.commit("checkout/SHOW_SHIPPING");
         },
-        addDaysToDate(startDate, days) {
-            this.days = [];
-            for (let i = 0; i < days; i++) {
-                const newDate = new Date(startDate);
-                newDate.setDate(startDate.getDate() + i);
-                this.days.push(newDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' }));
-            }
-        },
-        // orderStatus2() {
-        //     this.isPreOrder = false;
-        //     this.$store.commit('checkout/SET_IS_PICKUP', false)
-        // },
-        // orderStatus() {
-        //     this.isPreOrder = true;
-        //     this.$store.commit('checkout/SET_IS_PICKUP', true)
-        // }
-    },
-    watch: {
-        currentDay(newValue, oldValue) {
-            if (newValue !== null) {
-                if (this.isDateTodayWithoutYear(newValue)) {
-                    this.hours = this.getHoursToEndOfDay(false);
-                } else {
-                    this.hours = this.getHoursToEndOfDay(true);
-                    this.currentHour = 8;
-                }
-            }
-        },
+        transformDate(inputString) {
+            const parts = inputString.split(' ');
+
+            const months = {
+                "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+                "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11
+            };
+
+            const day = parseInt(parts[2], 10);
+            const month = months[parts[1]];
+            const hour = parseInt(parts[3], 10);
+            const minute = parseInt(parts[5], 10);
+
+            const date = new Date();
+            date.setFullYear(date.getFullYear(), month, day);
+            date.setHours(hour, minute, 0, 0);
+
+            return date.toUTCString();
+        }
     },
     computed: {
-        isPreOrder(){
+        ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"]),
+        isPreOrder() {
             return this.$store.state.checkout.type == 'pre_order';
         },
-        isDeliveryNow(){
-            return this.$store.state.checkout.type == 'delivery_now';
+        isSameDay() {
+            return this.$store.state.checkout.type == 'same_day';
+        },
+        isAsap() {
+            return this.$store.state.checkout.type == 'asap';
         }
     },
     mounted() {
-        this.addDaysToDate(new Date(), 1);
-        if (this.isDeliveryNow) {
-            this.addDaysToDate(new Date(), 1);
-        } else if (this.isPreOrder) {
-            this.addDaysToDate(new Date(), 365);
-            this.days.splice(0, 1);
-        }
     }
 }
 </script>
