@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <commonReSchedule :dialog="rescheduleDialog" @close="rescheduleDialog = false"/>
     <!-- :style="isLocation ? 'pointer-events:none;' : ''" -->
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
@@ -172,6 +173,7 @@ export default {
       navOpen: false,
       drawer: false,
       items: [],
+      rescheduleDialog: false,
     };
   },
   computed: {

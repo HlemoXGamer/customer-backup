@@ -1,4 +1,6 @@
 export default {
+    confirm: "Confirm",
+    need_reschedule: "You must Reschedule your Order",
     choose_service: "Choose Service",
     important_links: 'Important Links',
     contact_us: 'Contact Us',

@@ -1,4 +1,6 @@
 export default {
+  need_reschedule: "يجب عليك إعادة جدولة طلبك",
+  confirm: "تأكيد",
   choose_service: "إختر خدمة",
   important_links: "روابط هامة",
   contact_us: "تواصل معنا",
