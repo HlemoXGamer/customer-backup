@@ -4,7 +4,9 @@ export const timeChecker = (orderType, currentTime) => {
       // Initialization Phase
       const nowAsap = new Date(currentTime);
       const todayAsap = nowAsap.toLocaleDateString("en-US", {
-        weekday: "long",
+        weekday: "short",
+        month: "short",
+        day: "2-digit",
       });
       const daysAsap = [todayAsap];
       const hoursAsap = [];
@@ -72,10 +74,14 @@ export const timeChecker = (orderType, currentTime) => {
 
     case "same_day":
       const nowSameDay = new Date(currentTime);
-      const todaySameDay = nowSameDay.toLocaleDateString("en-US", {
-        weekday: "long",
+      const dateFormatter2 = new Intl.DateTimeFormat("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "2-digit",
       });
-      const daysSameDay = [todaySameDay];
+      const formattedDate = dateFormatter2.format(nowSameDay);
+
+      const daysSameDay = [formattedDate];
       const hoursSameDay = [];
       const minutesSameDay = [];
       const ampmSameDay = ["am", "pm"];
@@ -116,7 +122,7 @@ export const timeChecker = (orderType, currentTime) => {
         }
       }
 
-      // If the current hour = 8:00PM let the minutes be 30 only
+      // If the current hour is 8:00PM, let the minutes be 30 only
       if (nowSameDay.getHours() === 20) {
         // Make Array Empty Again
         for (let minute = 0; minute < 60; minute++) {
@@ -128,17 +134,6 @@ export const timeChecker = (orderType, currentTime) => {
         }
       }
 
-      // If the current hour = 8:00PM let the minutes 30 only
-      if (nowSameDay.getHours() == 20) {
-        // Make Array Empty Again
-        for (let minute = 0; minute < 60; minute++) {
-          minutesSameDay.pop(minute);
-        }
-
-        for (let minute = 0; minute < 31; minute++) {
-          minutesSameDay.push(minute);
-        }
-      }
       // Estimation Time Will Be After Payment Time By 40 Minutes
       const paymentTimeSameDay = nowSameDay;
       const estTimeSameDay = new Date(
