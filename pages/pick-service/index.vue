@@ -4,16 +4,17 @@
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
       <v-row no-gutters class="justify-center align-center py-2">
         <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now" @click="isToggle('pre_order')">
+          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="deliver_now"
+            @click="isToggle('pre_order')">
             Deliver now
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order" @click="isToggle('deliver_now')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order"
+            @click="isToggle('deliver_now')">
             Pre Order
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;"
-        class="align-center justify-start d-flex mt-6">
+      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
         <v-tabs-slider></v-tabs-slider>
         <v-tab value="areas" style="width: 200px" class="rounded-lg">
           {{ $t("location.select_your_area") }}
@@ -30,7 +31,8 @@
               background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
           </v-col>
           <v-col class="mx-0 mt-2 px-0 py-0">
-            <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
+            <!-- Old Address List -->
+            <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
               height="40px" style="border-bottom: 1px solid gray"
               class="py-2 px-2 d-flex flex-row align-center justify-space-between rounded-0">
               <p style="color: #65382c;" class="mb-0">
@@ -39,15 +41,11 @@
               <v-icon>
                 mdi-chevron-down
               </v-icon>
-            </v-card> 
-            <GoogleMap @set-address="setDefaultBranch" />
+            </v-card>  -->
+            <GoogleMap @set-address="onSetAddress" />
+            <CheckoutShipping :theAddress="theAddress" @address-updated="setDefaultBranch" />
             <v-col cols="12" class="d-flex align-center justify-center">
-              <v-progress-circular
-              :size="50"
-              color="#65382c"
-              v-if="loading"
-              indeterminate
-            ></v-progress-circular>
+              <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col>
           </v-col>
         </v-tab-item>
@@ -101,7 +99,8 @@ export default {
       filteredAreas: [],
       addresses: [],
       currentAddress: "",
-      loading: false
+      loading: false,
+      theAddress: null
     };
   },
   methods: {
@@ -111,6 +110,9 @@ export default {
           this.toggle = value;
         }
       }, 100);
+    },
+    onSetAddress(theAddress) {
+      this.theAddress = theAddress;
     },
     addDaysToDate(startDate, days) {
       this.days = [];
@@ -230,7 +232,7 @@ export default {
       this.$store.commit("checkout/SET_TYPE", newValue);
     },
     currentAddress(newValue, oldValue) {
-        this.setDefaultAddress(this.addresses[newValue]);
+      this.setDefaultAddress(this.addresses[newValue]);
     },
   },
   mounted() {

@@ -3,166 +3,85 @@
     <p class="text-h6 font-weight-bold mt-8" v-if="location_type !== 'address'">
       {{ $t("checkout.shipping.shipping_label") }}
     </p>
-
+    <p>Shipping Address: {{ theAddress }}</p>
     <v-card>
       <v-row v-if="location_type !== 'address'">
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
           <v-card>
             <v-card-text>
-              <CommonCountryCityCombo
-                :hide-city="true"
-                :disabled="location_type === 'area'"
-                :area="local.address.area_id"
-                :city="local.address.city_id"
-                @areaSelected="
-                  (c) => {
-                    local.address.area_id = c.id;
-                    local.address.area_name = c.name;
-                  }
-                "
-                @citySelected="
-                  (c) => {
-                    local.address.city_id = c.id;
-                    local.address.city_name = c.name;
-                  }
-                "
-              ></CommonCountryCityCombo>
+              <CommonCountryCityCombo :hide-city="true" :disabled="location_type === 'area'" :area="local.address.area_id"
+                :city="local.address.city_id" @areaSelected="(c) => {
+                  local.address.area_id = c.id;
+                  local.address.area_name = c.name;
+                }
+                  " @citySelected="(c) => {
+    local.address.city_id = c.id;
+    local.address.city_name = c.name;
+  }
+    "></CommonCountryCityCombo>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.block_no"
+              <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.block_no"
                 :error-messages="$validationMsgs($v.local.address.block_no)"
-                @input="$v.local.address.block_no.$touch()"
-              ></v-text-field>
+                @input="$v.local.address.block_no.$touch()"></v-text-field>
 
-              <p
-                v-if="!this.$auth.loggedIn"
-                class="text-subtitle-1 font-weight-bold mb-2 font-primary"
-              >
+              <p v-if="!this.$auth.loggedIn" class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ "Full Name" }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                v-if="!this.$auth.loggedIn"
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.name"
-                :error-messages="$validationMsgs($v.local.address.name)"
-                @input="$v.local.address.name.$touch()"
-              ></v-text-field>
+              <v-text-field v-if="!this.$auth.loggedIn" outlined class="rounded-lg" flat height="57"
+                v-model="local.address.name" :error-messages="$validationMsgs($v.local.address.name)"
+                @input="$v.local.address.name.$touch()"></v-text-field>
 
-              <p
-                class="text-subtitle-1 font-weight-bold mb-2 font-primary"
-                v-if="!this.$auth.loggedIn"
-              >
+              <p class="text-subtitle-1 font-weight-bold mb-2 font-primary" v-if="!this.$auth.loggedIn">
                 {{ "Email" }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                v-if="!this.$auth.loggedIn"
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.email"
-                type="email"
-                :error-messages="$validationMsgs($v.local.address.email)"
-                @input="$v.local.address.email.$touch()"
-              ></v-text-field>
+              <v-text-field v-if="!this.$auth.loggedIn" outlined class="rounded-lg" flat height="57"
+                v-model="local.address.email" type="email" :error-messages="$validationMsgs($v.local.address.email)"
+                @input="$v.local.address.email.$touch()"></v-text-field>
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.street_name") }}<Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.street_name"
+              <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.street_name"
                 :error-messages="$validationMsgs($v.local.address.street_name)"
-                @input="$v.local.address.street_name.$touch()"
-              ></v-text-field>
+                @input="$v.local.address.street_name.$touch()"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.building_number") }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.building_num"
+              <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.building_num"
                 :error-messages="$validationMsgs($v.local.address.building_num)"
-                @input="$v.local.address.building_num.$touch()"
-              ></v-text-field>
+                @input="$v.local.address.building_num.$touch()"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.floor") }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.floor"
+              <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.floor"
                 :error-messages="$validationMsgs($v.local.address.floor)"
-                @input="$v.local.address.floor.$touch()"
-              ></v-text-field>
+                @input="$v.local.address.floor.$touch()"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.apartment_no") }} <Sup>*</Sup>
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
-                v-model="local.address.apartment"
+              <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.apartment"
                 :error-messages="$validationMsgs($v.local.address.apartment)"
-                @input="$v.local.address.apartment.$touch()"
-              ></v-text-field>
+                @input="$v.local.address.apartment.$touch()"></v-text-field>
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.additional_info") }}
               </p>
-              <v-text-field
-                outlined
-                class="rounded-lg"
-                flat
-                height="57"
+              <v-text-field outlined class="rounded-lg" flat height="57"
                 :error-messages="$validationMsgs($v.local.address.description)"
-                @input="$v.local.address.description.$touch()"
-                v-model="local.address.description"
-              ></v-text-field>
+                @input="$v.local.address.description.$touch()" v-model="local.address.description"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.phone") }}
               </p>
               <div class="d-flex align-start">
-                <div
-                  class="country-container"
-                  style="max-height: 56px; line-height: 66px"
-                >
-                  <img
-                    width="20"
-                    height="20"
-                    src="https://img.icons8.com/color/48/null/kuwait.png"
-                  />
+                <div class="country-container" style="max-height: 56px; line-height: 66px">
+                  <img width="20" height="20" src="https://img.icons8.com/color/48/null/kuwait.png" />
                 </div>
                 <div style="width: 100%">
-                  <v-text-field
-                    dir="ltr"
-                    outlined
-                    class="rounded-lg"
-                    flat
-                    height="50"
-                    v-model="local.address.phone"
-                    :error-messages="$validationMsgs($v.local.address.phone)"
-                    @input="$v.local.address.phone.$touch()"
-                    label=""
-                    :placeholder="phone_placeholder"
-                  ></v-text-field>
+                  <v-text-field dir="ltr" outlined class="rounded-lg" flat height="50" v-model="local.address.phone"
+                    :error-messages="$validationMsgs($v.local.address.phone)" @input="$v.local.address.phone.$touch()"
+                    label="" :placeholder="phone_placeholder"></v-text-field>
                 </div>
               </div>
             </v-card-text>
@@ -186,37 +105,15 @@
         </v-card>
       </div>
       <v-card-actions class="justify-space-between px-0">
-        <v-btn
-          v-if="!$vuetify.breakpoint.mobile"
-          nuxt
-          to="/cart"
-          elevation="0"
-          text
-          color="grey"
-          large
-          dark
-          style="visibility: hidden"
-        >
-          <v-icon
-            :left="$i18n.locale === 'en'"
-            :right="$i18n.locale === 'ar'"
-            large
-          >
+        <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/cart" elevation="0" text color="grey" large dark
+          style="visibility: hidden">
+          <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
             mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
           </v-icon>
           {{ $t("checkout.shipping.back") }}
         </v-btn>
-        <v-btn
-          :loading="loading"
-          x-large
-          class="rounded-lg to-payment"
-          height="57"
-          color="dark"
-          elevation="0"
-          dark
-          :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
-          @click="showTime"
-        >
+        <v-btn :loading="loading" x-large class="rounded-lg to-payment" height="57" color="dark" elevation="0" dark
+          :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showTime">
           {{ $t("Continue To Summary") }}
         </v-btn>
       </v-card-actions>
@@ -225,6 +122,7 @@
 </template>
 <script>
 import OrderSummary from "@/components/checkout/OrderSummary.vue";
+import { get } from "@/apis/areas";
 
 import { mapFields } from "vuex-map-fields";
 import { getDefaultLocation } from "@/apis/addresses";
@@ -255,10 +153,12 @@ export default {
   mounted() {
     this.getDefaultLocation();
     localStorage.removeItem("shipping_address");
-    // const default_location = localStorage.getItem("default_location");
-    // if (default_location === "address") {
-    //   this.local.address = JSON.parse(localStorage.getItem("default_address"));
-    // }
+    get().then(({ data }) => {
+      this.areas = data;
+    })
+  },
+  props: {
+    theAddress: String, // Specify the expected data type as String
   },
   data() {
     return {
@@ -287,6 +187,7 @@ export default {
           email: "",
         },
       },
+      areas: [],
     };
   },
   computed: {
@@ -376,12 +277,32 @@ export default {
       if (address.building_no) {
         address_info.push(
           this.$t("profile.addresses.building_number") +
-            " " +
-            address.building_no
+          " " +
+          address.building_no
         );
       }
 
       return address_info.join(", ");
+    },
+  },
+  watch: {
+    theAddress(newAddress) {
+      // This function will be invoked when theAddress prop changes
+      this.local.address.country_name = newAddress[newAddress.length - 2].trim();
+      this.local.address.street_name = newAddress.slice(0, -2).join(' ').trim();
+      this.local.address.area_name = newAddress[newAddress.length - 2].trim();
+
+      const theArea = this.areas.find(area => area.name_en === this.local.address.area_name.slice(0, -1).toUpperCase());
+
+      if (theArea) {
+        // 'theArea' now contains the object with a matching 'name_en' property.
+        console.log('Found area:', theArea);
+        this.$emit('address-updated', theArea);
+      } else {
+        // No matching area found.
+        console.log('Area not found.');
+      }
+
     },
   },
   validations() {
@@ -505,13 +426,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.v-card__actions > .rounded-lg {
+.v-card__actions>.rounded-lg {
   padding: 0 auto;
   padding: 0px 5rem;
   background: $font-primary !important;
 }
 
-.v-card__actions > .to-payment {
+.v-card__actions>.to-payment {
   padding: 0rem 1rem !important;
 }
 </style>
