@@ -1,6 +1,6 @@
 <template>
   <v-row :class="$vuetify.breakpoint.mobile ? '' : 'mt-10'">
-    <commonPaymentReSchedule :dialog="paymentDialog" @close="paymentDialog = false" />
+    <commonPaymentReSchedule :dialog="paymentDialog" :order="order.id" @close="paymentDialog = false" />
     <!-- <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 2">
       <ProfileNav></ProfileNav>
     </v-col> -->

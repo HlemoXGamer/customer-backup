@@ -29,6 +29,9 @@ export default {
         dialog: {
             type: Boolean,
             default: false
+        },
+        order: {
+            required: true
         }
     },
     data() {
@@ -72,7 +75,7 @@ export default {
         },
         async closeDialog() {
             try {
-                await updateDate({ order_id: order, delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + this.currentMinute) })
+                await updateDate({ order_id: this.order, delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + this.currentMinute) })
                 this.$emit("close");
             } catch (err) {
                 this.$toast.error("Something went wrong");
