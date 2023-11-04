@@ -55,16 +55,6 @@
                           {{ $t(`profile.orders.orders_details.${order.status}`)}}
                         </p>
                       </v-col>
-                      <v-col cols="6" v-if="order.status === 'created'">
-                        <p class="font-weight-bold text-subtitle-1">
-                          {{ $t("profile.orders.orders_details.status") }}:
-                          <span style="
-                              color: red;
-                              font-weight: 700;
-                              font-size: 20px;
-                            ">{{ $t("profile.orders.payment_failed") }}</span>
-                        </p>
-                      </v-col>
                       <v-col cols="6">
                         <p class="font-weight-bold text-subtitle-1">
                           {{ $t("profile.orders.order_date") }} :

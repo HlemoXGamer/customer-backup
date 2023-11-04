@@ -1,6 +1,6 @@
 export const state = () => ({
   time: "",
-  timePeriod: 5000,
+  timePeriod: 5 * 60000,
   days: [],
   hours: [],
   minutes: [],
@@ -12,18 +12,18 @@ export const actions = {
   setTime({ commit }, time) {
     commit('SET_TIME', time);
   },
-  setData({ commit }, { days, hours, minutes, ampm, isPaymentTimeValid }){
-    commit("SET_DAYS", days);
-    commit("SET_HOURS", hours);
-    commit("SET_MINUTES", minutes);
-    commit("SET_AMPM", ampm);
-    commit("SET_PAYMENT", isPaymentTimeValid);
+  setData({ commit }, data){
+    commit("SET_DATA", data);
   }
 };
 
 export const mutations = {
-  SET_TIME(state, time) {
-    state.time = time;
+  SET_DATA(state, data){
+    state.days = data.days || [];
+    state.hours = data.hours || [];
+    state.minutes = data.minutes || [];
+    state.apmpm = data.apmpm || [];
+    state.payment = data.isPaymentTimeValid || true;
   },
   SET_DAYS(state, days) {
     state.days = days;
@@ -39,5 +39,8 @@ export const mutations = {
   },
   SET_PAYMENT(state, payment) {
     state.payment = payment;
+  },
+  SET_TIME(state, time){
+    state.time = time
   }
 };

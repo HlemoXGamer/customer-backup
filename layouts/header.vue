@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    {{ payment }}
-    <commonReSchedule :dialog="!payment" @close="rescheduleDialog = false" />
+    <commonReSchedule :dialog="!payment && $store.state.checkout.form.delivery_date !== null" @close="rescheduleDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
         <v-col :cols="$vuetify.breakpoint.mobile ? 4 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
@@ -248,7 +247,8 @@ export default {
   },
   watch: {
     type(newValue, oldValue) {
-      const data = timeChecker(newValue, this.time);
+      if(newValue == undefined || oldValue == undefined) return;
+      const data = timeChecker(this.type, this.time);
       this.$store.dispatch("timer/setData", data);
     },
     payment(newValue, oldValue) {

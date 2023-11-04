@@ -8,12 +8,12 @@
             @click="isToggle('asap')">
             Deliver now
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same_day"
-            @click="isToggle('same_day')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same-day"
+            @click="isToggle('same-day')">
             Later Today
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre_order"
-            @click="isToggle('pre_order')">
+          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre-order"
+            @click="isToggle('pre-order')">
             Pre Order
           </v-btn>
         </v-btn-toggle>

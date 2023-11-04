@@ -20,12 +20,7 @@
       <v-card class="pa-2" height="50vh">
         <v-card-text class="pa-5 font-primary font-weight-bold" height="50vh">
           <div class="center text-center">
-            <v-img
-              src="/images/done.png"
-              height="106"
-              max-width="106"
-              contain
-            ></v-img>
+            <v-img src="/images/done.png" height="106" max-width="106" contain></v-img>
             <div class="text-center mt-3 mb-3">
               {{ $t("checkout.payment.popup.thanks") }}
             </div>
@@ -34,17 +29,9 @@
             }}</small>
             <div class="d-flex p-2 align-center justify-space-between">
               <small>{{ $t("checkout.payment.popup.order_num") }}:2366</small>
-              <small
-                >{{ $t("checkout.payment.popup.date") }}:August 14, 2022</small
-              >
+              <small>{{ $t("checkout.payment.popup.date") }}:August 14, 2022</small>
             </div>
-            <v-btn
-              color="primary"
-              rounded
-              @click="dialog = false"
-              d-block
-              class="text-center mt-3 mb-3"
-            >
+            <v-btn color="primary" rounded @click="dialog = false" d-block class="text-center mt-3 mb-3">
               {{ $t("checkout.payment.popup.track_button") }}
             </v-btn>
             <div class="text-center mt-3 mb-3">
@@ -58,40 +45,16 @@
             </v-card-actions> -->
       </v-card>
     </v-dialog>
-    <v-card-actions
-      class="justify-space-between px-0 mt-5"
-      :class="$vuetify.breakpoint.xs ? 'flex-wrap-reverse' : ''"
-    >
-      <v-btn
-        @click="back"
-        elevation="0"
-        text
-        color="grey"
-        large
-        dark
-        style="background: transparent !important"
-        :class="$vuetify.breakpoint.xs ? 'mt-4' : ''"
-      >
-        <v-icon
-          :left="$i18n.locale === 'en'"
-          :right="$i18n.locale === 'ar'"
-          large
-        >
+    <v-card-actions class="justify-space-between px-0 mt-5" :class="$vuetify.breakpoint.xs ? 'flex-wrap-reverse' : ''">
+      <v-btn @click="back" elevation="0" text color="grey" large dark style="background: transparent !important"
+        :class="$vuetify.breakpoint.xs ? 'mt-4' : ''">
+        <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
           mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
         </v-icon>
         {{ $t("checkout.payment.return") }}
       </v-btn>
-      <v-btn
-        x-large
-        class="rounded-lg"
-        height="57"
-        color="#65382c"
-        elevation="0"
-        dark
-        :loading="loading"
-        :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
-        @click="confirm"
-      >
+      <v-btn x-large class="rounded-lg" height="57" color="#65382c" elevation="0" dark :loading="loading"
+        :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="confirm">
         {{ $t("checkout.payment.confirm") }}
       </v-btn>
     </v-card-actions>
@@ -154,39 +117,18 @@ export default {
       this.$store.commit("checkout/SET_TIP", parseInt(this.customTip));
     },
     async confirm() {
-      console.log(this.form);
-      if (this.form.is_pickup && this.form.is_pickup !== false) {
-        let time = this.form.delivery_time;
-        console.log(time);
-        if (!time.A.length || !time.hh.length || !time.mm.length) {
-          this.$toast.error(this.$t("checkout.delivery_time_required"));
+      let time = this.form.delivery_time;
+      console.log(time);
+      this.$store.dispatch("cart/get").then(() => {
+        if (
+          this.getItems.find((item) => !item.product.in_stock) === undefined
+        ) {
+          this.$store.dispatch("checkout/confirm");
         } else {
-          console.log("1");
-          this.$store.dispatch("cart/get").then(() => {
-            if (
-              this.getItems.find((item) => !item.product.in_stock) === undefined
-            ) {
-              this.$store.dispatch("checkout/confirm");
-            } else {
-              this.$toast.error(this.$t("checkout.out_of_stock"));
-              // this.loading = false;
-            }
-          });
+          this.$toast.error(this.$t("checkout.out_of_stock"));
+          // this.loading = false;
         }
-      } else {
-        console.log(this.form.delivery_date);
-
-        this.$store.dispatch("cart/get").then(() => {
-          if (
-            this.getItems.find((item) => !item.product.in_stock) === undefined
-          ) {
-            this.$store.dispatch("checkout/confirm");
-          } else {
-            this.$toast.error(this.$t("checkout.out_of_stock"));
-            // this.loading = false;
-          }
-        });
-      }
+      });
 
       // this.dialog = true;
       // this.loading = true;

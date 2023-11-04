@@ -29,11 +29,6 @@ export const state = () => ({
     to_send: {
     },
     payment_method_code: 0,
-    delivery_time: {
-      hh: "",
-      mm: "",
-      A: "",
-    },
     delivery_date: null,
     // pickup_time: null,
     notes: "",
@@ -120,19 +115,6 @@ export const actions = {
         ["branch_id", JSON.parse(localStorage.getItem("guest_branch"))]
     ]);
 
-    // if (state.form.delivery_date) {
-    //   console.log("i'mIn");
-    //   let time = state.form.delivery_time
-    //   console.log('time', time);
-    //   if (state.form.delivery_time.A == "PM") {
-    //         const hour = parseInt(state.form.delivery_time.hh) + 12;
-    //         time = hour + ":" + state.form.delivery_time.mm + ":00";
-    //       } else {
-    //         time =
-    //           state.form.delivery_time.hh + ":" + state.form.delivery_time.mm + ":00";
-    //       }
-    //   data.delivery_date = state.form.delivery_date + ' ' + (time || '00:00:00')
-    // }
     commit('SET_ADDRESS', data)
     commit('SHOW_PAYMENT')
     commit('SET_LOADING', false)
@@ -140,27 +122,14 @@ export const actions = {
   },
   confirm({ state, commit }) {
     commit('SET_LOADING', true)
-    let delivery_date_time = '';
-    if (state.form.delivery_date) {
-      let time = state.form.delivery_time
-      if (state.form.delivery_time.A == "PM") {
-        const hour = parseInt(state.form.delivery_time.hh) + 12;
-        time = hour + ":" + state.form.delivery_time.mm + ":00";
-      } else {
-        time =
-          state.form.delivery_time.hh + ":" + state.form.delivery_time.mm + ":00";
-      }
-      delivery_date_time = state.form.delivery_date + ' ' + (time || '00:00:00')
-    }
-
     const methods = ["knet", "Bookeey", "credit", "Applepay"]
     const _to_send = { ...state.form.to_send }
     if (_to_send.address_phone && _to_send.address_phone.length === 8) {
       _to_send.address_phone = '965' + _to_send.address_phone
     }
     const to_send = { ..._to_send, payment_method: methods[state.form.payment_method_code || 0], v_code: state.form.user_data.v_code }
-    if (delivery_date_time.length && delivery_date_time !== null) {
-      to_send.delivery_date = delivery_date_time;
+    if (state.form.delivery_date.length && state.form.delivery_date !== null) {
+      to_send.delivery_date = state.form.delivery_date;
     }
     return completeCheckout.call(this, to_send).then(({ data }) => {
       commit("cart/CLEAR_ALL", null, { root: true });

@@ -1,5 +1,6 @@
 <template>
   <v-row :class="$vuetify.breakpoint.mobile ? '' : 'mt-10'">
+    <commonPaymentReSchedule :dialog="paymentDialog" @close="paymentDialog = false" />
     <!-- <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 2">
       <ProfileNav></ProfileNav>
     </v-col> -->
@@ -23,19 +24,19 @@
                       {{ order.id }}
                     </p>
                   </v-col>
-                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.status !== 'created'">
+                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.status !== 'created' && isSuccess === 1">
                     <p class="font-weight-bold text-subtitle-1 font-primary">
                       {{ $t("profile.orders.orders_details.status") }}:
                       {{ $t(`profile.orders.orders_details.${order.status}`) }}
-                      <!-- {{ order.status }} -->
                     </p>
                   </v-col>
-                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.status === 'created'">
+                  <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6" v-if="order.isSuccess === 0">
                     <p class="font-weight-bold text-subtitle-1 font-primary">
-                      {{ $t("profile.orders.orders_details.status") }}:
-                      <span style="color: red; font-weight: 700; font-size: 20px">Payment Failed</span>
-                      <!-- {{ order.status }} -->
-                    </p>
+                          {{ $t("profile.orders.orders_details.status") }}:
+                          <span class="warning--text">
+                            {{ $t(`profile.orders.orders_details.hold`)}}
+                          </span>
+                        </p>
                   </v-col>
                   <v-col :cols="!$vuetify.breakpoint.mobile ? 4 : 6">
                     <p class="font-weight-bold text-subtitle-1 font-primary">
@@ -220,6 +221,7 @@ export default {
       complaintDialog: false,
       loadingReorder: false,
       isDisabled: "",
+      paymentDialog: false,
       form: {
         order_id: vm.$route.params.id,
         comment: "",
@@ -301,6 +303,9 @@ export default {
           this.order.address = this.transformAddress(data);
           if (data.review) {
             this.form = data.review;
+          }
+          if(data.isSuccess === 0){
+            this.paymentDialog = true;
           }
           this.loading = false;
         })

@@ -3,7 +3,7 @@
 // https://sable.sablesweets.com/api
 // sablebe.sablesweets.com
 // https://dev.sable-be.mohamedradwan.me/api
-const url = "https://sablebe.sablesweets.com/api";
+const url = "https://dev.sable-be.mohamedradwan.me/api";
   // process.env.NODE_ENV === "production"
   //   ? "https://sablebe.sablesweets.com/api"
   //   : "";

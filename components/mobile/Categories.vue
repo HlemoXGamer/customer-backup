@@ -220,7 +220,6 @@
             </v-col>
           </div>
           <div class="strip-three">
-            <!-- Colors -->
             <v-card
               v-if="
                 Object.keys(selectedCategoryCriteria[form.cake_type]).includes(
@@ -258,117 +257,6 @@
                     <div
                       v-for="color in selectedCategoryCriteria[form.cake_type]
                         .sizes[form.cake_size].colors"
-                      :key="color"
-                      class="cake_color"
-                      :class="form.cake_color === color ? 'active' : ''"
-                      @click="pickColor(color)"
-                      :style="{
-                        backgroundColor:
-                          color.toLowerCase().replaceAll(/\s/g, '') ==
-                          'offwhite'
-                            ? '#f9f1f1'
-                            : color,
-                      }"
-                    ></div>
-                  </v-row>
-                </v-row>
-              </v-col>
-            </v-card>
-
-            <!-- Flavors -->
-            <v-card
-              v-if="
-                Object.keys(selectedCategoryCriteria[form.cake_type]).includes(
-                  'sizes'
-                )  && selectedCategoryCriteria[form.cake_type]
-                        .sizes[form.cake_size]?.flavor?.length > 0
-              "
-            >
-              <v-card-title
-                v-if="
-                  form.cake_size.length &&
-                  Object.keys(selectedCategoryCriteria[form.cake_type].sizes)
-                    .length !== 0 &&
-                  Object.keys(
-                    selectedCategoryCriteria[form.cake_type].sizes
-                  )[0] !== 'undefined' 
-                "
-              >
-                <span class="title px-3">
-                  {{ $t("Pick a Flavor") }}</span
-                >
-              </v-card-title>
-              <v-col>
-                <v-row
-                  class="my-5"
-                  v-if="
-                    form.cake_size.length &&
-                    Object.keys(selectedCategoryCriteria[form.cake_type].sizes)
-                      .length !== 0 &&
-                    Object.keys(
-                      selectedCategoryCriteria[form.cake_type].sizes
-                    )[0] !== 'undefined'
-                  "
-                >
-                  <v-row class="d-flex justify-space-around align-center">
-                    <div
-                      v-for="color in selectedCategoryCriteria[form.cake_type]
-                        .sizes[form.cake_size].flavor"
-                      :key="color"
-                      class="cake_color"
-                      :class="form.cake_color === color ? 'active' : ''"
-                      @click="pickColor(color)"
-                      :style="{
-                        backgroundColor:
-                          color.toLowerCase().replaceAll(/\s/g, '') ==
-                          'offwhite'
-                            ? '#f9f1f1'
-                            : color,
-                      }"
-                    ></div>
-                  </v-row>
-                </v-row>
-              </v-col>
-            </v-card>
-            <!-- Extras -->
-            <v-card
-              v-if="
-                Object.keys(selectedCategoryCriteria[form.cake_type]).includes(
-                  'sizes'
-                )
-              "
-            >
-              <v-card-title
-                v-if="
-                  form.cake_size.length &&
-                  Object.keys(selectedCategoryCriteria[form.cake_type].sizes)
-                    .length !== 0 &&
-                  Object.keys(
-                    selectedCategoryCriteria[form.cake_type].sizes
-                  )[0] !== 'undefined' && selectedCategoryCriteria[form.cake_type]
-                        .sizes[form.cake_size]?.extra?.length > 0
-                "
-              >
-                <span class="title px-3">
-                  {{ $t("Pick a Extra") }}</span
-                >
-              </v-card-title>
-              <v-col>
-                <v-row
-                  class="my-5"
-                  v-if="
-                    form.cake_size.length &&
-                    Object.keys(selectedCategoryCriteria[form.cake_type].sizes)
-                      .length !== 0 &&
-                    Object.keys(
-                      selectedCategoryCriteria[form.cake_type].sizes
-                    )[0] !== 'undefined'
-                  "
-                >
-                  <v-row class="d-flex justify-space-around align-center">
-                    <div
-                      v-for="color in selectedCategoryCriteria[form.cake_type]
-                        .sizes[form.cake_size].extra"
                       :key="color"
                       class="cake_color"
                       :class="form.cake_color === color ? 'active' : ''"
@@ -725,8 +613,6 @@ export default {
       cake_shape: "",
       cake_size: "",
       cake_color: "",
-      extra: [],
-      flavor: [],
     },
     loading: false,
     printCakePopUpOpened: false,

@@ -46,15 +46,16 @@ export default {
     },
     methods: {
         showPayment() {
-            if (!this.currentDay || !this.currentHour || this.currentMinute) return this.$toast.error(this.$t("checkout.delivery_time_required"))
+            if ((!this.currentDay || !this.currentHour || this.currentMinute) && ( this.isPreOrder || this.isSameDay )) return this.$toast.error(this.$t("checkout.delivery_time_required"))
+            if (this.isPreOrder || this.isSameDay ) this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
             this.$store.commit("checkout/SHOW_SUMMARY");
         },
         back() {
             this.$store.commit("checkout/SHOW_SHIPPING");
         },
-        transformDate(inputString) {
-            const parts = inputString.split(' ');
+        transformDate(dateTime) {
+            const parts = dateTime.split(' ');
 
             const months = {
                 "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
@@ -65,27 +66,34 @@ export default {
             const month = months[parts[1]];
             const hour = parseInt(parts[3], 10);
             const minute = parseInt(parts[5], 10);
+            const ampm = parts[4];
 
             const date = new Date();
             date.setFullYear(date.getFullYear(), month, day);
             date.setHours(hour, minute, 0, 0);
 
-            return date.toUTCString();
-        }
+            const year = date.getFullYear();
+            const monthss = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed, so add 1
+            const days = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+
+
+            return `${year}-${monthss}-${days} ${hours}:${minutes}:${seconds} ${ampm}`;
+        },
     },
     computed: {
         ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"]),
         isPreOrder() {
-            return this.$store.state.checkout.type == 'pre_order';
+            return this.$store.state.checkout.type == 'pre-order';
         },
         isSameDay() {
-            return this.$store.state.checkout.type == 'same_day';
+            return this.$store.state.checkout.type == 'same-day';
         },
         isAsap() {
             return this.$store.state.checkout.type == 'asap';
         }
-    },
-    mounted() {
     }
 }
 </script>

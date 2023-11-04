@@ -26,3 +26,7 @@ export function complaintOrder(id, data) {
 export function trackOrder(id) {
   return client.get('/customer/deliveryManLocation/' + id)
 }
+
+export function updateDate(data){
+  return client.post('/customer/orders/update', data)
+}
