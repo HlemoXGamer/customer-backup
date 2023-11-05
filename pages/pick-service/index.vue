@@ -42,8 +42,8 @@
                 mdi-chevron-down
               </v-icon>
             </v-card>  -->
-            <GoogleMap @set-address="onSetAddress" />
-            <CheckoutShipping :theAddress="theAddress" @address-updated="setDefaultBranch" />
+              <GoogleMap @set-address="onSetAddress" />
+              <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" />
             <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col>
@@ -100,7 +100,8 @@ export default {
       addresses: [],
       currentAddress: "",
       loading: false,
-      theAddress: null
+      theAddress: null,
+      center: {},
     };
   },
   methods: {
@@ -111,8 +112,9 @@ export default {
         }
       }, 100);
     },
-    onSetAddress(theAddress) {
+    onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
+      this.center = center
     },
     addDaysToDate(startDate, days) {
       this.days = [];

@@ -52,7 +52,7 @@ export default {
           const formattedAddress = results[0].formatted_address;
           this.theAddress = formattedAddress;
           console.log('Formatted Address:', this.theAddress);
-          this.$emit('set-address', this.theAddress.split(' '))
+          this.$emit('set-address', this.theAddress.split(' '), this.center)
         } else {
           console.error('Geocoding failed due to:', status);
         }

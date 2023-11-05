@@ -3,7 +3,7 @@
     <p class="text-h6 font-weight-bold mt-8" v-if="location_type !== 'address'">
       {{ $t("checkout.shipping.shipping_label") }}
     </p>
-    <p>Shipping Address: {{ theAddress }}</p>
+    <p>Shipping Address: {{ theAddress?.join(' ') }}</p>
     <v-card>
       <v-row v-if="location_type !== 'address'">
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
@@ -28,8 +28,8 @@
                 "
               ></CommonCountryCityCombo> -->
               <v-select return-object :items="areas" :loading="loading.city" :item-value="itemValue" item-text="name"
-                height="57" outlined flat class="rounded-lg" :value="city"
-                @input="(e) => { this.$emit('address-updated', e) }" :error-messages="cityErrorMessages" />
+                height="57" outlined flat class="rounded-lg" :value="city" @input="(e) => { }"
+                :error-messages="cityErrorMessages" />
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
@@ -170,7 +170,8 @@ export default {
     });
   },
   props: {
-    theAddress: Array, // Specify the expected data type as String
+    theAddress: Array,
+    center: Object,
   },
   data() {
     return {
@@ -197,6 +198,7 @@ export default {
           branch_id: 3, // TODO: delete after the ap
           name: "",
           email: "",
+          mapAddress: null,
         },
       },
       areas: [],
@@ -244,6 +246,10 @@ export default {
       this.phoneValid = isValid;
     },
     showTime() {
+      if (this.mapAddress == null) {
+        this.$toast.error('Please put your address on the map');
+        return;
+      }
       let valid = true;
       if (
         !this.$auth.loggedIn ||
@@ -258,7 +264,7 @@ export default {
         "shipping_address",
         JSON.stringify(this.local.address)
       );
-      this.$store.commit("checkout/SHOW_SUMMARY");
+      // this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
       const address_info = [];
@@ -300,28 +306,30 @@ export default {
   },
   watch: {
     theAddress(newAddress) {
-      let theArea;
-      if (newAddress.length > 1) {
-        this.local.address.country_name =
-          newAddress[newAddress.length - 2].trim();
-        this.local.address.street_name = newAddress.slice(0, -2).join(" ").trim();
-        this.local.address.area_name = newAddress[newAddress.length - 2].trim();
+      this.local.address.country_name =
+        newAddress[newAddress.length - 2];
+      this.local.address.street_name = newAddress.slice(0, -2).join(" ");
+      this.local.address.area_name = newAddress[newAddress.length - 2];
 
-        this.areas.find(
-          (area) =>
-            area.name_en ===
-            this.local.address.area_name.slice(0, -1).toUpperCase()
-        );
+      const theArea = this.areas.find(
+        (area) =>
+          area.name_en ===
+          this.local.address.area_name.slice(0, -1).toUpperCase()
+      );
 
-      }
       if (theArea) {
         // 'theArea' now contains the object with a matching 'name_en' property.
         this.$toast.success("Area implemented.");
         this.city = theArea
-        // this.$emit("address-updated", theArea);
       } else {
         // No matching area found.
         this.$toast.error("Area not found.");
+      }
+
+      if (center) {
+        this.mapAddress = center
+      } else {
+        this.$toast.error('Please Put Your Address on the map')
       }
     },
   },
