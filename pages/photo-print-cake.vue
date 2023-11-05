@@ -31,7 +31,7 @@
                                     </p>
                                     <p v-if="child !== parent"
                                         class="mt-3 font-primary text-center mb-0 font-weight-bold text-uppercase"
-                                        style="width: 100%; fon-size: 18px;">
+                                        style="width: 100%; font-size: 18px;">
                                         {{ child !== parent ? child : '' }}
                                     </p>
                                 </v-card-text>
