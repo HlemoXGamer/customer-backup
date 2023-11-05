@@ -9,16 +9,28 @@
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
           <v-card>
             <v-card-text>
-              <CommonCountryCityCombo :hide-city="true" :disabled="location_type === 'area'" :area="local.address.area_id"
-                :city="local.address.city_id" @areaSelected="(c) => {
-                  local.address.area_id = c.id;
-                  local.address.area_name = c.name;
-                }
-                  " @citySelected="(c) => {
-    local.address.city_id = c.id;
-    local.address.city_name = c.name;
-  }
-    "></CommonCountryCityCombo>
+              <!-- <CommonCountryCityCombo
+                :hide-city="true"
+                :disabled="location_type === 'area'"
+                :area="local.address.area_id"
+                :city="local.address.city_id"
+                @areaSelected="
+                  (c) => {
+                    local.address.area_id = c.id;
+                    local.address.area_name = c.name;
+                  }
+                "
+                @citySelected="
+                  (c) => {
+                    local.address.city_id = c.id;
+                    local.address.city_name = c.name;
+                  }
+                "
+              ></CommonCountryCityCombo> -->
+              <v-select return-object :items="areas" :loading="loading.city" :item-value="itemValue" item-text="name"
+                height="57" outlined flat class="rounded-lg" :value="city"
+                @input="(e) => { this.$emit('address-updated', e) }" :error-messages="cityErrorMessages" />
+
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
               </p>
@@ -155,10 +167,10 @@ export default {
     localStorage.removeItem("shipping_address");
     get().then(({ data }) => {
       this.areas = data;
-    })
+    });
   },
   props: {
-    theAddress: String, // Specify the expected data type as String
+    theAddress: Array, // Specify the expected data type as String
   },
   data() {
     return {
@@ -188,6 +200,7 @@ export default {
         },
       },
       areas: [],
+      city: "",
     };
   },
   computed: {
@@ -287,22 +300,29 @@ export default {
   },
   watch: {
     theAddress(newAddress) {
-      // This function will be invoked when theAddress prop changes
-      this.local.address.country_name = newAddress[newAddress.length - 2].trim();
-      this.local.address.street_name = newAddress.slice(0, -2).join(' ').trim();
-      this.local.address.area_name = newAddress[newAddress.length - 2].trim();
+      let theArea;
+      if (newAddress.length > 1) {
+        this.local.address.country_name =
+          newAddress[newAddress.length - 2].trim();
+        this.local.address.street_name = newAddress.slice(0, -2).join(" ").trim();
+        this.local.address.area_name = newAddress[newAddress.length - 2].trim();
 
-      const theArea = this.areas.find(area => area.name_en === this.local.address.area_name.slice(0, -1).toUpperCase());
+        this.areas.find(
+          (area) =>
+            area.name_en ===
+            this.local.address.area_name.slice(0, -1).toUpperCase()
+        );
 
+      }
       if (theArea) {
         // 'theArea' now contains the object with a matching 'name_en' property.
-        console.log('Found area:', theArea);
-        this.$emit('address-updated', theArea);
+        this.$toast.success("Area implemented.");
+        this.city = theArea
+        // this.$emit("address-updated", theArea);
       } else {
         // No matching area found.
-        console.log('Area not found.');
+        this.$toast.error("Area not found.");
       }
-
     },
   },
   validations() {
