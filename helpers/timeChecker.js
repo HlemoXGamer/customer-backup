@@ -1,233 +1,226 @@
 export const timeChecker = (orderType, currentTime) => {
-  switch (orderType) {
-      case "asap":
-          // Initialization Phase
-          const nowAsap = new Date(currentTime);
-          const todayAsap = nowAsap.toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "2-digit",
-          });
-          const daysAsap = [todayAsap];
-          const hoursAsap = [];
-          const minutesAsap = [];
-          const ampmAsap = ["am", "pm"];
+    switch (orderType) {
+        case "asap":
+            // Initialization Phase
+            const nowAsap = new Date(currentTime);
+            const todayAsap = nowAsap.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "2-digit",
+            });
+            const daysAsap = [todayAsap];
+            const hoursAsap = [];
+            const minutesAsap = [];
+            const ampmAsap = ["am", "pm"];
 
-          // Calculate the starting hour based on the current time
-          let startHourAsap = 8;
-          if (
-              nowAsap.getHours() > 8 ||
-              (nowAsap.getHours() === 8 && nowAsap.getMinutes() >= 0)
-          ) {
-              startHourAsap = nowAsap.getHours();
-          }
+            // Calculate the starting hour and minutes based on the current time
+            let startHourAsap = 8;
+            let startMinuteAsap = 0;
+            if (
+                nowAsap.getHours() > 8 ||
+                (nowAsap.getHours() === 8 && nowAsap.getMinutes() >= 45)
+            ) {
+                startHourAsap = nowAsap.getHours();
+                startMinuteAsap = nowAsap.getMinutes() + 45;
+                if (startMinuteAsap >= 60) {
+                    startHourAsap += 1;
+                    startMinuteAsap -= 60;
+                }
+            }
 
-          // Generating Hours Array
-          for (let hour = startHourAsap; hour < 20; hour++) {
-              if (hour < 12) {
-                  hoursAsap.push(`${hour} am`);
-              } else {
-                  if (hour > 12) {
-                      hoursAsap.push(`${hour - 12} pm`);
-                  } else {
-                      hoursAsap.push(`${hour} pm`);
-                  }
-              }
-          }
+            // Generating Hours Array
+            for (let hour = startHourAsap; hour < 21; hour++) {
+                if (hour < 12) {
+                    hoursAsap.push(`${hour} am`);
+                } else {
+                    if (hour > 12) {
+                        hoursAsap.push(`${hour - 12} pm`);
+                    } else {
+                        hoursAsap.push(`${hour} pm`);
+                    }
+                }
+            }
 
-          // Generating Minutes Array
-          for (
-              let minute =
-                  nowAsap.getHours() === startHourAsap
-                      ? nowAsap.getMinutes()
-                      : 0;
-              minute < 60;
-              minute++
-          ) {
-              minutesAsap.push(minute);
-          }
+            // Generating Minutes Array
+            for (let minute = startMinuteAsap; minute < 60; minute++) {
+                minutesAsap.push(minute);
+            }
 
-          // Estimation Time Will Be After Payment Time By 40 Minutes
-          const paymentTimeAsap = nowAsap;
-          let estTimeAsap = new Date(paymentTimeAsap.getTime() + 40 * 60000); // 40 minutes later
+            // Estimation Time Will Be After Payment Time By 40 Minutes
+            const paymentTimeAsap = nowAsap;
+            let estTimeAsap = new Date(paymentTimeAsap.getTime() + 40 * 60000); // 40 minutes later
 
-          // Ensure 'est-time' is at least 8:40 AM
-          // if (
-          //     estTimeAsap.getHours() < 8 ||
-          //     (estTimeAsap.getHours() === 8 && estTimeAsap.getMinutes() < 40)
-          // ) {
-          //     estTimeAsap.setHours(8);
-          //     estTimeAsap.setMinutes(40);
-          // }
+            // If the current hour is 8:00PM, let the minutes be 30 only
+            if (nowAsap.getHours() === 20) {
+                // Make Array Empty Again
+                for (let minute = 0; minute < 60; minute++) {
+                    minutesAsap.pop(minute);
+                }
 
-          // Check if payment time is greater than or equal to 8:00 AM
-          const isPaymentTimeValidAsap =
-              paymentTimeAsap.getHours() >= 8 ||
-              (paymentTimeAsap.getHours() === 8 &&
-                  paymentTimeAsap.getMinutes() >= 0);
+                for (let minute = 0; minute < 31; minute++) {
+                    minutesAsap.push(minute);
+                }
+            }
 
-          return {
-              days: daysAsap,
-              hours: hoursAsap,
-              minutes: minutesAsap,
-              ampm: ampmAsap,
-              // "est-time": estTimeAsap.toLocaleTimeString(),
-              isPaymentTimeValid: isPaymentTimeValidAsap,
-          };
+            // Ensure 'est-time' is at least 8:40 AM
+            if (
+                estTimeAsap.getHours() < 8 ||
+                (estTimeAsap.getHours() === 8 && estTimeAsap.getMinutes() < 40)
+            ) {
+                estTimeAsap.setHours(8);
+                estTimeAsap.setMinutes(40);
+            }
 
-      case "same-day":
-          const nowSameDay = new Date(currentTime);
-          const dateFormatter2 = new Intl.DateTimeFormat("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "2-digit",
-          });
-          const formattedDate = dateFormatter2.format(nowSameDay);
+            // Check if payment time is greater than or equal to 8:00 AM
+            const isPaymentTimeValidAsap =
+                paymentTimeAsap.getHours() >= 8 ||
+                (paymentTimeAsap.getHours() === 8 &&
+                    paymentTimeAsap.getMinutes() >= 0);
 
-          const daysSameDay = [formattedDate];
-          const hoursSameDay = [];
-          const minutesSameDay = [];
-          const ampmSameDay = ["am", "pm"];
+            return {
+                days: daysAsap,
+                hours: hoursAsap,
+                minutes: minutesAsap,
+                ampm: ampmAsap,
+                "est-time": estTimeAsap.toLocaleTimeString(),
+                isPaymentTimeValid: isPaymentTimeValidAsap,
+            };
 
-          // Calculate the starting hour based on the current time
-          let startHourSameDay = 8;
-          if (
-              nowSameDay.getHours() > 8 ||
-              (nowSameDay.getHours() === 8 && nowSameDay.getMinutes() >= 0)
-          ) {
-              startHourSameDay = nowSameDay.getHours();
-          }
+        case "same-day":
+            // Initialization Phase
+            const nowSameDay = new Date(currentTime);
+            const dateFormatter2 = new Intl.DateTimeFormat("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "2-digit",
+            });
+            const formattedDate = dateFormatter2.format(nowSameDay);
 
-          // Generating Hours Array
-          for (let hour = startHourSameDay; hour < 21; hour++) {
-              if (hour < 12) {
-                  hoursSameDay.push(`${hour} am`);
-              } else {
-                  if (hour > 12) {
-                      hoursSameDay.push(`${hour - 12} pm`);
-                  } else {
-                      hoursSameDay.push(`${hour} am`);
-                  }
-              }
-          }
+            const daysSameDay = [formattedDate];
+            const hoursSameDay = [];
+            const minutesSameDay = [];
+            const ampmSameDay = ["am", "pm"];
 
-          // Generating Minutes Array
-          if (
-              (nowSameDay.getHours() === 4 &&
-                  nowSameDay.getMinutes() === 0) ||
-              (nowSameDay.getHours() >= 8 && nowSameDay.getHours() < 20)
-          ) {
-              for (let minute = 0; minute < 56; minute++) {
-                  minutesSameDay.push(minute);
-              }
-          } else {
-              for (
-                  let minute = nowSameDay.getMinutes();
-                  minute < 60;
-                  minute++
-              ) {
-                  minutesSameDay.push(minute);
-              }
-          }
+            // Calculate the starting hour and minutes based on the current time
+            let startHourSameDay = 8;
+            let startMinuteSameDay = 0;
+            if (
+                nowSameDay.getHours() > 8 ||
+                (nowSameDay.getHours() === 8 && nowSameDay.getMinutes() >= 45)
+            ) {
+                startHourSameDay = nowSameDay.getHours();
+                startMinuteSameDay = nowSameDay.getMinutes() + 45;
+                if (startMinuteSameDay >= 60) {
+                    startHourSameDay += 1;
+                    startMinuteSameDay -= 60;
+                }
+            }
 
-          // If the current hour is 8:00PM, let the minutes be 30 only
-          if (nowSameDay.getHours() === 20) {
-              // Make Array Empty Again
-              for (let minute = 0; minute < 60; minute++) {
-                  minutesSameDay.pop(minute);
-              }
+            // Generating Hours Array
+            for (let hour = startHourSameDay; hour < 21; hour++) {
+                if (hour < 12) {
+                    hoursSameDay.push(`${hour} am`);
+                } else if (hour === 12 && startMinuteSameDay === 0) {
+                    hoursSameDay.push(`${hour} pm`);
+                } else {
+                    hoursSameDay.push(`${hour - 12} pm`);
+                }
+            }
 
-              for (let minute = 0; minute < 31; minute++) {
-                  minutesSameDay.push(minute);
-              }
-          }
+            // Generating Minutes Array
+            let lastHour = hoursSameDay[hoursSameDay.length - 1];
+            lastHour = parseInt(lastHour);
+            let lastMinute = 30; // Set the latest minute to 30
+            for (
+                let minute = startMinuteSameDay;
+                minute <= lastMinute;
+                minute++
+            ) {
+                minutesSameDay.push(minute);
+            }
 
-          // Estimation Time Will Be After Payment Time By 40 Minutes
-          const paymentTimeSameDay = nowSameDay;
-          const estTimeSameDay = new Date(
-              paymentTimeSameDay.getTime() + 40 * 60000
-          ); // 40 minutes later
+            // Estimation Time Will Be After Payment Time By 40 Minutes
+            const paymentTimeSameDay = nowSameDay;
+            let estTimeSameDay = new Date(
+                paymentTimeSameDay.getTime() + 40 * 60000
+            ); // 40 minutes later
 
-          // Ensure 'est-time' is at least 8:40 AM
-          // if (
-          //     estTimeSameDay.getHours() < 8 ||
-          //     (estTimeSameDay.getHours() === 8 &&
-          //         estTimeSameDay.getMinutes() < 40)
-          // ) {
-          //     estTimeSameDay.setHours(8);
-          //     estTimeSameDay.setMinutes(40);
-          // }
+            // Define payment time conditions based on the current time
+            let isPaymentTimeValidSameDay = false;
+            if (
+                (nowSameDay.getHours() >= 8 && nowSameDay.getHours() < 20) ||
+                (nowSameDay.getHours() === 7 && nowSameDay.getMinutes() < 60) ||
+                (nowSameDay.getHours() === 0 && nowSameDay.getMinutes() < 5) ||
+                (nowSameDay.getHours() === 4 && nowSameDay.getMinutes() < 60)
+            ) {
+                isPaymentTimeValidSameDay = true;
+            }
 
-          // Define payment time conditions based on the current time
-          let isPaymentTimeValidSameDay = false;
-          if (
-              (nowSameDay.getHours() >= 8 && nowSameDay.getHours() < 20) ||
-              (nowSameDay.getHours() === 7 && nowSameDay.getMinutes() < 60) ||
-              (nowSameDay.getHours() === 0 && nowSameDay.getMinutes() < 5) || // Changed this line
-              (nowSameDay.getHours() === 4 && nowSameDay.getMinutes() < 60)
-          ) {
-              isPaymentTimeValidSameDay = true;
-          }
+            return {
+                days: daysSameDay,
+                hours: hoursSameDay,
+                minutes: minutesSameDay,
+                ampm: ampmSameDay,
+                "est-time": estTimeSameDay.toLocaleTimeString(),
+                isPaymentTimeValid: isPaymentTimeValidSameDay,
+            };
 
-          return {
-              days: daysSameDay,
-              hours: hoursSameDay,
-              minutes: minutesSameDay,
-              ampm: ampmSameDay,
-              "est-time": estTimeSameDay.toLocaleTimeString(),
-              isPaymentTimeValid: isPaymentTimeValidSameDay,
-          };
+        case "pre-order":
+            // Initialize current time to tomorrow
+            const nowPreOrder = new Date(currentTime);
+            nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Set to tomorrow
+            const daysPreOrder = [];
+            const dateFormatter = new Intl.DateTimeFormat("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "2-digit",
+            });
 
-      case "pre-order":
-          // Initialize current time to tomorrow
-          const nowPreOrder = new Date(currentTime);
-          nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Set to tomorrow
-          const daysPreOrder = [];
-          const dateFormatter = new Intl.DateTimeFormat("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "2-digit",
-          });
+            for (let i = 0; i < 365; i++) {
+                const formattedDate = dateFormatter.format(nowPreOrder);
+                daysPreOrder.push(formattedDate);
+                nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Move to the next day
+            }
 
-          for (let i = 0; i < 365; i++) {
-              const formattedDate = dateFormatter.format(nowPreOrder);
-              daysPreOrder.push(formattedDate);
-              nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Move to the next day
-          }
+            const hoursPreOrder = [];
+            const minutesPreOrder = [];
+            const ampmPreOrder = ["am", "pm"];
 
-          const hoursPreOrder = [];
-          const minutesPreOrder = [];
-          const ampmPreOrder = ["am", "pm"];
+            // Define the range of time (from 8:00 AM to 8:30 PM)
+            const startHour = 8;
+            const endHour = 20; // 8:30 PM is the same as 20:30 in 24-hour format
 
-          for (let hour = 1; hour < 25; hour++) {
-              if (hour < 12) {
-                  hoursPreOrder.push(`${hour} am`);
-              } else {
-                  if (hour > 12) {
-                      hoursPreOrder.push(`${hour - 12} pm`);
-                  } else {
-                      hoursPreOrder.push(`${hour} am`);
-                  }
-              }
-          }
-          for (let minute = 0; minute < 60; minute++) {
-              minutesPreOrder.push(minute);
-          }
+            for (let hour = startHour; hour <= endHour; hour++) {
+                if (hour < 12) {
+                    hoursPreOrder.push(`${hour} am`);
+                } else if (hour === 12) {
+                    hoursPreOrder.push(`${hour} pm`);
+                } else {
+                    hoursPreOrder.push(`${hour - 12} pm`);
+                }
+            }
 
-          // Set an arbitrary 'est-time' for pre-order
-          const estTimePreOrder = new Date(currentTime); // Modify with your logic for 'est-time'
+            // Limit minutes to 30 for the latest hour (8:30 PM)
+            const latestHour = currentTime.slice(11,13) == 20 ? 30 : 59;
 
-          // TODO: SET PAYMENT VALIATION AND ESTIMATION TIME
-          return {
-              days: daysPreOrder,
-              hours: hoursPreOrder,
-              minutes: minutesPreOrder,
-              ampm: ampmPreOrder,
-              // "est-time": estTimePreOrder.toLocaleTimeString(),
-              isPaymentTimeValid: true, // Modify as needed
-          };
+            for (let minute = 0; minute <= latestHour; minute++) {
+                minutesPreOrder.push(minute);
+            }
 
-      default:
-          return null;
-  }
+            // Set an arbitrary 'est-time' for pre-order
+            const estTimePreOrder = new Date(currentTime); // Modify with your logic for 'est-time'
+
+            // TODO: SET PAYMENT VALIDATION AND ESTIMATION TIME
+            return {
+                days: daysPreOrder,
+                hours: hoursPreOrder,
+                minutes: minutesPreOrder,
+                ampm: ampmPreOrder,
+                // "est-time": estTimePreOrder.toLocaleTimeString(),
+                isPaymentTimeValid: true, // Modify as needed
+            };
+
+        default:
+            return null;
+    }
 };
