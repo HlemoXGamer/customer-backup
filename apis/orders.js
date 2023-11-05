@@ -30,3 +30,7 @@ export function trackOrder(id) {
 export function updateDate(data){
   return client.post('/customer/orders/update', data)
 }
+
+export function refundLatePayment(data){
+  return client.post('/customer/orders/refund-req', data)
+}
