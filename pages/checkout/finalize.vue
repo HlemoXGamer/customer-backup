@@ -6,7 +6,7 @@
           <v-card elevation="0" color="#fff6ee" class="rounded-lg mb-10" v-if="step < 5">
             <v-card-text class="pt-0 pb-5 d-flex align-center justify-space-around"
               :class="{ 'px-16': !$vuetify.breakpoint.mobile }">
-              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
+              <!-- <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
                 <div class="step-btn" :class="{ active: step == 1, complete: step > 1 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 1">mdi-check</v-icon>
@@ -17,17 +17,29 @@
                   {{ $t("checkout.shipping.shipping") }}
                 </p>
               </div>
+              <v-divider></v-divider> -->
+              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
+                <div class="step-btn" :class="{ active: step == 1, complete: step > 1 }">
+                  <v-btn :ripple="false" fab elevation="0">
+                    <v-icon v-if="step > 1">mdi-check</v-icon>
+
+                    <v-icon v-else>mdi-clock-outline</v-icon>
+                  </v-btn>
+                </div>
+                <p class="font-weight-bold mt-5" :class="[step >= 1 ? 'brown--text' : 'grey--text']">
+                  {{ $t("checkout.shipping.time") }}
+                </p>
+              </div>
               <v-divider></v-divider>
               <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
                 <div class="step-btn" :class="{ active: step == 2, complete: step > 2 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 2">mdi-check</v-icon>
-
-                    <v-icon v-else>mdi-clock-outline</v-icon>
+                    <v-icon v-else>mdi-script-text-outline</v-icon>
                   </v-btn>
                 </div>
                 <p class="font-weight-bold mt-5" :class="[step >= 2 ? 'brown--text' : 'grey--text']">
-                  {{ $t("checkout.shipping.time") }}
+                  {{ $t("Summary") }}
                 </p>
               </div>
               <v-divider></v-divider>
@@ -35,44 +47,32 @@
                 <div class="step-btn" :class="{ active: step == 3, complete: step > 3 }">
                   <v-btn :ripple="false" fab elevation="0">
                     <v-icon v-if="step > 3">mdi-check</v-icon>
-                    <v-icon v-else>mdi-script-text-outline</v-icon>
-                  </v-btn>
-                </div>
-                <p class="font-weight-bold mt-5" :class="[step >= 3 ? 'brown--text' : 'grey--text']">
-                  {{ $t("Summary") }}
-                </p>
-              </div>
-              <v-divider></v-divider>
-              <div class="d-flex flex-column align-center justify-center pt-15" style="width:130px">
-                <div class="step-btn" :class="{ active: step == 4, complete: step > 4 }">
-                  <v-btn :ripple="false" fab elevation="0">
-                    <v-icon v-if="step > 4">mdi-check</v-icon>
                     <PaymentIcon v-else />
                   </v-btn>
                 </div>
-                <p class="font-weight-bold mt-5" :class="[step >= 4 ? 'brown--text' : 'grey--text']">
+                <p class="font-weight-bold mt-5" :class="[step >= 3 ? 'brown--text' : 'grey--text']">
                   {{ $t("checkout.shipping.payment_methods") }}
                 </p>
               </div>
             </v-card-text>
           </v-card>
           <v-stepper-items>
-            <v-stepper-content step="1">
+            <!-- <v-stepper-content step="1">
               <CheckoutShipping />
+            </v-stepper-content> -->
+
+            <v-stepper-content step="1">
+              <CheckoutPickTime v-if="step == 1" />
             </v-stepper-content>
 
             <v-stepper-content step="2">
-              <CheckoutPickTime v-if="step == 2" />
-            </v-stepper-content>
-
-            <v-stepper-content step="3">
               <CheckoutSummary />
             </v-stepper-content>
 
-            <v-stepper-content step="4">
+            <v-stepper-content step="3">
               <CheckoutPayment />
             </v-stepper-content>
-            <v-stepper-content step="5">
+            <v-stepper-content step="4">
               <CheckoutSuccess />
             </v-stepper-content>
           </v-stepper-items>
