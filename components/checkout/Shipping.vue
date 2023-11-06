@@ -198,7 +198,8 @@ export default {
           branch_id: 3, // TODO: delete after the ap
           name: "",
           email: "",
-          mapAddress: null,
+          lat: null,
+          lng: null,
         },
       },
       areas: [],
@@ -321,16 +322,19 @@ export default {
         // 'theArea' now contains the object with a matching 'name_en' property.
         this.$toast.success("Area implemented.");
         this.city = theArea
+        if (this.center) {
+          this.lat = this.center.lat
+          this.lng = this.center.lng
+          console.log(this.lat, this.lng);
+        } else {
+          this.$toast.error('Please Put Your Address on the map')
+        }
       } else {
         // No matching area found.
         this.$toast.error("Area not found.");
       }
 
-      if (center) {
-        this.mapAddress = center
-      } else {
-        this.$toast.error('Please Put Your Address on the map')
-      }
+      console.log(this.local.address);
     },
   },
   validations() {
