@@ -32,6 +32,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { timeChecker } from "~/helpers/timeChecker";
 export default {
     data() {
         return {
@@ -47,7 +48,7 @@ export default {
         currentHour(newHour) {
             // Check if the currentHour is 8:00 PM and we are in preOrder
             console.log(newHour);
-            if (this.isPreOrder && newHour === '8 pm') {
+            if ((this.isPreOrder) && newHour === '8 pm') {
                 // Update the minutes array from 0 to 30 only
                 this.minutes = this.generateMinutes(0, 30);
             } else {
@@ -56,6 +57,21 @@ export default {
             }
             // Reset currentMinute when currentHour changes
             this.currentMinute = "";
+            if (this.isSameDay) {
+                const isPm = newHour.includes('pm')
+                if (isPm) {
+                    if (new Date().getHours() == (parseInt(newHour) + 12)) {
+                        this.minutes = timeChecker('asap', new Date).minutes
+                    }
+                } else {
+                    if (new Date().getHours() == (parseInt(newHour))) {
+                        this.minutes = timeChecker('asap', new Date).minutes
+                    }
+                }
+                if (newHour === '8 pm') {
+                    this.minutes = this.generateMinutes(0, 30);
+                }
+            }
         }
     },
     methods: {

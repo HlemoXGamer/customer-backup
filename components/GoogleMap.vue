@@ -1,5 +1,5 @@
 <template>
-  <GmapMap ref="mapRef" :center="center" :zoom="7" map-type-id="terrain" style="width: '100%'; height: 600px"
+  <GmapMap ref="mapRef" :center="center" :zoom="18" map-type-id="terrain" style="width: '100%'; height: 600px"
     @click="replaceMarker">
     <GmapMarker :position="center" :clickable="true" :draggable="true" />
   </GmapMap>
