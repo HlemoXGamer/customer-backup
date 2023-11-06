@@ -39,8 +39,10 @@
                         </v-col>
                     </v-row>
                 </v-tab-item>
-                <v-tab-item key="1" v-if="parent && type">
-                    <v-row no-gutters v-if="Object.keys(categoryCriteria[parent][type]).includes('sizes')"
+                <v-tab-item key="1" v-if="parent !== '' && type !== ''">
+                    <div v-if="Object.keys(categoryCriteria[parent][type]).includes('sizes')">
+                        yes
+                        <!-- <v-row no-gutters>
                         v-for="(size, index) in Object.keys(categoryCriteria[parent][type]['sizes'])" :key="index">
                         <v-col cols="12" class="d-flex align-center justify-center my-2">
                             <v-card class="d-flex justify-space-between align-center col-11 py-0 px-0 rounded-lg ps-4"
@@ -58,15 +60,16 @@
                                 </div>
                             </v-card>
                         </v-col>
-                    </v-row>
-                    <v-row no-guttersv-else>
+                    </v-row> -->
+                    </div>
+                    <v-row no-gutters v-else>
                         <v-col cols="12" class="d-flex align-center justify-space-between my-3">
                             <v-card class="d-flex justify-space-between align-center col-11 py-0 px-0 rounded-lg ps-4"
                                 @click="pickSize(type)" height="80px" style="overflow: hidden; border: 2px solid #ecbaa8;">
                                 <v-card-text class="py-0 px-0 py-3" style="width: fit-content">
                                     <p class="font-primary text-center mb-0 font-weight-bold text-uppercase"
                                         style="width: 100%; font-size: 20px;">
-                                        {{ type }}
+                                        {{ type }} &nbsp; | &nbsp; {{ categoryCriteria[parent][type]['price'] }} KWD
                                     </p>
                                 </v-card-text>
                                 <div style="width: 150px; height: 100%;">
@@ -77,8 +80,9 @@
                         </v-col>
                     </v-row>
                 </v-tab-item>
-                <v-tab-item key="2" v-if="parent && type && size">
-                    <v-row no-gutters class=" d-flex align-center justify-space-between px-4">
+                <v-tab-item key="2">
+                    <div v-if="parent !== '' && size !== '' && type !== 'heart cake'">
+                        <v-row no-gutters class=" d-flex align-center justify-space-between px-4">
                         <p class="text-center text-h5 font-primary font-weight-bold mb-5 mt-5">{{ titles[activeStep] }}</p>
                         <v-btn large color="#65382c" icon v-if="color !== ''"
                             @click="color = ''"><v-icon>mdi-reload</v-icon></v-btn>
@@ -97,7 +101,7 @@
                                     :class="{ 'white--text': String(itemColor).toLowerCase().trim() !== 'off white' && String(itemColor).toLowerCase().trim() !== 'white' }">
                                     <v-icon
                                         :color="String(itemColor).toLowerCase().trim() !== 'off white' && String(itemColor).toLowerCase().trim() !== 'white' ? '#fff' : '#000'">mdi-eyedropper-variant</v-icon>
-                                    Pick
+                                        {{ itemColor }}
                                 </p>
                             </v-card>
                         </v-col>
@@ -136,9 +140,73 @@
                             </v-radio-group>
                         </v-col>
                     </v-row>
-                    <v-row v-if="color && size && type && parent" no-gutters
+                    <v-row v-if="color !== '' && size !== '' && type !== '' && parent !== ''" no-gutters
                         class="mt-7 align-center justify-center px-5"><v-btn large color="#65382c" class="white--text"
                             @click="saveCake()"><v-icon>mdi-check</v-icon> Confrim</v-btn></v-row>
+                    </div>
+                    <!-- <div v-else>
+                        <v-row no-gutters class=" d-flex align-center justify-space-between px-4">
+                        <p class="text-center text-h5 font-primary font-weight-bold mb-5 mt-5">{{ titles[activeStep] }}</p>
+                        <v-btn large color="#65382c" icon v-if="color !== ''"
+                            @click="color = ''"><v-icon>mdi-reload</v-icon></v-btn>
+                    </v-row>
+                    <v-row no-gutters>
+                        <v-col cols="4" class="d-flex align-center justify-center my-2"
+                            v-if="Object.keys(categoryCriteria[parent][type]).includes('colors')"
+                            v-for="(itemColor, index) in Object.values(categoryCriteria[parent][type]['colors'])"
+                            :key="index">
+                            <v-card
+                                :color="String(itemColor).toLowerCase().trim() !== 'off white' ? String(itemColor).toLowerCase().trim() !== 'white' ? itemColor : '#fbf7f5' : ''"
+                                class="col-11 rounded-lg d-flex align-center justify-center"
+                                :class="{ 'active-color': itemColor == color }" @click="pickColor(itemColor)" height="80px"
+                                style="border: 1px solid #ecbaa8">
+                                <p class="text-h6 text-uppercase text-center mb-0 font-weighb-bold"
+                                    :class="{ 'white--text': String(itemColor).toLowerCase().trim() !== 'off white' && String(itemColor).toLowerCase().trim() !== 'white' }">
+                                    <v-icon
+                                        :color="String(itemColor).toLowerCase().trim() !== 'off white' && String(itemColor).toLowerCase().trim() !== 'white' ? '#fff' : '#000'">mdi-eyedropper-variant</v-icon>
+                                        {{ itemColor }}
+                                </p>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                    <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
+                        v-if="matchedItem?.flavor.length">
+                        <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Flavors</p>
+                        <v-btn large color="#65382c" icon v-if="flavor !== ''"
+                            @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
+                    </v-row>
+                    <v-row no-gutters v-if="matchedItem?.flavor.length">
+                        <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2">
+                            <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
+                                :value="flavor.id"></v-radio>
+                        </v-radio-group>
+                    </v-row>
+                    <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
+                        v-if="matchedItem?.extra.length">
+                        <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Extras</p>
+                    </v-row>
+                    <v-row no-gutters v-if="matchedItem?.extra.length">
+                        <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5">
+                            <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
+                                color="#65382c" hide-details>
+                                <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
+                                    :value="extra.id"></v-radio>
+                                <v-radio value="" label="None"></v-radio>
+                            </v-radio-group>
+                        </v-col>
+                        <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5">
+                            <v-radio-group v-model="extra_right" class="d-flex align-center justify-center my-2"
+                                color="#65382c" hide-details>
+                                <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
+                                    :value="extra.id"></v-radio>
+                                <v-radio value="" label="None"></v-radio>
+                            </v-radio-group>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="color && type && parent" no-gutters
+                        class="mt-7 align-center justify-center px-5"><v-btn large color="#65382c" class="white--text"
+                            @click="saveCake()"><v-icon>mdi-check</v-icon> Confrim</v-btn></v-row>
+                    </div> -->
                 </v-tab-item>
             </v-tabs-items>
         </v-col>
@@ -357,6 +425,7 @@ export default {
                     }
                     if (product !== undefined) {
                         newArr[element[0]][element[0]].image = product.images[0].url;
+                        newArr[element[0]][element[0]].price = product.price;
                     }
                 }
             });
@@ -367,6 +436,14 @@ export default {
             setTimeout(() => {
                 if (type === 'back') {
                     this.activeStep -= 1;
+                    if(this.activeStep === 0){
+                        this.parent = "";
+                        this.type = "";
+                        this.color = "";
+                        this.flavor = "";
+                        this.extra_left = "";
+                        this.extra_right = "";
+                    }
                 } else if (type === 'next') {
                     this.activeStep += 1;
                 }

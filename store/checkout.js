@@ -180,13 +180,13 @@ export const mutations = {
     state.step = 1;
   },
   SHOW_PAYMENT(state) {
-    state.step = 4;
-  },
-  SHOW_SUMMARY(state) {
     state.step = 3;
   },
-  SHOW_TIME(state) {
+  SHOW_SUMMARY(state) {
     state.step = 2;
+  },
+  SHOW_TIME(state) {
+    state.step = 1;
   },
   SHOW_REVIEW(state) {
     state.step = 4;
