@@ -1,6 +1,6 @@
 <template>
     <div :style="$vuetify.breakpoint.width > 414 ? 'width: 229px;' : 'width: 47%;'" class="my-1 mx-1">
-        <v-card @click="categoryViewed(category.id)" class="a-category-card" :width="$vuetify.breakpoint.width > 414 ? 229 : '100%'" min-height="200"
+        <v-card @click="category.name_en == 'Photo Print Cake' ? $router.push('/photo-print-cake') : categoryViewed(category.id)" class="a-category-card" :width="$vuetify.breakpoint.width > 414 ? 229 : '100%'" min-height="200"
             style="border-radius: 10px;" color="#fff">
             <v-img cover :height="$vuetify.breakpoint.width > 414 ? 200 : 150"
                 :lazy-src="category.image" :src="category.image" style="cursor: pointer;" class="rounded-lg category-image" />
