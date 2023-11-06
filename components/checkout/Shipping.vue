@@ -135,7 +135,7 @@
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
           @click="showTime"
         >
-          {{ $t("checkout.shipping.continue") }}
+          {{ $t("Continue To Shopping") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -269,7 +269,7 @@ export default {
         valid = valid && !this.$v.$invalid;
       }
       
-      // if (!valid) return;
+      if (!valid) return;
       localStorage.setItem(
         "shipping_address",
         JSON.stringify(this.local.address)

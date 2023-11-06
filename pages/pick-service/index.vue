@@ -276,10 +276,11 @@ export default {
       const totalMinutes = hours * 60 + minutes;
 
       // Calculate the total minutes for 7:55 PM and 7:59 AM
-      const startDimMinutes = 19 * 60 + 55; // Time to start dimming in minutes (7:55 PM)
+      const startDimMinutes = 19 * 60 + 45; // Time to start dimming in minutes (7:55 PM)
       const endDimMinutes = 7 * 60 + 59; // Time to end dimming in minutes (7:59 AM)
 
       // Check if current time is between 7:55 PM and 11:59 PM or between 12:00 AM and 7:59 AM
+      // TODO: Delete it Later
       return totalMinutes >= startDimMinutes || totalMinutes <= endDimMinutes;
     },
     isLaterTodayDimmed() {
@@ -293,6 +294,7 @@ export default {
       const endDimMinutes = 23 * 60 + 59; // Time to end dimming in minutes (11:59 PM)
 
       // Check if current time is between 7:45 PM and 11:59 PM
+      // TODO: Delete it Later
       return totalMinutes >= startDimMinutes && totalMinutes <= endDimMinutes;
     }
   },
