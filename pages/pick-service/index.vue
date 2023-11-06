@@ -5,11 +5,11 @@
       <v-row no-gutters class="justify-center align-center py-2">
         <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
           <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
-            @click="isToggle('asap')">
+            @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
             Deliver now
           </v-btn>
           <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same-day"
-            @click="isToggle('same-day')">
+            @click="isToggle('same-day')" :disabled="isLaterTodayDimmed" >
             Later Today
           </v-btn>
           <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre-order"
@@ -226,12 +226,41 @@ export default {
       this.setDefaultAddress(this.addresses[newValue]);
     },
   },
+  computed: {
+    isDeliveryNowDimmed() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      // Calculate the total minutes for 7:55 PM and 7:59 AM
+      const startDimMinutes = 19 * 60 + 55; // Time to start dimming in minutes (7:55 PM)
+      const endDimMinutes = 7 * 60 + 59; // Time to end dimming in minutes (7:59 AM)
+
+      // Check if current time is between 7:55 PM and 11:59 PM or between 12:00 AM and 7:59 AM
+      return totalMinutes >= startDimMinutes || totalMinutes <= endDimMinutes;
+    },
+    isLaterTodayDimmed() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      // Calculate the total minutes for 7:45 PM and 11:59 PM
+      const startDimMinutes = 19 * 60 + 45; // Time to start dimming in minutes (7:45 PM)
+      const endDimMinutes = 23 * 60 + 59; // Time to end dimming in minutes (11:59 PM)
+
+      // Check if current time is between 7:45 PM and 11:59 PM
+      return totalMinutes >= startDimMinutes && totalMinutes <= endDimMinutes;
+    }
+  },
   mounted() {
     localStorage.removeItem("default_location");
     localStorage.removeItem("default_address");
     localStorage.removeItem("default_area");
     this.getAreas();
     this.getAddresses();
+    this.currentHour = new Date().getHours();
   }
 }
 </script>

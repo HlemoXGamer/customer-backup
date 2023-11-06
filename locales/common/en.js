@@ -42,5 +42,14 @@ export default {
         search_placeholder: "Search for an Area"
     },
     sweet_moments: "Sweet Moments Since 1992",
-    no_addresses: "There are currently no saved Addresses"
+    no_addresses: "There are currently no saved Addresses",
+    reschedule: "Reschedule",
+    refund: "Refund",
+    sure_refund: "Are you sure you want to refund your money and cancel the order?",
+    pick: {
+        type: "Pick a Type",
+        size: "Pick a Size",
+        color: "Pick a Color",
+        flavors_extra: "Pick Flavors & Extras"
+    }
 }

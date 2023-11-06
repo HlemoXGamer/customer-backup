@@ -124,6 +124,10 @@ export default {
       type: Object,
       default: () => ({ name_en: "", name_ar: "", images: [], price: 10 }),
     },
+    extra_flavor: {
+      type: Array,
+      default: [],
+    }
   },
   data: (vm) => ({
     qty: 1,
@@ -170,6 +174,7 @@ export default {
       this.loading = true;
       try {
         await this.$store.dispatch("cart/add", {
+          extra_flavor: this.extra_flavor,
           product_id: this.product.id,
           images: this.images.map((image) => image.file),
           notes: this.notes

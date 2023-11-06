@@ -7,12 +7,7 @@
         :class="`category-slider-wrapper ${
           selected_category.includes(category.id) ? 'category-slider-wrapper--active' : ''
         }`"
-        @click="
-          category.name_en === 'Photo Print Cake'
-            ? openPrintCake(category.id)
-            : update(category)
-        "
-      >
+        @click=" category.name_en == 'Photo Print Cake' ? $router.push('/photo-print-cake') : update(category)">
         <div class="category-slider">
           <v-img
             class="category-slider-image"

@@ -42,5 +42,14 @@ export default {
     search_placeholder: "إبحث عن منطقة"
   },
   sweet_moments: "لحظات حلوة منذ عام 1992",
-  no_addresses: "لا يوجد حاليا أي عناوين محفوظة"
+  no_addresses: "لا يوجد حاليا أي عناوين محفوظة",
+  reschedule: "إعادة الجدولة",
+  refund: "استرداد",
+  sure_refund: "هل أنت متأكد أنك تريد استرداد أموالك وإالغاء الطلب؟",
+  pick: {
+    type: "إختر نوع",
+    size: "إختر حجم",
+    color: "إختر لون",
+    flavors_extra: "إختر النكهات والإضافات"
+}
 };
