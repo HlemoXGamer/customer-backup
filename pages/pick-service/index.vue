@@ -35,7 +35,8 @@
               background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
           </v-col>
           <v-col class="mx-0 mt-2 px-0 py-0">
-            <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
+            <!-- Old Address List -->
+            <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
               height="40px" style="border-bottom: 1px solid gray"
               class="py-2 px-2 d-flex flex-row align-center justify-space-between rounded-0">
               <p style="color: #65382c;" class="mb-0">
@@ -44,7 +45,10 @@
               <v-icon>
                 mdi-chevron-down
               </v-icon>
-            </v-card>
+            </v-card>  -->
+            <GoogleMap @set-address="onSetAddress" />
+            <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" />
+
             <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col>
@@ -56,9 +60,13 @@
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
             <v-col v-for="address in addresses" :key="address.id" cols="12">
+              <v-dialog v-model="mapModel" width="100%">
+                <GoogleMap @set-address="onSetAddress" />
+                <v-btn @click="updateLatLng(address)" style="width: fit-content; margin: 50px;">Update The Address</v-btn>
+              </v-dialog>
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                  :color="active ? '#65382c' : ''" @click="toggle">
+                  :color="active ? '#65382c' : ''" @click="checkLatLng(address); toggle()">
                   <v-card-text>
                     <v-scroll-y-transition>
                       <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
@@ -72,6 +80,7 @@
                         <p>{{ address.address_info }}</p>
                         <p>{{ address.description }}</p>
                       </div>
+
                     </v-scroll-y-transition>
                   </v-card-text>
                 </v-card>
@@ -86,6 +95,8 @@
 <script>
 import { get } from "@/apis/areas";
 import { get as getAddresses, setDefault } from "@/apis/addresses";
+import { update } from '@/apis/addresses'
+
 export default {
   data() {
     return {
@@ -103,7 +114,10 @@ export default {
       filteredAreas: [],
       addresses: [],
       currentAddress: "",
-      loading: false
+      loading: false,
+      theAddress: null,
+      center: {},
+      mapModel: false,
     };
   },
   methods: {
@@ -113,6 +127,18 @@ export default {
           this.toggle = value;
         }
       }, 100);
+    },
+    onSetAddress(theAddress, center) {
+      this.theAddress = theAddress;
+      this.center = center
+    },
+    addDaysToDate(startDate, days) {
+      this.days = [];
+      for (let i = 0; i < days; i++) {
+        const newDate = new Date(startDate);
+        newDate.setDate(startDate.getDate() + i);
+        this.days.push(newDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' }));
+      }
     },
     search() {
       if (this.searchTerm !== null) {
@@ -179,6 +205,7 @@ export default {
       this.loading = false;
     },
     async setDefaultBranch(area) {
+      console.log(area);
       if (this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
       const { branches } = area;
       localStorage.setItem("default_location", "area");
@@ -217,6 +244,21 @@ export default {
       }
       this.$store.dispatch("cart/get", { branch: branches[0] });
     },
+    checkLatLng(address) {
+      console.log(address.hasOwnProperty('lat'));
+      if (address && !address.lat && !address.lng) {
+        this.mapModel = true;
+      } 
+    },
+    updateLatLng(address) {
+      localStorage.setItem(
+        "shipping_address",
+        JSON.stringify({ ...address, lat: this.center.lat, lng: this.center.lng })
+      );
+      update(address.id, { ...address, lat: this.center.lat, lng: this.center.lng })
+      this.mapModel = false;
+      this.$toast.success('Address Updated SuccessFully')
+    }
   },
   watch: {
     toggle(newValue, oldValue) {
