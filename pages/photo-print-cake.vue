@@ -58,7 +58,7 @@
                             </v-card>
                         </v-col>
                     </v-row>
-                    <v-row no-gutters v-else>
+                    <v-row v-else no-gutters >
                         <v-col cols="12" class="d-flex align-center justify-space-between my-3">
                             <v-card class="d-flex justify-space-between align-center col-11 py-0 px-0 rounded-lg ps-4"
                                 @click="pickSize(type)" height="80px" style="overflow: hidden; border: 2px solid #ecbaa8;">
