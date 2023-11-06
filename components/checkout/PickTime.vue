@@ -60,7 +60,7 @@ export default {
     },
     methods: {
         showPayment() {
-            if ((!this.currentDay || !this.currentHour || this.currentMinute)) return this.$toast.error(this.$t("checkout.delivery_time_required"))
+            if ((!this.currentDay || !this.currentHour || !this.currentMinute)) return this.$toast.error(this.$t("checkout.delivery_time_required"))
             if (this.isPreOrder || this.isSameDay) this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
             this.$store.commit("checkout/SHOW_SUMMARY");

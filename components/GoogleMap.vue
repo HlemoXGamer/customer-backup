@@ -9,7 +9,7 @@
 export default {
   data() {
     return {
-      center: { lat: 0, lng: 0 }, // Initialize to null
+      center: { lat: 29.33919817328526, lng: 47.671376497490094 },
       theAddress: null,
     };
   },
