@@ -42,8 +42,9 @@
                 mdi-chevron-down
               </v-icon>
             </v-card>  -->
-              <GoogleMap @set-address="onSetAddress" />
-              <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" />
+            <GoogleMap @set-address="onSetAddress" />
+            <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" />
+
             <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col>
@@ -52,9 +53,13 @@
         <v-tab-item key="addresses">
           <v-item-group v-model="currentAddress" class="mt-4">
             <v-col v-for="address in addresses" :key="address.id" cols="12">
+              <v-dialog v-model="mapModel" width="100%">
+                <GoogleMap @set-address="onSetAddress" />
+                <v-btn @click="updateLatLng(address)" style="width: fit-content; margin: 50px;">Update The Address</v-btn>
+              </v-dialog>
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                  :color="active ? '#65382c' : ''" @click="toggle">
+                  :color="active ? '#65382c' : ''" @click="checkLatLng(address); toggle()">
                   <v-card-text>
                     <v-scroll-y-transition>
                       <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
@@ -68,6 +73,7 @@
                         <p>{{ address.address_info }}</p>
                         <p>{{ address.description }}</p>
                       </div>
+
                     </v-scroll-y-transition>
                   </v-card-text>
                 </v-card>
@@ -82,6 +88,8 @@
 <script>
 import { get } from "@/apis/areas";
 import { get as getAddresses, setDefault } from "@/apis/addresses";
+import { update } from '@/apis/addresses'
+
 export default {
   data() {
     return {
@@ -102,6 +110,7 @@ export default {
       loading: false,
       theAddress: null,
       center: {},
+      mapModel: false,
     };
   },
   methods: {
@@ -228,6 +237,21 @@ export default {
       }
       this.$store.dispatch("cart/get", { branch: branches[0] });
     },
+    checkLatLng(address) {
+      console.log(address.hasOwnProperty('lat'));
+      if (address && !address.lat && !address.lng) {
+        this.mapModel = true;
+      } 
+    },
+    updateLatLng(address) {
+      localStorage.setItem(
+        "shipping_address",
+        JSON.stringify({ ...address, lat: this.center.lat, lng: this.center.lng })
+      );
+      update(address.id, { ...address, lat: this.center.lat, lng: this.center.lng })
+      this.mapModel = false;
+      this.$toast.success('Address Updated SuccessFully')
+    }
   },
   watch: {
     toggle(newValue, oldValue) {

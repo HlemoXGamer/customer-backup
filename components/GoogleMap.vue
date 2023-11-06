@@ -1,5 +1,6 @@
 <template>
-  <GmapMap ref="mapRef" :center="center" :zoom="7" map-type-id="terrain" style="width: '100%'; height: 600px" @click="replaceMarker">
+  <GmapMap ref="mapRef" :center="center" :zoom="7" map-type-id="terrain" style="width: '100%'; height: 600px"
+    @click="replaceMarker">
     <GmapMarker :position="center" :clickable="true" :draggable="true" />
   </GmapMap>
 </template>
@@ -8,7 +9,7 @@
 export default {
   data() {
     return {
-      center: null, // Initialize to null
+      center: { lat: 0, lng: 0 }, // Initialize to null
       theAddress: null,
     };
   },
@@ -22,8 +23,8 @@ export default {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           this.center = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
+            lat: position.coords.latitude || 0,
+            lng: position.coords.longitude || 0,
           };
         }, (error) => {
           console.error('Error getting current location:', error);

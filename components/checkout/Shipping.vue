@@ -198,8 +198,8 @@ export default {
           branch_id: 3, // TODO: delete after the ap
           name: "",
           email: "",
-          lat: null,
-          lng: null,
+          lat: 0,
+          lng: 0,
         },
       },
       areas: [],
@@ -247,7 +247,7 @@ export default {
       this.phoneValid = isValid;
     },
     showTime() {
-      if (this.mapAddress == null) {
+      if (this.lat == null || this.lng == null) {
         this.$toast.error('Please put your address on the map');
         return;
       }
@@ -265,7 +265,7 @@ export default {
         "shipping_address",
         JSON.stringify(this.local.address)
       );
-      // this.$emit("address-updated", this.city);
+      this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
       const address_info = [];
@@ -314,9 +314,11 @@ export default {
 
       const theArea = this.areas.find(
         (area) =>
-          area.name_en ===
-          this.local.address.area_name.slice(0, -1).toUpperCase()
+          area.name_en.includes(
+            this.local.address.area_name.slice(0, -1).toUpperCase()
+          )
       );
+
 
       if (theArea) {
         // 'theArea' now contains the object with a matching 'name_en' property.
