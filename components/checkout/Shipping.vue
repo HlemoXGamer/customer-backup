@@ -268,8 +268,8 @@ export default {
         this.$v.$touch();
         valid = valid && !this.$v.$invalid;
       }
-
-      if (!valid) return;
+      
+      // if (!valid) return;
       localStorage.setItem(
         "shipping_address",
         JSON.stringify(this.local.address)
