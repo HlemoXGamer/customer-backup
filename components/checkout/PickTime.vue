@@ -61,11 +61,11 @@ export default {
                 const isPm = newHour.includes('pm')
                 console.log(new Date().getHours(), (parseInt(newHour) + 12));
                 if (isPm) {
-                    if (new Date().getHours() + 1 == (parseInt(newHour) + 12)) {
+                    if (new Date().getHours() == (parseInt(newHour) + 12)) {
                         this.minutes = timeChecker('asap', new Date).minutes
                     }
                 } else {
-                    if (new Date().getHours() + 1 == (parseInt(newHour))) {
+                    if (new Date().getHours() == (parseInt(newHour))) {
                         this.minutes = timeChecker('asap', new Date).minutes
                     }
                 }
@@ -133,7 +133,7 @@ export default {
         isAsap() {
             return this.$store.state.checkout.type == 'asap';
         }
-    }
+    },
 }
 </script>  
   
