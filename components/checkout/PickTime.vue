@@ -1,17 +1,13 @@
 <template>
     <v-col cols="12">
-        <!-- <v-row v-if="this.$store.state.checkout.type == 'deliver_now'" class="align-center justify-space-around mb-0 pb-0" style="padding-bottom: 50px;">
-            <v-btn @click="orderStatus2" :color="!isPreOrder ? '#65382c' : null" elevation="0" :dark="!isPreOrder">Normal</v-btn>
-            <v-btn @click="orderStatus" :color="isPreOrder ? '#65382c' : null" elevation="0" :dark="isPreOrder">Pre Order</v-btn>
-        </v-row> -->
-        <v-row v-if="isPreOrder || isSameDay" v-row no-gutters class="align-center justify-center mb-5 mt-0 pt-0">
+        <v-row v-if="isPreOrder || isSameDay" class="align-center justify-center mb-5 mt-0 pt-0">
             <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
             </scroll-picker-group>
         </v-row>
-        <v-row v-if="isAsap" v-row no-gutters class="align-center justify-center text-h6">
+        <v-row v-if="isAsap" class="align-center justify-center text-h6">
             <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
                 Delivery will arrive after 40 min from Pay time
             </p>
@@ -42,12 +38,30 @@ export default {
             currentDay: "",
             currentHour: "",
             currentMinute: "",
+            // Initialize minutes with a full range as default
+            minutes: this.generateMinutes(0, 59),
+        }
+    },
+    watch: {
+        // Watcher for the currentHour data property
+        currentHour(newHour) {
+            // Check if the currentHour is 8:00 PM and we are in preOrder
+            console.log(newHour);
+            if (this.isPreOrder && newHour === '8 pm') {
+                // Update the minutes array from 0 to 30 only
+                this.minutes = this.generateMinutes(0, 30);
+            } else {
+                // Otherwise, provide the full range of minutes
+                this.minutes = this.generateMinutes(0, 59);
+            }
+            // Reset currentMinute when currentHour changes
+            this.currentMinute = "";
         }
     },
     methods: {
         showPayment() {
-            if ((!this.currentDay || !this.currentHour || this.currentMinute) && ( this.isPreOrder || this.isSameDay )) return this.$toast.error(this.$t("checkout.delivery_time_required"))
-            if (this.isPreOrder || this.isSameDay ) this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
+            if ((!this.currentDay || !this.currentHour || this.currentMinute)) return this.$toast.error(this.$t("checkout.delivery_time_required"))
+            if (this.isPreOrder || this.isSameDay) this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
             this.$store.dispatch("checkout/checkout", JSON.parse(localStorage.getItem("shipping_address")));
             this.$store.commit("checkout/SHOW_SUMMARY");
         },
@@ -82,6 +96,14 @@ export default {
 
             return `${year}-${monthss}-${days} ${hours}:${minutes}:${seconds} ${ampm}`;
         },
+        // Method to generate minutes array
+        generateMinutes(start, end) {
+            let minutesArray = [];
+            for (let i = start; i <= end; i++) {
+                minutesArray.push(i < 10 ? `0${i}` : i.toString());
+            }
+            return minutesArray;
+        },
     },
     computed: {
         ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"]),
@@ -96,4 +118,5 @@ export default {
         }
     }
 }
-</script>
+</script>  
+  
