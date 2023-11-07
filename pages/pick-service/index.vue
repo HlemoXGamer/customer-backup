@@ -54,26 +54,26 @@
             {{ $t("common.no_addresses") }}
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
-            <v-col v-for="address in addresses" :key="address.id" cols="12">
+            <v-col v-for="address in addresses" :key="address?.id" cols="12">
               <v-dialog v-model="mapModel" width="100%">
                 <GoogleMap @set-address="onSetAddress" />
                 <v-btn @click="updateLatLng(address)" style="width: fit-content; margin: 50px;">Update The Address</v-btn>
               </v-dialog>
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                  :color="active ? '#65382c' : ''" @click="checkLatLng(address); toggle()">
+                  :color="active ? '#65382c' : ''" @click="address.lat ? toggle() : checkLatLng(address)">
                   <v-card-text>
                     <v-scroll-y-transition>
                       <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
                         }`">
-                        <p>{{ address.address }}</p>
+                        <p>{{ address?.address }}</p>
                         <p>
-                          {{ address.country_name }}
-                          {{ address.city_name }}
-                          {{ address.area_name }}
+                          {{ address?.country_name }}
+                          {{ address?.city_name }}
+                          {{ address?.area_name }}
                         </p>
-                        <p>{{ address.address_info }}</p>
-                        <p>{{ address.description }}</p>
+                        <p>{{ address?.address_info }}</p>
+                        <p>{{ address?.description }}</p>
                       </div>
 
                     </v-scroll-y-transition>
@@ -258,6 +258,7 @@ export default {
   watch: {
     toggle(newValue, oldValue) {
       this.$store.commit("checkout/SET_TYPE", newValue);
+      console.log(newValue);
     },
     currentAddress(newValue, oldValue) {
       this.setDefaultAddress(this.addresses[newValue]);

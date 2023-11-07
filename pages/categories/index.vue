@@ -12,7 +12,7 @@
             </v-row>
             <v-spacer />
             <v-row no-gutters class="justify-end align-center">
-              <strong style="color:#65382c">{{ default_location == "area" ? address.name ?? "---" : address.area_name ?? "---" }}</strong>
+              <strong style="color:#65382c">{{ default_location == "area" ? address.name ?? "---" : address?.area_name ?? "---" }}</strong>
               <v-icon :class="i18n_me('mr-1', 'ml-1')" color="#65382c">mdi-chevron-{{i18n_me('left', 'right')}}</v-icon>
             </v-row>
           </v-btn>
@@ -67,7 +67,7 @@
         default_location: localStorage.getItem("default_location"),
         address: {},
         loading: false,
-        area_id: JSON.parse(localStorage.getItem('default_area')).id,
+        area_id: JSON.parse(localStorage.getItem('default_area'))?.id,
       };
     },
     watch: {
