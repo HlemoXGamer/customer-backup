@@ -266,8 +266,11 @@ export default {
         (this.$auth.loggedIn && this.location_type !== "address")
       ) {
         this.$v.$touch();
-        console.log('NO !')
-        valid = valid && !this.$v.$invalid;
+        if(this.$v.$invalid){
+          valid = false;
+        }else{
+          valid = true;
+        }
       }
       
       if (!valid) return;
