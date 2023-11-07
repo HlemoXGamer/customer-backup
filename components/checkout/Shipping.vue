@@ -266,11 +266,7 @@ export default {
         (this.$auth.loggedIn && this.location_type !== "address")
       ) {
         this.$v.$touch();
-        if(this.$v.$invalid){
-          valid = false;
-        }else{
-          valid = true;
-        }
+        valid = valid && !this.$v.$invalid;
       }
       
       if (!valid) return;
@@ -357,6 +353,14 @@ export default {
       local: {
         address: {
           description: {
+            required: helpers.withParams(
+              {
+                lang: this.$i18n.locale,
+              },
+              required
+            ),
+          },
+          city_id: {
             // required: helpers.withParams(
             //   {
             //     lang: this.$i18n.locale,
@@ -364,21 +368,13 @@ export default {
             //   required
             // ),
           },
-          city_id: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
-            ),
-          },
           area_id: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
-            ),
+            // required: helpers.withParams(
+            //   {
+            //     lang: this.$i18n.locale,
+            //   },
+            //   required
+            // ),
           },
           building_num: {
             numeric: helpers.withParams(
