@@ -29,11 +29,6 @@
       </v-tabs>
       <v-tabs-items v-model="currentTab">
         <v-tab-item key="areas">
-          <v-col cols="12" class="mt-4 px-0">
-            <v-text-field v-model="searchTerm" @input="search()" hide-details clearable flat solo
-              :placeholder="$t('common.areas.search_placeholder')" color="#65382c" style="border-radius: 12px;"
-              background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
-          </v-col>
           <v-col class="mx-0 mt-2 px-0 py-0">
             <!-- Old Address List -->
             <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"

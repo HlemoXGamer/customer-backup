@@ -1,8 +1,15 @@
 <template>
-  <GmapMap ref="mapRef" :center="center" :zoom="18" map-type-id="terrain" style="width: '100%'; height: 600px"
-    @click="replaceMarker">
-    <GmapMarker :position="center" :clickable="true" :draggable="true" />
-  </GmapMap>
+  <div>
+    <div style="padding-bottom: 10px;">
+      <v-text-field v-model="searchTerm" @input="searchLocation()" hide-details clearable flat solo
+        :placeholder="$t('common.areas.search_placeholder')" color="#65382c" style="border-radius: 12px;"
+        background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
+    </div>
+    <GmapMap ref="mapRef" :center="center" :zoom="18" map-type-id="terrain" style="width: '100%'; height: 600px"
+      @click="replaceMarker">
+      <GmapMarker :position="center" :clickable="true" :draggable="true" />
+    </GmapMap>
+  </div>
 </template>
 
 <script>
@@ -11,6 +18,7 @@ export default {
     return {
       center: { lat: 29.33919817328526, lng: 47.671376497490094 },
       theAddress: null,
+      searchTerm: '',
     };
   },
   mounted() {
@@ -59,6 +67,22 @@ export default {
         }
       });
     },
+
+    searchLocation() {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: this.searchTerm }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const newCenter = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          };
+          this.center = newCenter;
+          this.replaceMarker({ latLng: newCenter });
+        } else {
+          console.error('Search was not successful for the following reason:', status);
+        }
+      });
+    }
 
   },
 };
