@@ -193,6 +193,9 @@ export default {
       },
     };
   },
+  mounted(){
+    this.$store.commit("checkout/SHOW_TIME");
+  }
 };
 </script>
 

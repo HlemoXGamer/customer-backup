@@ -1,11 +1,13 @@
 import payment from './payment/en';
 import shipping from './shipping/en';
+import summary from './summary/en';
 import time from './time/en'
 
 export default {
   voucher_code: "Voucher Code",
   time,
   shipping,
+  summary,
     payment,
     "minimum_subtotal" : "Minimum subtotal is ",
     estimated_message : 'Estimated delivery time within',

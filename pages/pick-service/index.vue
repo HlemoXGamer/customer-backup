@@ -264,6 +264,10 @@ export default {
     },
     currentAddress(newValue, oldValue) {
       this.setDefaultAddress(this.addresses[newValue]);
+      localStorage.setItem(
+        "shipping_address",
+        JSON.stringify(this.addresses[newValue])
+      );
     },
   },
   computed: {

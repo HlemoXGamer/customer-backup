@@ -9,11 +9,11 @@
         </v-row>
         <v-row v-if="isAsap" class="align-center justify-center text-h6">
             <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
-                Delivery will arrive after 40 min from Pay time
+                {{ $t("checkout.time.delivery")}}
             </p>
         </v-row>
         <v-card>
-            <v-card-actions class="justify-space-between px-0">
+            <v-card-actions class="d-flex px-0" :class="{ 'flex-column justify-center align-start': $vuetify.breakpoint.xs, 'justify-space-between': !$vuetify.breakpoint.xs }">
                 <v-btn @click="back" elevation="0" text color="grey" large dark style="background: transparent !important"
                     :class="$vuetify.breakpoint.xs ? 'mt-4' : ''">
                     <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
@@ -21,8 +21,8 @@
                     </v-icon>
                     {{ $t("checkout.time.return") }}
                 </v-btn>
-                <v-btn x-large class="rounded-lg to-payment" height="57" color="#65382c" elevation="0" dark
-                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showPayment">
+                <v-btn x-large class="rounded-lg to-payment" :class="{ 'mt-3 py-4': $vuetify.breakpoint.xs}" height="57" color="#65382c" elevation="0" dark
+                    :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="showSummary" :block="$vuetify.breakpoint.xs">
                     {{ $t("checkout.time.continue") }}
                 </v-btn>
             </v-card-actions>
@@ -74,7 +74,7 @@ export default {
         }
     },
     methods: {
-        showPayment() {
+        showSummary() {
             if(this.type == "pre-order" || this.type == "same-day"){
                 if ((!this.currentDay || !this.currentHour)) return this.$toast.error(this.$t("checkout.delivery_time_required"))
                 this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? '00')));
