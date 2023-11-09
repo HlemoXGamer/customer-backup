@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="auto" @click:outside="$emit('close')">
+    <v-dialog v-model="dialog" persistent max-width="1100">
       <v-card color="white" class="px-3 py-3 rounded-lg dialog-card" style="position: relative;">
           <v-btn icon large color="#65382c" style="position: absolute; top: 10px; right: 10px;" @click="$emit('close')">
             <v-icon>mdi-close</v-icon>
@@ -11,12 +11,12 @@
             :placeholder="$t('common.areas.search_placeholder')" color="#65382c" style="border-radius: 12px;"
             background-color="#ededed" dense prepend-inner-icon="mdi-map-marker" height="50" />
         </div>
-        <GmapMap ref="mapRef" :center="center" :zoom="18" map-type-id="terrain" style="width: 100%; height: 600px"
+        <GmapMap ref="mapRef" :center="center" :zoom="18" map-type-id="terrain" style="width: 100%; height: 400px"
           @click="replaceMarker">
           <GmapMarker :position="center" :clickable="true" :draggable="true" />
         </GmapMap>
-        <v-row no-gutters class="py-4 align-center justify-center" v-if="address">
-          <v-btn color="#65382c" dark elevation="0" @click="$emit('updateLatLng', address)" style="width: fit-content;">Update The Address</v-btn>
+        <v-row no-gutters class="py-4 align-center justify-center" v-if="isAddress">
+          <v-btn color="#65382c" dark elevation="0" @click="$emit('updateLatLng', address, center)" style="width: fit-content;">Update The Address</v-btn>
         </v-row>
       </v-card>
     </v-dialog>
@@ -36,7 +36,7 @@ export default {
     },
     address: {
       type: Object,
-      default: {}
+      default: () => {}
     }
   },
   data() {

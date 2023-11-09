@@ -54,8 +54,8 @@
             {{ $t("common.no_addresses") }}
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
+            <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLng="updateLatLng" isAddress :address="currentMapAddress" @close="savedAddrMapDialog = false" />
             <v-col v-for="address in addresses" :key="address?.id" cols="12">
-                <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLang="updateLatLang" isAddress :address="address" />
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
                   :color="active ? '#65382c' : ''" @click="address.lat ? toggle() : checkLatLng(address)">
@@ -110,7 +110,8 @@ export default {
       theAddress: null,
       center: {},
       savedAddrMapDialog: false,
-      gmapDialog: true
+      gmapDialog: true,
+      currentMapAddress: ""
     };
   },
   methods: {
@@ -123,7 +124,7 @@ export default {
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
-      this.center = center
+      this.center = center;
     },
     addDaysToDate(startDate, days) {
       this.days = [];
@@ -240,15 +241,19 @@ export default {
     checkLatLng(address) {
       // console.log(address.hasOwnProperty('lat'));
       if (address && !address.lat && !address.lng) {
+        this.currentMapAddress = address;
         this.savedAddrMapDialog = true;
       } 
     },
-    updateLatLng(address) {
+    async updateLatLng(address, center) {
       localStorage.setItem(
         "shipping_address",
-        JSON.stringify({ ...address, lat: this.center.lat, lng: this.center.lng })
+        JSON.stringify({ ...address, lat: center.lat, lng: center.lng })
       );
-      update(address.id, { ...address, lat: this.center.lat, lng: this.center.lng })
+      await update(address.id, { ...address, lat: center.lat, lng: center.lng });
+      await this.getAddresses();
+      this.setDefaultAddress(address);
+      this.$router.push({ path: "/products" });
       this.savedAddrMapDialog = false;
       this.$toast.success('Address Updated SuccessFully')
     }
@@ -256,7 +261,6 @@ export default {
   watch: {
     toggle(newValue, oldValue) {
       this.$store.commit("checkout/SET_TYPE", newValue);
-      console.log(newValue);
     },
     currentAddress(newValue, oldValue) {
       this.setDefaultAddress(this.addresses[newValue]);
