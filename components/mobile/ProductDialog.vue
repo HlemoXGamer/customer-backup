@@ -126,7 +126,7 @@ export default {
     },
     extra_flavor: {
       type: Array,
-      default: [],
+      default: () => ([]),
     }
   },
   data: (vm) => ({

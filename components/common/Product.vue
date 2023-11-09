@@ -28,9 +28,7 @@
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-width="750">
-      <v-card elevation="0" outlined rounded="md" :class="`d-flex flex-column overflow-hidden px-5 py-7 product-dialog
-                   ${$vuetify.breakpoint.mobile ? 'mobile-dialog' : ''}
-                  `">
+      <v-card elevation="0" outlined rounded="md" :class="`d-flex flex-column overflow-hidden px-5 py-7 product-dialog ${$vuetify.breakpoint.mobile ? 'mobile-dialog' : ''}`">
         <div class="d-flex meta">
           <img height="72" width="70" :src="product.images[0] ? product.images[0].url : ''" alt="" />
           <div :class="`flex-grow-1 ${$i18n.locale === 'en' ? 'pl-5' : 'pr-5'
