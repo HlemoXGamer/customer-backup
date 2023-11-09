@@ -258,6 +258,7 @@ export default {
     showTime() {
       if (this.lat == null || this.lng == null) {
         this.$toast.error('Please put your address on the map');
+        this.$emit('openGMap');
         return;
       }
       let valid = true;
@@ -270,10 +271,10 @@ export default {
       }
       
       if (!valid) return;
-      // localStorage.setItem(
-      //   "shipping_address",
-      //   JSON.stringify(this.local.address)
-      // );
+      localStorage.setItem(
+        "shipping_address",
+        JSON.stringify(this.local.address)
+      );
       this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
@@ -349,6 +350,19 @@ export default {
     },
   },
   validations() {
+    let loggedIn = !this.$auth.loggedIn ? {
+      name: {
+      required: helpers.withParams(
+        { lang: this.$i18n.locale },
+        requiredIf(function (value, parentVm) {
+          return this.$auth.isLoggedIn;
+        })
+      ),
+    },
+    email: {
+      required: requiredIf(!this.$auth.loggedIn),
+      email,
+    }} : '';
     return {
       local: {
         address: {
@@ -411,23 +425,6 @@ export default {
               required
             ),
           },
-          name: {
-           required: helpers.withParams(
-             { lang: this.$i18n.locale },
-             requiredIf(function (value, parentVm) {
-               return !this.$auth.isLoggedIn;
-             })
-           ),
-          },
-          email: {
-           required: helpers.withParams(
-             { lang: this.$i18n.locale },
-             requiredIf(function (value, parentVm) {
-               return !this.$auth.isLoggedIn;
-             })
-           ),
-           email,
-          },
           floor: {
             numeric: helpers.withParams(
               {
@@ -455,6 +452,17 @@ export default {
               },
               required
             ),
+          },
+          name: {
+            required: requiredIf(function() {
+                return !this.$auth.loggedIn;
+            }),
+          },
+          email: {
+            required: requiredIf(function() {
+                return !this.$auth.loggedIn;
+            }),
+            email,
           },
           phone: {
             required: helpers.withParams(

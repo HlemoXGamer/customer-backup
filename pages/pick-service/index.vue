@@ -41,8 +41,8 @@
                 mdi-chevron-down
               </v-icon>
             </v-card>  -->
-            <GoogleMap @set-address="onSetAddress" />
-            <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" />
+            <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" />
+            <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/>
 
             <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
@@ -55,10 +55,7 @@
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
             <v-col v-for="address in addresses" :key="address?.id" cols="12">
-              <v-dialog v-model="mapModel" width="100%">
-                <GoogleMap @set-address="onSetAddress" />
-                <v-btn @click="updateLatLng(address)" style="width: fit-content; margin: 50px;">Update The Address</v-btn>
-              </v-dialog>
+                <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLang="updateLatLang" isAddress :address="address" />
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
                   :color="active ? '#65382c' : ''" @click="address.lat ? toggle() : checkLatLng(address)">
@@ -112,7 +109,8 @@ export default {
       loading: false,
       theAddress: null,
       center: {},
-      mapModel: false,
+      savedAddrMapDialog: false,
+      gmapDialog: true
     };
   },
   methods: {
@@ -240,9 +238,9 @@ export default {
       this.$store.dispatch("cart/get", { branch: branches[0] });
     },
     checkLatLng(address) {
-      console.log(address.hasOwnProperty('lat'));
+      // console.log(address.hasOwnProperty('lat'));
       if (address && !address.lat && !address.lng) {
-        this.mapModel = true;
+        this.savedAddrMapDialog = true;
       } 
     },
     updateLatLng(address) {
@@ -251,7 +249,7 @@ export default {
         JSON.stringify({ ...address, lat: this.center.lat, lng: this.center.lng })
       );
       update(address.id, { ...address, lat: this.center.lat, lng: this.center.lng })
-      this.mapModel = false;
+      this.savedAddrMapDialog = false;
       this.$toast.success('Address Updated SuccessFully')
     }
   },
