@@ -116,22 +116,22 @@
                             </v-row>
                         </div>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
-                            v-if="matchedItem?.flavor">
+                            v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
                             <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Flavors</p>
                             <v-btn large color="#65382c" icon v-if="flavor !== ''"
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
-                        <v-row no-gutters v-if="matchedItem?.flavor">
+                        <v-row no-gutters v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
                             <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2">
                                 <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
                                     :value="flavor.id"></v-radio>
                             </v-radio-group>
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
-                            v-if="matchedItem?.extra">
+                            v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
                             <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Extras</p>
                         </v-row>
-                        <v-row no-gutters v-if="matchedItem?.extra">
+                        <v-row no-gutters v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
                             <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5">
                                 <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
