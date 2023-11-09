@@ -1,7 +1,8 @@
 <template>
     <v-row no-gutters>
-        <v-col cols="12" class="my-3" style="position: relative;">
-            <v-btn @click="step('back')" large color="#65382c" icon style="position: absolute;" class="ml-4"
+        <v-col cols="12" class="mb-3 mt-7 pt-5" style="position: relative;">
+            <v-btn @click="$router.back()" color="#65382c" text style="position: absolute;" class="ml-2 mt-n14" elevation="0"><v-icon>mdi-chevron-left</v-icon>{{ $t("checkout.shipping.back") }}</v-btn>
+            <v-btn @click="step('back')" large color="#65382c" icon style="position: absolute;" class="ml-10"
                 v-if="activeStep > 0"><v-icon>mdi-keyboard-backspace</v-icon></v-btn>
             <p class="text-center text-h4 font-primary font-weight-bold">{{ activeStep == 2 ? titles[activeStep + 1] :
                 titles[activeStep] }}</p>

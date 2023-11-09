@@ -22,12 +22,12 @@
         <p v-if="!products.length && !loading" class="font-primary">
           {{ $t("products.not_found") }}
         </p>
-          <MobileProductDialog
+      </v-row>
+        <MobileProductDialog
           :product="mobileProductDialogData"
           v-model="mobileProductDialog"
           @update="(vlaue) => (this.mobileProductDialog = vlaue)"
         />
-      </v-row>
     </v-col>
   </v-row>
 </template>

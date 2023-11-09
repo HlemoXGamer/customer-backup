@@ -10,8 +10,8 @@ export default {
   area: "المنطقة",
   address: "العنوان",
   building_floor_apartment: "المبنى/الطابق/رقم الشقة/رقم الفيلا",
-  continue: "الذهاب إلى الوقت",
-  back: "الرجوع إلى سلة التسويق",
+  continue: "الذهاب إلى التسوق",
+  back: "الرجوع للتسوق",
   time: "الوقت",
   errors: {
     required: "مطلوب",

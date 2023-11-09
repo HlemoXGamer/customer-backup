@@ -10,8 +10,8 @@ export default {
   area: "area",
   address: "Address",
   building_floor_apartment: "Building/Floor/Apartment/Villa no",
-  continue: "Continue to Time",
-  back: "RETURN TO CART",
+  continue: "Continue to Shopping",
+  back: "Return to Shopping",
   time: "Time",
   errors: {
     required: "Required",
