@@ -120,7 +120,7 @@ export const timeChecker = (orderType, currentTime) => {
             for (let hour = startHourSameDay; hour < 21; hour++) {
                 if (hour < 12) {
                     hoursSameDay.push(`${hour} am`);
-                } else if (hour === 12 && startMinuteSameDay === 0) {
+                } else if (hour === 12) {
                     hoursSameDay.push(`${hour} pm`);
                 } else {
                     hoursSameDay.push(`${hour - 12} pm`);

@@ -32,10 +32,10 @@
                         </h3>
                       </v-list-item-title>
                       <v-list-item v-if="notifications.length === 0">
-                        <v-list-item-title class="px-4 mb-2">
-                          <h2>
+                        <v-list-item-title class="px-0">
+                          <p class="mb-0 py-3 text-h7 text-center font-weight-bold">
                             {{ $t("common.no_notifications") }}
-                          </h2>
+                          </p>
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item v-if="notifications.length !== 0"
@@ -301,6 +301,7 @@ export default {
     await getServerTime().then((response) => {
       this.$store.dispatch("timer/setTime", response.timer);
       const data = timeChecker(this.type, response.timer);
+      console.log(data);
       this.$store.dispatch("timer/setData", data);
     });
     timeUpdateInterval = setInterval(async () => {

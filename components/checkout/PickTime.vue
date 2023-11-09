@@ -47,7 +47,6 @@ export default {
         // Watcher for the currentHour data property
         currentHour(newHour) {
             // Check if the currentHour is 8:00 PM and we are in preOrder
-            console.log(newHour);
             if ((this.isPreOrder) && newHour === '8 pm') {
                 // Update the minutes array from 0 to 30 only
                 this.minutes = this.generateMinutes(0, 30);
@@ -59,14 +58,13 @@ export default {
             this.currentMinute = "";
             if (this.isSameDay) {
                 const isPm = newHour.includes('pm')
-                console.log(new Date().getHours(), (parseInt(newHour) + 12));
                 if (isPm) {
                     if (new Date().getHours() + (new Date().getMinutes() > 15 ? 1 : 0) == (parseInt(newHour) + 12)) {
-                        this.minutes = timeChecker('asap', new Date).minutes
+                        this.minutes = timeChecker('asap', new Date).minutes;
                     }
                 } else {
                     if (new Date().getHours() + (new Date().getMinutes() > 15 ? 1 : 0) == (parseInt(newHour))) {
-                        this.minutes = timeChecker('asap', new Date).minutes
+                        this.minutes = timeChecker('asap', new Date).minutes;
                     }
                 }
                 if (newHour === '8 pm') {
@@ -79,8 +77,8 @@ export default {
         showPayment() {
             if(this.type == "pre-order" || this.type == "same-day"){
                 if ((!this.currentDay || !this.currentHour || !this.currentMinute.toString())) return this.$toast.error(this.$t("checkout.delivery_time_required"))
+                this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? '00')));
             }
-            this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
             this.$store.commit("checkout/SHOW_SUMMARY");
         },
         back() {
@@ -127,13 +125,13 @@ export default {
         ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"]),
         ...mapState("checkout", ["type"]),
         isPreOrder() {
-            return this.$store.state.checkout.type == 'pre-order';
+            return this.type == 'pre-order';
         },
         isSameDay() {
-            return this.$store.state.checkout.type == 'same-day';
+            return this.type == 'same-day';
         },
         isAsap() {
-            return this.$store.state.checkout.type == 'asap';
+            return this.type == 'asap';
         }
     },
 }

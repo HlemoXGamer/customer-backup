@@ -1,11 +1,11 @@
 <template>
   <div>
-    <p class="text-h6 font-weight-bold mt-8" v-if="location_type !== 'address'">
+    <p class="text-h6 font-weight-bold mt-8">
       {{ $t("checkout.shipping.shipping_label") }}
     </p>
     <p>Shipping Address: {{ theAddress?.join(' ') }}</p>
     <v-card>
-      <v-row v-if="location_type !== 'address'">
+      <v-row>
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
           <v-card>
             <v-card-text>
@@ -100,7 +100,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <div v-else>
+      <!-- <div v-else>
         <v-card outlined rounded="lg" class="d-flex align-center" height="150">
           <v-card-text>
             <v-scroll-y-transition>
@@ -115,7 +115,7 @@
             </v-scroll-y-transition>
           </v-card-text>
         </v-card>
-      </div>
+      </div> -->
       <v-card-actions class="justify-space-between px-0">
         <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/cart" elevation="0" text color="grey" large dark
           style="visibility: hidden">
@@ -270,10 +270,10 @@ export default {
       }
       
       if (!valid) return;
-      localStorage.setItem(
-        "shipping_address",
-        JSON.stringify(this.local.address)
-      );
+      // localStorage.setItem(
+      //   "shipping_address",
+      //   JSON.stringify(this.local.address)
+      // );
       this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
@@ -345,7 +345,7 @@ export default {
         this.$toast.error("Area not found.");
       }
 
-      console.log(this.local.address);
+      // console.log(this.local.address);
     },
   },
   validations() {
@@ -353,11 +353,15 @@ export default {
       local: {
         address: {
           description: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
+            // required: helpers.withParams(
+            //   {
+            //     lang: this.$i18n.locale,
+            //   },
+            //   required
+            // ),
+            string: helpers.withParams(
+              { lang: this.$i18n.locale },
+              value => typeof value === 'string'
             ),
           },
           city_id: {
@@ -408,16 +412,21 @@ export default {
             ),
           },
           name: {
-            required: helpers.withParams(
-              { lang: this.$i18n.locale },
-              requiredIf(function (value, parentVm) {
-                return this.$auth.isLoggedIn;
-              })
-            ),
+           required: helpers.withParams(
+             { lang: this.$i18n.locale },
+             requiredIf(function (value, parentVm) {
+               return !this.$auth.isLoggedIn;
+             })
+           ),
           },
           email: {
-            required: requiredIf(!this.$auth.loggedIn),
-            email,
+           required: helpers.withParams(
+             { lang: this.$i18n.locale },
+             requiredIf(function (value, parentVm) {
+               return !this.$auth.isLoggedIn;
+             })
+           ),
+           email,
           },
           floor: {
             numeric: helpers.withParams(

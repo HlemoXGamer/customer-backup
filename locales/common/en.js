@@ -24,7 +24,7 @@ export default {
     logout: 'Logout',
     login: 'Login',
     notifications: "Notifications",
-    no_notifications: "no notifications for now",
+    no_notifications: "No Notifications for now",
     cart_empty: "This is Cart is Empty",
     search_here: "Search here ...",
     my_address: 'My Addresses',

@@ -106,6 +106,8 @@ export const actions = {
       ["address_building_no", address.building_num],
       ["address_apartment", address.apartment],
       ['address_street_name', address.street_name],
+      ['lat', address.lat],
+      ['lng', address.lng],
       ["block_no", address.block_no],
       this.$auth.loggedIn ? "" :
         ["name", address.name],
@@ -128,7 +130,7 @@ export const actions = {
       _to_send.address_phone = '965' + _to_send.address_phone
     }
     const to_send = { ..._to_send, payment_method: methods[state.form.payment_method_code || 0], v_code: state.form.user_data.v_code }
-    if (state.form.delivery_date.length && state.form.delivery_date !== null) {
+    if (state.form.delivery_date && state.form.delivery_date !== null) {
       to_send.delivery_date = state.form.delivery_date;
     }
     return completeCheckout.call(this, to_send).then(({ data }) => {
