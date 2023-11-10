@@ -29,6 +29,7 @@ export default {
     },
     add_note: "Add Note",
     Add: "Add",
-    KWD: "KWD"
+    KWD: "KWD",
+    note: "Notes"
   };
   

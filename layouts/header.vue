@@ -3,7 +3,7 @@
     <commonReSchedule :dialog="!payment && $store.state.checkout.form.delivery_date !== null" @close="rescheduleDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
-        <v-col :cols="$vuetify.breakpoint.mobile ? 4 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
+        <v-col :cols="$vuetify.breakpoint.mobile ? 1 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
           <nuxt-link :to="goToHome" class="py-2">
             <v-img :height="$vuetify.breakpoint.xs ? 40 : 50" :max-width="$vuetify.breakpoint.mobile ? 65 : 100" contain
               src="/images/big-logo.png" class="logo"></v-img>
@@ -11,8 +11,14 @@
         </v-col>
         <v-col class="pb-0 pt-0 mb-0">
           <v-row class="d-flex align-center justify-end pt-0">
-            <v-col :class="`pb-0 mb-0 ${text_dir}`">
+            <v-col :class="`pb-0 mb-0 ${text_dir} ${ $vuetify.breakpoint.xs ? 'px-0' : '' }`">
               <div>
+                <v-menu offset-y v-if="isLogin">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" color="primary" @click="goToLogin" small elevation="0"
+                      class="rounded-sm">{{ $t("common.sign_in_up") }}</v-btn>
+                  </template>
+                </v-menu>
                 <!-- notifications -->
                 <v-menu offset-x origin="top right" offset-y v-if="$auth.loggedIn" min-width="300" max-height="300">
                   <template v-slot:activator="{ on, attrs }">
@@ -112,13 +118,6 @@
                     <v-icon color="#65382c">mdi-cart</v-icon>
                   </v-btn>
                 </v-badge>
-
-                <v-menu offset-y v-if="isLogin">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs" v-on="on" color="primary" @click="goToLogin" small elevation="0"
-                      class="rounded-sm">{{ $t("common.sign_in_up") }}</v-btn>
-                  </template>
-                </v-menu>
               </div>
             </v-col>
           </v-row>
@@ -248,7 +247,8 @@ export default {
   watch: {
     '$route' (to, from){
       const okPaths = ["profile", "login", "/ar/profile", "/ar/login"];
-      if(!okPaths.some(path => to.path.includes(path))){
+      const okQueries = ["cart", "menu"];
+      if(!okPaths.some(path => to.path.includes(path)) && !okQueries.some(query => Object.keys(to.query).includes(query))){
         let shipping = localStorage.getItem("shipping_address");
         let shipping_type = localStorage.getItem("shipping_type");
         let default_location = localStorage.getItem("default_location");
@@ -265,7 +265,7 @@ export default {
     },
     payment(newValue, oldValue) {
       if(this.payment == false){
-        const data = timeChecker("pre_order", this.time);
+        const data = timeChecker("pre-order", this.time);
         this.$store.dispatch("timer/setData", data);
       }
     }
@@ -311,7 +311,8 @@ export default {
   },
   async mounted() {
     this.$store.commit("checkout/SET_TYPE", localStorage.getItem("shipping_type"));
-    if(this.type !== ""){
+    const types = ["same-day", "pre-order", "asap"];
+    if(types.includes(this.type)){
       await getServerTime().then((response) => {
       this.$store.dispatch("timer/setTime", response.timer);
       const data = timeChecker(this.type, response.timer);

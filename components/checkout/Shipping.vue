@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="text-h6 font-weight-bold mt-8">
+    <p class="text-h6 font-weight-bold mt-8 font-primary" :class="{ 'text-center': $vuetify.breakpoint.smAndDown }">
       {{ $t("checkout.shipping.shipping_label") }}
     </p>
     <!-- <p>Shipping Address: {{ theAddress?.join(' ') }}</p> -->
@@ -30,7 +30,7 @@
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.area") }} <Sup>*</Sup>
               </p>
-              <v-combobox :items="areas" :loading="loading.city" item-text="name" item-value="id"
+              <v-combobox :items="areas" :loading="loading.city" :item-text="`name_${$i18n.locale}`" item-value="id"
                 height="57" outlined flat class="rounded-lg" v-model="currentArea"
                 :error-messages="$validationMsgs($v.local.address.area_id)" color="#65382c" />
 
@@ -94,7 +94,7 @@
                   <img width="20" height="20" src="https://img.icons8.com/color/48/null/kuwait.png" />
                 </div>
                 <div style="width: 100%">
-                  <v-text-field dir="ltr" outlined class="rounded-lg" flat height="50" v-model="local.address.phone"
+                  <v-text-field dir="ltr" outlined class="rounded-lg ms-2" flat height="55" v-model="local.address.phone"
                     :error-messages="$validationMsgs($v.local.address.phone)" @input="$v.local.address.phone.$touch()"
                     label="" :placeholder="phone_placeholder" color="#65382c"></v-text-field>
                 </div>
@@ -135,10 +135,11 @@
           color="dark"
           elevation="0"
           dark
+          :block="$vuetify.breakpoint.xs"
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
           @click="showShopping"
         >
-          {{ $t("Continue To Shopping") }}
+          {{ $t("checkout.shipping.continue") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -175,21 +176,20 @@ export default {
     OfficeIcon,
   },
   mounted() {
-    this.getDefaultLocation();
+    // this.getDefaultLocation();
     localStorage.removeItem("shipping_address");
     get().then(({ data }) => {
       this.areas = data;
       this.areas.sort((a, b) => {
-         let nameA = a.name_en.toUpperCase(); // ignore upper and lowercase
-         let nameB = b.name_en.toUpperCase(); // ignore upper and lowercase
-         if (nameA < nameB) {
-             return -1;
-         }
-         if (nameA > nameB) {
-             return 1;
-         }
-         // names must be equal
-         return 0;
+        let nameA = a.name_ar;
+        let nameB = b.name_ar;
+        let comparison = nameA.localeCompare(nameB, 'ar');
+        if (comparison !== 0) {
+            return comparison;
+        }
+        nameA = a.name_en;
+        nameB = b.name_en;
+        return nameA.localeCompare(nameB, 'en');
       });
     });
   },

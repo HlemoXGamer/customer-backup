@@ -34,6 +34,7 @@ export default {
     },
     Add: "أضف",
     KWD: "دينار",
-    add_note: "أضف ملاحظة"
+    add_note: "أضف ملاحظة",
+    note: "الملاحظات"
   };
   

@@ -9,7 +9,7 @@
           }}</v-icon>
         </v-btn>
         <span class="px-5">
-          {{ $t("products.add_note") }}
+          {{ !view ? $t("products.add_note") : $t("products.note") }}
         </span>
       </v-toolbar>
       <v-card-text>
@@ -22,11 +22,11 @@
         </v-row>
         <v-row v-if="self" cols="12" sm="6" v-for="note in getItemNotes" :key="note.id">
           <v-col>
-            <productNote :note="note" @update-note="updateNote" />
+            <productNote :view="view" :note="note" @update-note="updateNote" />
           </v-col>
         </v-row>
         <!-- <button @click="testMethod">Test me</button> -->
-        <v-card-actions v-if="self" class="mt-5">
+        <v-card-actions v-if="self && !view" class="mt-5">
           <v-btn @click="addToCart" :loading="loading" block elevation="1" rounded color="#65382c" class="white--text">{{
             $t("common.update") }}</v-btn>
         </v-card-actions>
@@ -60,6 +60,10 @@ export default {
       type: Number,
       default: 0,
     },
+    view: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     loading: false,

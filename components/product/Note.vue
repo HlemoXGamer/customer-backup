@@ -1,5 +1,5 @@
 <template>
-  <v-text-field :value="note.note" outlined clearable v-on:input="updateNote($event)" hide-details></v-text-field>
+  <v-text-field :readonly="view" :value="note.note" outlined clearable v-on:input="updateNote($event)" hide-details></v-text-field>
 </template>
 <script>
 import { toBase64 } from "@/utils/files";
@@ -12,6 +12,10 @@ export default {
     id: {
       type: Number,
     },
+    view: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     updateNote(event) {

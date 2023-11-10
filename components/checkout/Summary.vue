@@ -66,7 +66,7 @@
             </v-card-title>
             <v-card-text class="pa-8 pt-4">
                 <v-row class="align-center">
-                    <v-col v-for="product in products" :key="product.id" cols="4">
+                    <v-col v-for="product in products" :key="product.id" :cols="$vuetify.breakpoint.smAndDown ? 12 : $vuetify.breakpoint.mobile ? 6 : 4">
                         <v-card>
                             <v-carousel hide-delimiters v-if="product.images.length > 0" height="200" cover>
                               <v-carousel-item
@@ -80,14 +80,29 @@
                                 height="200"></v-img> -->
                             <v-card-title class="pa-4">{{ product.product.name_en }}</v-card-title>
                             <v-card-text class="pb-4">
-                                Price: {{ product.price }} KWD
+                                <v-row no-gutters class="align-center justify-space-between">
+                                    <p class="ma-0 pa-0">
+                                        Price: {{ product.price }} KWD
+                                    </p>
+                                    <v-btn v-if="product.product.has_note == 1" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product, 'note')">
+                                      <v-icon color="#65382c">mdi-draw-pen</v-icon>
+                                    </v-btn>
+                                </v-row>
                             </v-card-text>
                         </v-card>
                     </v-col>
                 </v-row>
             </v-card-text>
         </v-card>
-
+        <productNoteDialog
+          :value="dialog.note_dialog"
+          @close="dialog.note_dialog = false"
+          :notes="dialog.notes"
+          :product-id="dialog.product_id"
+          :count="dialog.count"
+          :self="true"
+          :view="true"
+          />
         <v-card :color="checkout_loading ? '' : 'grey lighten-4'" rounded="lg" :loading="checkout_loading"
             :disabled="checkout_loading" class="mt-4">
             <v-card-title class="text-h6 font-weight-bold grey--text text--darken-1 mb-0 py-5 px-5 font-weight-bold">
@@ -181,7 +196,7 @@
 </template>
   
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { mapFields } from "vuex-map-fields";
 import { show as getBranch } from "@/apis/branches";
 export default {
@@ -209,8 +224,12 @@ export default {
             same_date_branch: {},
             loading: false,
             products: [],
+            discount: "",
+            discount_type: "",
+            discount_rate: "",
+            newSubTotal: "",
             user: JSON.parse(localStorage.getItem('shipping_address')),
-            authedUser: JSON.parse(localStorage.getItem('user'))
+            authedUser: JSON.parse(localStorage.getItem('user')),
             // quantity: 1,
             // totals: [],
             // total: 0,
@@ -236,6 +255,14 @@ export default {
             //       "https://www.theflavorbender.com/wp-content/uploads/2020/05/French-Croissants-SM-2363.jpg",
             //   },
             // ],
+            dialog: {
+              image_dialog: false,
+              images: [],
+              note_dialog: false,
+              notes: [],
+              product_id: "",
+              count: 0,
+            },
         };
     },
     mounted() {
@@ -245,6 +272,37 @@ export default {
         this.get_branch();
     },
     methods: {
+        ...mapActions("cart", ["setItemNotes"]),
+        openDialog(product, type) {
+          if (type === "image") {
+            this.openImageDialog(product);
+          } else {
+            this.openNoteDialog(product);
+          }
+        },
+        openImageDialog(product) {
+          this.dialog.images = product.images;
+          this.dialog.product_id = product.product_id;
+          this.dialog.count = 1;
+          const theThis = this;
+          setTimeout(function () {
+            theThis.dialog.image_dialog = true;
+          }, 200);
+        },
+        openNoteDialog(product) {
+          this.dialog.notes = product.notes;
+          this.dialog.product_id = product.product_id;
+          this.dialog.count = product.quantity;
+        
+          const theThis = this;
+          setTimeout(function () {
+            theThis.dialog.note_dialog = true;
+          }, 200);
+          this.setItemNotes({
+            itemNotes: product.notes,
+            productId: product.product_id,
+          });
+        },
         back() {
             this.$store.commit("checkout/SHOW_TIME");
         },
