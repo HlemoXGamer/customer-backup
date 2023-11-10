@@ -3,7 +3,7 @@
     <p class="text-h6 font-weight-bold mt-8">
       {{ $t("checkout.shipping.shipping_label") }}
     </p>
-    <p>Shipping Address: {{ theAddress?.join(' ') }}</p>
+    <!-- <p>Shipping Address: {{ theAddress?.join(' ') }}</p> -->
     <v-card>
       <v-row>
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
@@ -27,6 +27,9 @@
                   }
                 "
               ></CommonCountryCityCombo> -->
+              <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
+                {{ $t("profile.addresses.area") }} <Sup>*</Sup>
+              </p>
               <v-combobox :items="areas" :loading="loading.city" item-text="name" item-value="id"
                 height="57" outlined flat class="rounded-lg" v-model="currentArea"
                 :error-messages="$validationMsgs($v.local.address.area_id)" color="#65382c" />

@@ -1,13 +1,13 @@
 <template>
     <v-row no-gutters>
         <v-col cols="12" class="mb-3 mt-7 pt-5" style="position: relative;">
-            <v-btn @click="$router.back()" color="#65382c" text style="position: absolute;" class="ml-2 mt-n14" elevation="0"><v-icon>mdi-chevron-left</v-icon>{{ $t("checkout.shipping.back") }}</v-btn>
-            <v-btn @click="step('back')" large color="#65382c" icon style="position: absolute;" class="ml-10"
+            <v-btn @click="$router.back()" color="#65382c" text style="position: absolute;" class="ml-n4 mt-n14" elevation="0"><v-icon>mdi-chevron-left</v-icon>{{ $t("checkout.shipping.back") }}</v-btn>
+            <v-btn @click="step('back')" large color="#65382c" icon style="position: absolute;" :class="{ 'ml-10': !$vuetify.breakpoint.xs }"
                 v-if="activeStep > 0"><v-icon>mdi-keyboard-backspace</v-icon></v-btn>
-            <p class="text-center text-h4 font-primary font-weight-bold">{{ activeStep == 2 ? titles[activeStep + 1] :
+            <p class="text-center text-h4 font-primary font-weight-bold" :class="{ 'pt-11': $vuetify.breakpoint.xs && activeStep > 0 }">{{ activeStep == 2 ? titles[activeStep + 1] :
                 titles[activeStep] }}</p>
         </v-col>
-        <v-col>
+        <v-col cols="12">
             <v-row no-gutters class="d-flex align-center justify-center" v-if="loading && items.length == 0">
                 <v-progress-circular :size="50" color="#65382c" indeterminate></v-progress-circular>
             </v-row>
@@ -98,7 +98,7 @@
                         </v-row>
                         <div v-if="Object.keys(categoryCriteria[parent][type]['sizes'][size]).includes('colors')">
                             <v-row no-gutters>
-                                <v-col cols="4" class="d-flex align-center justify-center my-2"
+                                <v-col :cols="$vuetify.breakpoint.smAndDown ? 12 : $vuetify.breakpoint.mobile ? 6 : 4" class="d-flex align-center justify-center my-2"
                                     v-for="(itemColor, index) in Object.values(categoryCriteria[parent][type]['sizes'][size]['colors'])"
                                     :key="index">
                                     <v-card
@@ -118,22 +118,23 @@
                         </div>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Flavors</p>
-                            <v-btn large color="#65382c" icon v-if="flavor !== ''"
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.flavor.length > 0">Flavors</p>
+                            <v-btn large color="#65382c" icon v-if="flavor !== '' && matchedItem.flavor.length > 0"
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
-                            <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2">
+                            <v-radio-group v-if="matchedItem.flavor.length > 0" v-model="flavor" row class="d-flex align-center justify-center my-2">
                                 <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
                                     :value="flavor.id"></v-radio>
                             </v-radio-group>
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Extras</p>
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.extra.length > 0">Extras</p>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
-                            <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5">
+                            <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5" v-if="matchedItem.extra.length > 0">
+                                <p class="text-h6 font-primary font-weight-bold text-center">Left Half</p>
                                 <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
@@ -141,7 +142,8 @@
                                     <v-radio value="" label="None"></v-radio>
                                 </v-radio-group>
                             </v-col>
-                            <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5">
+                            <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5" v-if="matchedItem.extra.length > 0">
+                                <p class="text-h6 font-primary font-weight-bold text-center">Right Half</p>
                                 <v-radio-group v-model="extra_right" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
@@ -163,7 +165,7 @@
                         </v-row>
                     <div v-if="Object.keys(categoryCriteria[parent][type]).includes('colors')">
                             <v-row no-gutters>
-                                <v-col cols="4" class="d-flex align-center justify-center my-2"
+                                <v-col :cols="$vuetify.breakpoint.smAndDown ? 12 : $vuetify.breakpoint.mobile ? 6 : 4" class="d-flex align-center justify-center my-2"
                                     v-for="(itemColor, index) in Object.values(categoryCriteria[parent][type]['colors'])"
                                     :key="index">
                                     <v-card
@@ -486,7 +488,7 @@ export default {
             if (this.extra_right !== "") {
                 this.extra_flavor.push(this.extra_right);
             }
-            const product = this.items.find(item => String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+            const product = this.items.find(item => String(item.name_en).includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
             this.product = product;
             this.id = this.product.id;
             this.dialog = true;
