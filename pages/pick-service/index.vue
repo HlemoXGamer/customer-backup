@@ -3,8 +3,8 @@
     <v-col class="py-0 px-0 mx-0 my-0">
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
       <v-row no-gutters class="justify-center align-center py-2">
-        <v-btn-toggle dense v-model="toggle" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn plain class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
+        <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0">
+          <v-btn outlined class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
             @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
             Deliver now
           </v-btn>
@@ -41,12 +41,11 @@
                 mdi-chevron-down
               </v-icon>
             </v-card>  -->
+            <!-- <v-col cols="12" class="d-flex align-center justify-center">
+              <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
+            </v-col> -->
             <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" />
             <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/>
-
-            <v-col cols="12" class="d-flex align-center justify-center">
-              <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
-            </v-col>
           </v-col>
         </v-tab-item>
         <v-tab-item key="addresses">
@@ -85,14 +84,15 @@
   </v-row>
 </template>
 <script>
-import { get } from "@/apis/areas";
+// import { get } from "@/apis/areas";
 import { get as getAddresses, setDefault } from "@/apis/addresses";
 import { update } from '@/apis/addresses'
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
-      toggle: this.$store.state.checkout.type || "asap",
+      shipping_type: this.$store.state.checkout.type,
       currentTab: "areas",
       currentDay: new Date().getDate(),
       currentHour: "",
@@ -116,11 +116,11 @@ export default {
   },
   methods: {
     isToggle(value) {
-      setTimeout(() => {
-        if (this.toggle == undefined) {
-          this.toggle = value;
-        }
-      }, 100);
+      // setTimeout(() => {
+      //   if (this.toggle == undefined) {
+      //     this.toggle = value;
+      //   }
+      // }, 100);
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
@@ -141,15 +141,15 @@ export default {
         this.filteredAreas = this.areas;
       }
     },
-    getAreas() {
-      this.loading = true;
-      get().then(({ data }) => {
-        this.areas = data;
-        this.filteredAreas = data;
-      }).finally(() => {
-        this.loading = false;
-      })
-    },
+    // getAreas() {
+    //   this.loading = true;
+    //   get().then(({ data }) => {
+    //     this.areas = data;
+    //     this.filteredAreas = data;
+    //   }).finally(() => {
+    //     this.loading = false;
+    //   })
+    // },
     async getAddresses() {
       const { data } = await getAddresses();
       this.addresses = data.map(this.transformAddress);
@@ -199,7 +199,6 @@ export default {
       this.loading = false;
     },
     async setDefaultBranch(area) {
-      console.log(area);
       if (this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
       const { branches } = area;
       localStorage.setItem("default_location", "area");
@@ -239,7 +238,6 @@ export default {
       this.$store.dispatch("cart/get", { branch: branches[0] });
     },
     checkLatLng(address) {
-      // console.log(address.hasOwnProperty('lat'));
       if (address && !address.lat && !address.lng) {
         this.currentMapAddress = address;
         this.savedAddrMapDialog = true;
@@ -259,8 +257,14 @@ export default {
     }
   },
   watch: {
-    toggle(newValue, oldValue) {
-      this.$store.commit("checkout/SET_TYPE", newValue);
+    shipping_type(newValue, oldValue) {
+      if(newValue !== undefined){
+        this.$store.commit("checkout/SET_TYPE", newValue);
+        localStorage.setItem("shipping_type", newValue);
+      }
+    },
+    type(newValue, oldValue){
+      this.shipping_type = newValue
     },
     currentAddress(newValue, oldValue) {
       this.setDefaultAddress(this.addresses[newValue]);
@@ -271,6 +275,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("checkout", ["type"]),
     isDeliveryNowDimmed() {
       const now = new Date();
       const hours = now.getHours();
@@ -304,9 +309,9 @@ export default {
     localStorage.removeItem("default_location");
     localStorage.removeItem("default_address");
     localStorage.removeItem("default_area");
-    this.getAreas();
-    this.getAddresses();
+    // this.getAreas();\
     this.currentHour = new Date().getHours();
+    if(this.$auth.loggedIn) this.getAddresses();
   }
 }
 </script>

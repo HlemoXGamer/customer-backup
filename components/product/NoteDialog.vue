@@ -17,7 +17,7 @@
           <v-col>
             <span>Item No ({{ index }})</span>
             <v-text-field v-model="notes[index - 1]" outlined clearable @input="updateProduct(index - 1)"
-              :value="form.notes[index - 1]"></v-text-field>
+              :value="form.notes[index - 1]" hide-details></v-text-field>
           </v-col>
         </v-row>
         <v-row v-if="self" cols="12" sm="6" v-for="note in getItemNotes" :key="note.id">
@@ -82,7 +82,6 @@ export default {
   },
   methods: {
     // testMethod() {
-    //   console.log("the cart is ", this.getItems, "Product id", this.productId);
     //   const any = this.getItems.findIndex((item) => {
     //     return item.product_id === this.productId;
     //   });
@@ -117,7 +116,6 @@ export default {
       });
       newNotes[index] = note;
       this.setItemNotes({ itemNotes: newNotes, productId: this.productId });
-      // console.log(index);
       // if (!this.form.update_notes.includes(note.id)) {
       //   this.form.update_notes.push(note.id);
       // }
@@ -130,8 +128,6 @@ export default {
     },
     async addToCart() {
       try {
-        console.log(this.form.notes);
-        console.log(this.form.update_notes);
         this.loading = true;
         await this.$store.dispatch("cart/add", {
           product_id: this.productId,
@@ -141,6 +137,7 @@ export default {
           special_request: "",
         });
         this.$toast.success("Item Added to Your Cart successfully");
+        this.$emit("updated");
         this.$emit("close");
         this.reset();
       } catch (err) {
@@ -154,7 +151,6 @@ export default {
         this.form.notes[index] = "";
       }
       this.$emit("add-note", this.form.notes[index]);
-      console.log(this.form.notes);
     },
   },
 };

@@ -118,7 +118,6 @@ export default {
     },
     async confirm() {
       let time = this.form.delivery_time;
-      console.log(time);
       this.$store.dispatch("cart/get").then(() => {
         if (
           this.getItems.find((item) => !item.product.in_stock) === undefined

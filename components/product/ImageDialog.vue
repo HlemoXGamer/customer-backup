@@ -135,6 +135,7 @@ export default {
           special_request: "",
         });
         this.$toast.success("Item Added to Your Cart successfully");
+        this.$emit("updated");
         this.$emit("close");
         this.reset();
       } catch (err) {

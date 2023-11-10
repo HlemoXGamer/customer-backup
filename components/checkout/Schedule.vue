@@ -119,7 +119,6 @@ export default {
           for (let i = startHours; i <= endHours; i++) {
             results.push(i);
           }
-          // console.log("timers ==> ", results);
         }
       } else {
         if (this.$auth.loggedIn) {
@@ -135,13 +134,10 @@ export default {
               for (let i = startHours; i <= endHours; i++) {
                 results.push(i);
               }
-              // console.log("timers ==> ", results);
             } else {
-              // console.log(currentHours);
               for (let i = currentHours + 1; i <= endHours; i++) {
                 results.push(i);
               }
-              // console.log("timers ==> ", results);
             }
           }
         } else {
@@ -156,7 +152,6 @@ export default {
               for (let i = startHours; i <= endHours; i++) {
                 results.push(i);
               }
-              console.log("timers ==> ", results);
             } else {
               for (let i = currentHours + 1; i <= endHours; i++) {
                 results.push(i);
@@ -213,7 +208,6 @@ export default {
       return days;
     },
     setSameDay() {
-      console.log("same_day", this.$props.same_day);
       const date = new Date();
       let A,
         hh = "";
@@ -268,9 +262,6 @@ export default {
 
         this.delivery_time = { hh: "", mm: "", A: "" };
       }
-
-      console.log("delivery_date", this.delivery_date);
-      console.log("delivery_time", this.delivery_time);
     },
     get_branch() {
       getBranch(localStorage.getItem("guest_branch")).then(({ data }) => {

@@ -165,7 +165,6 @@ import { required, numeric, helpers } from "vuelidate/lib/validators";
 import { get } from "~/apis/cities";
 
 const phone_number = (value) => {
-  console.log({ value });
   return /^(\[5694]\d{7})$/g.test(value);
 };
 
@@ -220,7 +219,6 @@ export default {
       this.$v.$touch();
 
       if (this.$v.$invalid) {
-        console.log(this.$v);
         this.$toast.error("Error");
         return;
       }

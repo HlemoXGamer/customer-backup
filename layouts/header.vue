@@ -246,8 +246,20 @@ export default {
     },
   },
   watch: {
+    '$route' (to, from){
+      const okPaths = ["profile"];
+      if(!okPaths.some(path => to.path.includes(path))){
+        let shipping = localStorage.getItem("shipping_address");
+        let shipping_type = localStorage.getItem("shipping_type");
+        let default_location = localStorage.getItem("default_location");
+
+        if(!shipping || !default_location || !shipping_type){
+          this.$router.push({ path: "/pick-service"});
+        }
+      }
+    },
     type(newValue, oldValue) {
-      if(newValue == undefined || oldValue == undefined) return;
+      if(newValue == undefined || oldValue == undefined || this.type == "" || this.time == "") return;
       const data = timeChecker(this.type, this.time);
       this.$store.dispatch("timer/setData", data);
     },
@@ -298,10 +310,11 @@ export default {
     }
   },
   async mounted() {
-    await getServerTime().then((response) => {
+    this.$store.commit("checkout/SET_TYPE", localStorage.getItem("shipping_type"));
+    if(this.type !== ""){
+      await getServerTime().then((response) => {
       this.$store.dispatch("timer/setTime", response.timer);
       const data = timeChecker(this.type, response.timer);
-      console.log(data);
       this.$store.dispatch("timer/setData", data);
     });
     timeUpdateInterval = setInterval(async () => {
@@ -311,6 +324,7 @@ export default {
         this.$store.dispatch("timer/setData", data);
       })
     }, this.timePeriod);
+    }
   },
   beforeDestroy() {
     clearInterval(timeUpdateInterval);

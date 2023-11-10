@@ -165,7 +165,6 @@ export default {
       if (this.$v.$invalid) return;
       this.loading = true;
       // login(this.form).then(e => {
-      //   console.log(e)
       // })
       // return
       // this.$auth.setUserToken("Asdasd2342x", "Asdasd2342x");

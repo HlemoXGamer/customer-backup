@@ -13,9 +13,9 @@
           <p class="mb-0 text-left" :class="{ 'text-right': $i18n.locale == 'ar' }" style="color:#65382c;">
             {{ product.price }} {{ $t("products.KWD") }}
           </p>
-          <v-btn v-if="!isInCart" :loading="addToCartLoading"  @click="handleClickCartIcon(product)" small elevation="0" color="#fff" style="border-radius: 5px; color: #65382c;"><v-icon left dark small
+          <v-btn v-if="product.has_image == 1 || product.has_note == 1 || !isInCart" :loading="addToCartLoading"  @click="handleClickCartIcon(product)" small elevation="0" color="#fff" style="border-radius: 5px; color: #65382c;"><v-icon left dark small
               class="ml-0 mr-0">mdi-plus</v-icon>{{ $t("products.Add") }}</v-btn>
-          <div v-if="product.has_image === 0 && product.has_note === 0 && inCartCount >= 1" class="d-flex align-center justify-center">
+          <div v-if="product.has_image == 0 && product.has_note == 0 && inCartCount >= 1" class="d-flex align-center justify-center">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0" @click="changeCount(1)">
               <v-icon small class="mx-0 my-0 rounded" style="background: #fff; color: #65382c;">mdi-plus</v-icon>
             </v-btn>
@@ -116,11 +116,11 @@
                 images.length > count * 10)) ||
               addToCartLoading
               " @click="
-    addToCartDialog(product, { count, special_request })
-    " :loading="addToCartLoading" :class="product.has_note == 1 && product.has_image == 1
-    ? 'mt-3 col-5 Newprimary'
-    : 'ml-8 col-5 Newprimary'
-    " elevation="0" rounded :block="product.has_note == 1 && product.has_image == 1">
+                addToCartDialog(product, { count, special_request })
+                " :loading="addToCartLoading" :class="product.has_note == 1 && product.has_image == 1
+                ? 'mt-3 col-5 Newprimary'
+                : 'ml-8 col-5 Newprimary'
+                " elevation="0" rounded :block="product.has_note == 1 && product.has_image == 1">
             {{ $t("products.product.add_to_cart") }}
           </v-btn>
         </div>
@@ -223,6 +223,7 @@ import SizeSelect from "@/components/product/SizeSelect.vue";
 import { add as addToWishList } from "@/apis/wishlist";
 import { productView } from "@/apis/products";
 import { v4 as uuidv4 } from "uuid";
+import { mapState } from "vuex";
 
 export default {
   props: {
@@ -270,11 +271,12 @@ export default {
     },
   },
   computed: {
+    ...mapState("cart", ["items"]),
     isInCart() {
-      return this.$store.state.cart.items.map(item => item.product_id).includes(this.product.id);
+      return this.items.map(item => item.product_id).includes(this.product.id);
     },
     inCartCount() {
-      return this.$store.state.cart.items.find(item => item.product_id == this.product.id)?.quantity || 0;
+      return this.items.find(item => item.product_id == this.product.id)?.quantity || 0;
     },
     url() {
       // if (!this.product.featured_vendor) return "";

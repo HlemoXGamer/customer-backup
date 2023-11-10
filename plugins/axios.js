@@ -26,7 +26,10 @@ export default function ({ $axios, app, $auth }) {
     errors = errors ? errors : {};
 
     // store.commit('SET_ERROR_BAG', errors);
-    if (!shouldNotToast(array_should_not, message)) {
+    if (error.response.status === 401) {
+      // Handle 401 error here ( Unauthorized )
+      localStorage.removeItem("user");
+    } else if (!shouldNotToast(array_should_not, message)) {
       app.$toast.error(message);
     }
     // setTimeout(() => {

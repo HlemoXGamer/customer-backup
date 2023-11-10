@@ -1,5 +1,5 @@
 <template>
-  <v-text-field :value="note.note" outlined clearable v-on:input="updateNote($event)"></v-text-field>
+  <v-text-field :value="note.note" outlined clearable v-on:input="updateNote($event)" hide-details></v-text-field>
 </template>
 <script>
 import { toBase64 } from "@/utils/files";

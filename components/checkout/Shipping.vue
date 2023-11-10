@@ -27,62 +27,62 @@
                   }
                 "
               ></CommonCountryCityCombo> -->
-              <v-select return-object :items="areas" :loading="loading.city" :item-value="itemValue" item-text="name"
+              <v-combobox return-object :items="areas" :loading="loading.city" item-text="name"
                 height="57" outlined flat class="rounded-lg" :value="city" @input="(e) => { }"
-                :error-messages="cityErrorMessages" />
+                :error-messages="cityErrorMessages" color="#65382c" />
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.block_no"
                 :error-messages="$validationMsgs($v.local.address.block_no)"
-                @input="$v.local.address.block_no.$touch()"></v-text-field>
+                @input="$v.local.address.block_no.$touch()" color="#65382c"></v-text-field>
 
               <p v-if="!this.$auth.loggedIn" class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ "Full Name" }} <Sup>*</Sup>
               </p>
               <v-text-field v-if="!this.$auth.loggedIn" outlined class="rounded-lg" flat height="57"
                 v-model="local.address.name" :error-messages="$validationMsgs($v.local.address.name)"
-                @input="$v.local.address.name.$touch()"></v-text-field>
+                @input="$v.local.address.name.$touch()" color="#65382c"></v-text-field>
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary" v-if="!this.$auth.loggedIn">
                 {{ "Email" }} <Sup>*</Sup>
               </p>
               <v-text-field v-if="!this.$auth.loggedIn" outlined class="rounded-lg" flat height="57"
                 v-model="local.address.email" type="email" :error-messages="$validationMsgs($v.local.address.email)"
-                @input="$v.local.address.email.$touch()"></v-text-field>
+                @input="$v.local.address.email.$touch()" color="#65382c"></v-text-field>
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.street_name") }}<Sup>*</Sup>
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.street_name"
                 :error-messages="$validationMsgs($v.local.address.street_name)"
-                @input="$v.local.address.street_name.$touch()"></v-text-field>
+                @input="$v.local.address.street_name.$touch()" color="#65382c"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.building_number") }} <Sup>*</Sup>
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.building_num"
                 :error-messages="$validationMsgs($v.local.address.building_num)"
-                @input="$v.local.address.building_num.$touch()"></v-text-field>
+                @input="$v.local.address.building_num.$touch()" color="#65382c"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.floor") }} <Sup>*</Sup>
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.floor"
                 :error-messages="$validationMsgs($v.local.address.floor)"
-                @input="$v.local.address.floor.$touch()"></v-text-field>
+                @input="$v.local.address.floor.$touch()" color="#65382c"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.apartment_no") }} <Sup>*</Sup>
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57" v-model="local.address.apartment"
                 :error-messages="$validationMsgs($v.local.address.apartment)"
-                @input="$v.local.address.apartment.$touch()"></v-text-field>
+                @input="$v.local.address.apartment.$touch()" color="#65382c"></v-text-field>
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.additional_info") }}
               </p>
               <v-text-field outlined class="rounded-lg" flat height="57"
                 :error-messages="$validationMsgs($v.local.address.description)"
-                @input="$v.local.address.description.$touch()" v-model="local.address.description"></v-text-field>
+                @input="$v.local.address.description.$touch()" v-model="local.address.description" color="#65382c"></v-text-field>
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.phone") }}
               </p>
@@ -93,7 +93,7 @@
                 <div style="width: 100%">
                   <v-text-field dir="ltr" outlined class="rounded-lg" flat height="50" v-model="local.address.phone"
                     :error-messages="$validationMsgs($v.local.address.phone)" @input="$v.local.address.phone.$touch()"
-                    label="" :placeholder="phone_placeholder"></v-text-field>
+                    label="" :placeholder="phone_placeholder" color="#65382c"></v-text-field>
                 </div>
               </div>
             </v-card-text>
@@ -133,7 +133,7 @@
           elevation="0"
           dark
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
-          @click="showTime"
+          @click="showShopping"
         >
           {{ $t("Continue To Shopping") }}
         </v-btn>
@@ -176,6 +176,18 @@ export default {
     localStorage.removeItem("shipping_address");
     get().then(({ data }) => {
       this.areas = data;
+      this.areas.sort((a, b) => {
+         let nameA = a.name_en.toUpperCase(); // ignore upper and lowercase
+         let nameB = b.name_en.toUpperCase(); // ignore upper and lowercase
+         if (nameA < nameB) {
+             return -1;
+         }
+         if (nameA > nameB) {
+             return 1;
+         }
+         // names must be equal
+         return 0;
+      });
     });
   },
   props: {
@@ -186,6 +198,7 @@ export default {
     return {
       showAddMessage: false,
       location_type: null,
+      cityErrorMessages: [],
       local: {
         address: {
           // TODO: why country name ?
@@ -255,7 +268,7 @@ export default {
     checkPhone({ isValid }) {
       this.phoneValid = isValid;
     },
-    showTime() {
+    showShopping() {
       if (this.lat == null || this.lng == null) {
         this.$toast.error('Please put your address on the map');
         this.$emit('openGMap');
@@ -271,10 +284,10 @@ export default {
       }
       
       if (!valid) return;
-      localStorage.setItem(
-        "shipping_address",
-        JSON.stringify(this.local.address)
-      );
+
+      this.local.address = this.theAddress;
+
+      localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
       this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
@@ -318,7 +331,7 @@ export default {
   watch: {
     theAddress(newAddress) {
       this.local.address.country_name =
-        newAddress[newAddress.length - 2];
+      newAddress[newAddress.length - 2];
       this.local.address.street_name = newAddress.slice(0, -2).join(" ");
       this.local.address.area_name = newAddress[newAddress.length - 2];
 
@@ -337,7 +350,6 @@ export default {
         if (this.center) {
           this.lat = this.center.lat
           this.lng = this.center.lng
-          console.log(this.lat, this.lng);
         } else {
           this.$toast.error('Please Put Your Address on the map')
         }
@@ -345,8 +357,6 @@ export default {
         // No matching area found.
         this.$toast.error("Area not found.");
       }
-
-      // console.log(this.local.address);
     },
   },
   validations() {

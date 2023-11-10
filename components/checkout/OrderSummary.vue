@@ -289,7 +289,6 @@ export default {
           const start = this.branch.start.split(":")[0];
           const end = this.branch.end.split(":")[0];
           this.branch_start = start;
-          // console.log("timer",)
           if (
             ((timer.getHours() >= parseInt(end) && parseInt(end) > 12) ||
               timer.getHours() < parseInt(start)) &&
@@ -326,13 +325,9 @@ export default {
         });
     },
     reverseCheckbox(chckbox) {
-      console.log(this.same_day);
-      console.log(this.is_picked);
       if (this.same_day === true || this.is_picked === true) {
-        console.log("yes");
         this.$store.commit("checkout/SET_IS_PICKUP", true);
       } else {
-        console.log("no");
         this.$store.commit("checkout/SET_IS_PICKUP", false);
         this.$store.commit("checkout/SET_DELIVERY_DATE", null);
       }

@@ -313,7 +313,6 @@ export default {
     new_notification: {
       handler(value) {
         debugger;
-        console.log("value", value);
         this.realTimeStatus = value;
       },
       deep: true,

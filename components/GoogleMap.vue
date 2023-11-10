@@ -81,10 +81,8 @@ export default {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: latLng }, (results, status) => {
         if (status === 'OK' && results[0]) {
-          console.log(results);
           const formattedAddress = results[0].formatted_address;
           this.theAddress = formattedAddress;
-          console.log('Formatted Address:', this.theAddress);
           this.$emit('set-address', this.theAddress.split(' '), this.center)
         } else {
           console.error('Geocoding failed due to:', status);

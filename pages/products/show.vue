@@ -337,7 +337,6 @@ export default {
     };
   },
   async asyncData({ params }) {
-    console.log({params})
     const product = (await show(params.slug)).data;
     return {
       product,

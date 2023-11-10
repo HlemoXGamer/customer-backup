@@ -89,8 +89,10 @@ export default {
     },
   },
   async mounted() {
-    await LocalNotifications.requestPermissions();
-    this.$store.dispatch("notification/getNotifications");
+    if(this.$auth.loggedIn){
+      await LocalNotifications.requestPermissions();
+      this.$store.dispatch("notification/getNotifications");
+    }
   },
 };
 </script>

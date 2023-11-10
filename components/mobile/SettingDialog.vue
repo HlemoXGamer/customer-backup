@@ -59,7 +59,6 @@ export default {
   methods: {
     switchLanguage() {
       // this.$router.replace(this.switchLocalePath('en'))
-      // console.log('...',this.$router.options)
       // if (this.$i18n.local === "ar") {
       //   switchLocalePath("en");
       // } else {

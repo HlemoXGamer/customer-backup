@@ -267,8 +267,6 @@ export default {
       return { ...address, address_info: address_info.join(", ") };
     },
     updateModelValue(data) {
-      debugger;
-      console.log({ data });
     },
   },
   mounted() {
