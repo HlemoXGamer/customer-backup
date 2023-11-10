@@ -27,9 +27,9 @@
                   }
                 "
               ></CommonCountryCityCombo> -->
-              <v-combobox return-object :items="areas" :loading="loading.city" item-text="name"
-                height="57" outlined flat class="rounded-lg" :value="city" @input="(e) => { }"
-                :error-messages="cityErrorMessages" color="#65382c" />
+              <v-combobox :items="areas" :loading="loading.city" item-text="name" item-value="id"
+                height="57" outlined flat class="rounded-lg" v-model="currentArea"
+                :error-messages="$validationMsgs($v.local.address.area_id)" color="#65382c" />
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
@@ -199,12 +199,13 @@ export default {
       showAddMessage: false,
       location_type: null,
       cityErrorMessages: [],
+      currentArea: null,
       local: {
         address: {
           // TODO: why country name ?
           // TODO: why city_name and area_name. why not id ?
           // TODO: branch_id : how should i get it ?
-          country_name: "Egypt",
+          country_name: "Kuwait",
           address: "",
           city_id: null,
           area_id: null,
@@ -269,11 +270,11 @@ export default {
       this.phoneValid = isValid;
     },
     showShopping() {
-      if (this.lat == null || this.lng == null) {
-        this.$toast.error('Please put your address on the map');
-        this.$emit('openGMap');
-        return;
-      }
+      // if (this.lat == null || this.lng == null) {
+      //   this.$toast.error('Please put your address on the map');
+      //   this.$emit('openGMap');
+      //   return;
+      // }
       let valid = true;
       if (
         !this.$auth.loggedIn ||
@@ -285,10 +286,13 @@ export default {
       
       if (!valid) return;
 
-      this.local.address.address = this.theAddress.join(" ");
-
+      // this.local.address.address = this.theAddress.join(" ");
+      if(!this.currentArea) return this.$toast.error(this.$t("checkout.shipping.choose_area"));
+      this.local.address.address = this.transformAddress(this.local.address);
       localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
-      this.$emit("address-updated", this.city);
+      this.local.address.area_id = this.currentArea.id;
+      this.$emit("address-updated", this.currentArea);
+      // this.$emit("address-updated", this.city);
     },
     transformAddress(address) {
       const address_info = [];
@@ -360,19 +364,6 @@ export default {
     },
   },
   validations() {
-    let loggedIn = !this.$auth.loggedIn ? {
-      name: {
-      required: helpers.withParams(
-        { lang: this.$i18n.locale },
-        requiredIf(function (value, parentVm) {
-          return this.$auth.isLoggedIn;
-        })
-      ),
-    },
-    email: {
-      required: requiredIf(!this.$auth.loggedIn),
-      email,
-    }} : '';
     return {
       local: {
         address: {
@@ -397,12 +388,12 @@ export default {
             // ),
           },
           area_id: {
-            // required: helpers.withParams(
-            //   {
-            //     lang: this.$i18n.locale,
-            //   },
-            //   required
-            // ),
+            required: helpers.withParams(
+              {
+                lang: this.$i18n.locale,
+              },
+              required
+            ),
           },
           building_num: {
             numeric: helpers.withParams(

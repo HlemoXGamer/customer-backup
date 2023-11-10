@@ -13,6 +13,7 @@ export default {
   continue: "الذهاب إلى التسوق",
   back: "الرجوع للتسوق",
   time: "الوقت",
+  choose_area: "يجب ان تختار منطقه",
   errors: {
     required: "مطلوب",
     email_invalid: "طريقة كتابة البريد الإلكتروني غير صحيحة",

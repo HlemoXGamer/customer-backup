@@ -2,17 +2,17 @@
   <v-row no-gutters class="py-5">
     <v-col class="py-0 px-0 mx-0 my-0">
       <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
-      <v-row no-gutters class="justify-center align-center py-2">
-        <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0">
-          <v-btn outlined class="py-0 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
+      <v-row no-gutters class="justify-center align-center py-2 flex-wrap">
+        <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0 d-flex align-center justify-center flex-wrap">
+          <v-btn outlined class="py-0 my-1 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
             @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
             Deliver now
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same-day"
+          <v-btn class="ms-3 my-1 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same-day"
             @click="isToggle('same-day')" :disabled="isLaterTodayDimmed" >
             Later Today
           </v-btn>
-          <v-btn class="ms-3 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre-order"
+          <v-btn class="ms-3 my-1 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre-order"
             @click="isToggle('pre-order')">
             Pre Order
           </v-btn>
@@ -44,7 +44,7 @@
             <!-- <v-col cols="12" class="d-flex align-center justify-center">
               <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
             </v-col> -->
-            <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" />
+            <!-- <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" /> -->
             <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/>
           </v-col>
         </v-tab-item>
@@ -53,7 +53,7 @@
             {{ $t("common.no_addresses") }}
           </p>
           <v-item-group v-model="currentAddress" class="mt-4">
-            <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLng="updateLatLng" isAddress :address="currentMapAddress" @close="savedAddrMapDialog = false" />
+            <!-- <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLng="updateLatLng" isAddress :address="currentMapAddress" @close="savedAddrMapDialog = false" /> -->
             <v-col v-for="address in addresses" :key="address?.id" cols="12">
               <v-item v-slot="{ active, toggle }">
                 <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
@@ -108,7 +108,7 @@ export default {
       currentAddress: "",
       loading: false,
       theAddress: null,
-      center: {},
+      center: { lat: 0, lng: 0 },
       savedAddrMapDialog: false,
       gmapDialog: true,
       currentMapAddress: ""
@@ -198,8 +198,7 @@ export default {
       this.$store.dispatch("cart/get");
       this.loading = false;
     },
-    async setDefaultBranch(area) {
-      if (this.currentHour == null || this.currentMinute == null) return this.$toast.error(this.$t("checkout.delivery_time_required"));
+    async setDefaultBranch(area) {  
       const { branches } = area;
       localStorage.setItem("default_location", "area");
       localStorage.setItem("default_area", JSON.stringify(area));

@@ -13,6 +13,7 @@ export default {
   continue: "Continue to Shopping",
   back: "Return to Shopping",
   time: "Time",
+  choose_area: "You have to pick an Area",
   errors: {
     required: "Required",
     email_invalid: "Wrong email format",

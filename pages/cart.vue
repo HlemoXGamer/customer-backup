@@ -56,7 +56,7 @@
         v-model="voucher_code" :placeholder="$t('checkout.enter_voucher')">
         <template #append>
           <v-row no-gutters class="align-center justify-center" style="margin-top: -7px">
-            <v-btn class="my-auto mx-0 rounded-lg" elevation="0" text :loading="loading" @click="applyVoucher()">
+            <v-btn :disabled="!voucher_code.length" class="my-auto mx-0 rounded-lg" elevation="0" text :loading="loading" @click="applyVoucher()">
               {{ $t("checkout.apply") }}
             </v-btn>
           </v-row>
@@ -289,7 +289,7 @@ export default {
       await this.$store.dispatch("cart/setAll", newItems);
       const newitem = {
         ...item,
-        quantity: item.quantity,
+        quantity: -1,
         images: item.images.map((image) => image.file),
         notes: item.notes.map((note) => note.note),
       };
