@@ -285,7 +285,7 @@ export default {
       
       if (!valid) return;
 
-      this.local.address = this.theAddress;
+      this.local.address.address = this.theAddress.join(" ");
 
       localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
       this.$emit("address-updated", this.city);

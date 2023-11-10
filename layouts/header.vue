@@ -247,7 +247,7 @@ export default {
   },
   watch: {
     '$route' (to, from){
-      const okPaths = ["profile"];
+      const okPaths = ["profile", "login"];
       if(!okPaths.some(path => to.path.includes(path))){
         let shipping = localStorage.getItem("shipping_address");
         let shipping_type = localStorage.getItem("shipping_type");

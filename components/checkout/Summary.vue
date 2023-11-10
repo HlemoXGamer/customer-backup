@@ -54,7 +54,7 @@
                         <p><strong>Phone:</strong> {{ user?.phone }}</p>
                     </v-col>
                     <v-col cols="6">
-                        <p><strong>Address:</strong> {{ user?.address_info }}</p>
+                        <p><strong>Address:</strong> {{ user?.address }}</p>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -143,7 +143,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="text-center font-weight-bold pt-5">
-                                        <!-- {{ $t("checkout.estimated_message") }} -->
+                                        {{ $t("checkout.estimated_message") }}
 
                                         <span style="display: block">{{
                                             // calculateEstimatedTime(
