@@ -9,7 +9,7 @@
         </v-col>
         <v-col cols="12">
             <v-row no-gutters class="d-flex align-center justify-center" v-if="loading && items.length == 0">
-                <v-progress-circular :size="50" color="#65382c" indeterminate></v-progress-circular>
+                <v-progress-circular :size="50" color="#65382c" indeterminate></v-progress-circular> 
             </v-row>
             <v-tabs-items v-model="activeStep">
                 <v-tab-item key="0">
