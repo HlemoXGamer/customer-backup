@@ -271,7 +271,7 @@ export default {
       await this.$store.dispatch("cart/setAll", newItems);
       const newitem = {
         ...item,
-        quantity: 1,
+        quantity: item.quantity,
         images: item.images.map((image) => image.file),
         // notes: item.notes.map((note) => note.note),
         notes: ["", ...item.notes.map((note) => note.note)],
@@ -285,12 +285,11 @@ export default {
       const Idx = this.products.findIndex((i) => i.product_id === item.product_id);
       const newItems = JSON.parse(JSON.stringify(this.products));
       newItems[Idx].quantity = newItems[Idx].quantity - 1;
-      this.calculateTotals(newItems);
 
       await this.$store.dispatch("cart/setAll", newItems);
       const newitem = {
         ...item,
-        quantity: -1,
+        quantity: item.quantity,
         images: item.images.map((image) => image.file),
         notes: item.notes.map((note) => note.note),
       };

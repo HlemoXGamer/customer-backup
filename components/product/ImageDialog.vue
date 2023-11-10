@@ -34,8 +34,8 @@
             $t("common.update") }}</v-btn>
         </v-card-actions>
       </v-card-text>
-      <v-card-actions v-if="$vuetify.breakpoint.mobile" class="card_actions">
-        <v-btn class="font-weight-bold" @click="addToCart" :disabled="form.images.length < count ? true : false">
+      <v-card-actions v-if="$vuetify.breakpoint.mobile && !$route.path.includes('/cart')" class="card_actions">
+        <v-btn :loading="loading" class="font-weight-bold" @click="addToCart" :disabled="form.images.length < count ? true : false">
           Add to Cart
         </v-btn>
       </v-card-actions>
@@ -68,13 +68,15 @@ export default {
       default: 0,
     },
   },
-  data: () => ({
-    loading: false,
-    form: {
-      images: [],
-      deleted_images: [],
-    },
-  }),
+  data() {
+    return {
+      loading: false,
+      form: {
+        images: [],
+        deleted_images: [],
+      }, 
+    }
+  },
   watch: {
     "$props.images": {
       handler() {

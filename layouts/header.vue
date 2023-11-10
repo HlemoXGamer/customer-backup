@@ -247,14 +247,14 @@ export default {
   },
   watch: {
     '$route' (to, from){
-      const okPaths = ["profile", "login"];
+      const okPaths = ["profile", "login", "/ar/profile", "/ar/login"];
       if(!okPaths.some(path => to.path.includes(path))){
         let shipping = localStorage.getItem("shipping_address");
         let shipping_type = localStorage.getItem("shipping_type");
         let default_location = localStorage.getItem("default_location");
 
         if(!shipping || !default_location || !shipping_type){
-          this.$router.push({ path: "/pick-service"});
+          this.$router.push(this.localePath("/pick-service"));
         }
       }
     },
