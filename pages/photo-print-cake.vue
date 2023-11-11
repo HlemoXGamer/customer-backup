@@ -568,6 +568,121 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>.active-color {
+<style lang="scss" scoped>
+.active-color {
     border: 2px solid #65382c !important;
-}</style>
+}
+.mobile-dialog.product-dialog {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 90vh;
+}
+
+.product-card {
+  transform: translate(0, 0);
+
+  transition: all 0.3s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translate(10px, -10px);
+  box-shadow: 0 0 20px #ff6c2952 !important;
+}
+
+.v-application .primary {
+  background-color: #65382c !important;
+  border-color: #65382c !important;
+}
+
+.v-application .primary--text {
+  color: #65382c !important;
+  caret-color: #65382c !important;
+}
+
+.product-card {
+  padding: 2rem;
+  background: #f4f7ff !important;
+}
+
+.v-card__subtitle,
+.v-card__text,
+.v-card__title {
+  padding: 0px 1rem !important;
+}
+
+.font-primary {
+  color: $font-primary !important;
+}
+
+.addToCart {
+  border-radius: 50%;
+  background: #65382c;
+  opacity: 0.5;
+  border: 1px solid;
+  height: 34px;
+  width: 34px;
+}
+
+.addToCart i {
+  color: white !important;
+}
+
+.desc {
+  font-size: 14px;
+  color: #909dcb;
+}
+
+.count_input {
+  border: 1px solid;
+  width: 25px;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.request {
+  border-radius: 12px !important;
+}
+
+.request * {
+  box-shadow: unset !important;
+}
+
+.meta {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #65382c;
+}
+
+.actions-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-image {
+  position: relative;
+}
+
+.out-text {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.out-text span {
+  transform: rotate(-20deg);
+}
+
+.disable-cursor {
+  pointer-events: none;
+}
+</style>
