@@ -32,7 +32,7 @@
               </p>
               <v-combobox :items="areas" :loading="loading.city" :item-text="`name_${$i18n.locale}`" item-value="id"
                 height="57" outlined flat class="rounded-lg" v-model="currentArea"
-                :error-messages="$validationMsgs($v.local.address.area_id)" color="#65382c" />
+                :error-messages="$validationMsgs($v.currentArea)" @input="$v.currentArea.$touch()" color="#65382c" />
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
@@ -278,6 +278,10 @@ export default {
       //   this.$emit('openGMap');
       //   return;
       // }
+      if(this.currentArea !== null) {
+        this.local.address.area_id = this.currentArea.id;
+        this.local.address.city_id = this.currentArea.city_id;
+      };
       let valid = true;
       if (
         !this.$auth.loggedIn ||
@@ -288,12 +292,11 @@ export default {
       }
       
       if (!valid) return;
-
+      console.log("HE")
       // this.local.address.address = this.theAddress.join(" ");
       if(!this.currentArea) return this.$toast.error(this.$t("checkout.shipping.choose_area"));
       this.local.address.address = this.transformAddress(this.local.address);
       localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
-      this.local.address.area_id = this.currentArea.id;
       this.$emit("address-updated", this.currentArea);
       // this.$emit("address-updated", this.city);
     },
@@ -368,6 +371,14 @@ export default {
   },
   validations() {
     return {
+      currentArea: {
+        required: helpers.withParams(
+          {
+            lang: this.$i18n.locale,
+          },
+          required
+        ),
+      },
       local: {
         address: {
           description: {
@@ -383,12 +394,12 @@ export default {
             ),
           },
           city_id: {
-            // required: helpers.withParams(
-            //   {
-            //     lang: this.$i18n.locale,
-            //   },
-            //   required
-            // ),
+            required: helpers.withParams(
+              {
+                lang: this.$i18n.locale,
+              },
+              required
+            ),
           },
           area_id: {
             required: helpers.withParams(
