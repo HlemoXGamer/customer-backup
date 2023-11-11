@@ -133,10 +133,10 @@ export default {
           product_id: this.productId,
           images: this.form.images.map((image) => image.file),
           deleted_images: this.form.deleted_images,
-          quantity: this.count,
+          quantity: 0,
           special_request: "",
         });
-        this.$toast.success("Item Added to Your Cart successfully");
+        this.$toast.success("Item Updated successfully");
         this.$emit("updated");
         this.$emit("close");
         this.reset();

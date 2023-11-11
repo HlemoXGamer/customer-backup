@@ -140,7 +140,7 @@ export default {
           quantity: 0,
           special_request: "",
         });
-        this.$toast.success("Item Added to Your Cart successfully");
+        this.$toast.success("Item Updated successfully");
         this.$emit("updated");
         this.$emit("close");
         this.reset();

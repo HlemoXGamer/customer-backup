@@ -543,7 +543,8 @@ export default {
                 mediaUrl: product.images[0]?.url,
                 quantity: data.count || 1,
                 images: this.images.map((image) => image.file),
-                notes: this.notes.map((note) => note),
+                // notes: this.notes.map((note) => note),
+                notes: ["", ...this.notes.map((note) => note.note)],
                 special_request: data.special_request || "",
                 extra_flavor: this.extra_flavor
             });

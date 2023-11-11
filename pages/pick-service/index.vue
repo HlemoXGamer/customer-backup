@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters class="py-5">
     <v-col class="py-0 px-0 mx-0 my-0">
-      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("location.set_address") }}</p>
+      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ titles[activeStep] }}</p>
       <v-tabs-items v-model="activeStep">
         <v-tab-item key="0">
           <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
@@ -66,18 +66,17 @@
         </v-tabs-items>
       </v-tab-item>
       <v-tab-item key="1">
-        <p style="color: #65382c; font-size: 20px;" class="font-weight-bold mb-2">{{ $t("common.choose_service") }}</p>
-        <v-row no-gutters class="justify-center align-center py-2 flex-wrap">
+        <v-row no-gutters class="justify-center align-center py-2 flex-wrap mt-6">
           <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0 d-flex align-center justify-center flex-wrap">
-            <v-btn outlined class="py-0 my-1 me-3 px-4 rounded-lg" style="text-transform: unset;" value="asap"
+            <v-btn outlined x-large class="py-0 my-1 me-3 px-4 rounded-lg font-weight-bold" style="text-transform: unset; border-width: 2px;" value="asap"
               @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
               Deliver now
             </v-btn>
-            <v-btn class="ms-3 my-1 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="same-day"
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold" style="text-transform: unset; border-width: 2px" outlined value="same-day"
               @click="isToggle('same-day')" :disabled="isLaterTodayDimmed" >
               Later Today
             </v-btn>
-            <v-btn class="ms-3 my-1 rounded-lg px-4" style="text-transform: unset; border-width: thin" outlined value="pre-order"
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold" style="text-transform: unset; border-width: 2px" outlined value="pre-order"
               @click="isToggle('pre-order')">
               Pre Order
             </v-btn>
@@ -113,6 +112,10 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      titles: {
+        0: this.$t("location.set_address"),
+        1: this.$t("common.choose_service")
+      },
       shipping_type: this.$store.state.checkout.type,
       currentTab: "areas",
       currentDay: new Date().getDate(),
