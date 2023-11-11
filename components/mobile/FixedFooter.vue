@@ -8,20 +8,8 @@
       <span class="fixed-footer-text"> {{ $t("dialog.home") }} </span>
     </nuxt-link>
     <nuxt-link
-      :to="
-        localePath(
-          $route.query.cart
-            ? ''
-            : {
-                query: {
-                  cart: true,
-                },
-              },
-          $i18n.locale
-        )
-      "
-      class="profile fixed-footer-item"
-    >
+      :to="localePath('/cart')"
+      class="profile fixed-footer-item">
       <v-badge
         :content="count"
         :value="count"
@@ -103,10 +91,10 @@ export default {
   computed: {
     ...mapGetters("cart", ["count"]),
     goToHome() {
-      return ("/location");
+      return ("/pick-service");
       const default_location = localStorage.getItem("default_location");
       if (!default_location) {
-        return ("/location");
+        return ("/pick-service");
       } else {
         return ("/products");
       }
