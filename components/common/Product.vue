@@ -71,7 +71,7 @@
                     <v-icon>mdi-minus</v-icon>
                   </v-btn>
                   <input class="count_input font-primary" readonly
-                    style="pointer-events: none !important; user-select: none !important;" v-model="count" />
+                    style="  border: 1px solid; width: 25px; border-radius: 3px; text-align: center; pointer-events: none !important; user-select: none !important;" v-model="count" />
                   <v-btn icon class="font-primary" @click="changeCount(1)">
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
@@ -371,7 +371,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .mobile-dialog.product-dialog {
   position: absolute;
   top: 0;
