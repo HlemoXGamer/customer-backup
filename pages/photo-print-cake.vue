@@ -209,7 +209,7 @@
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id"></v-radio>
-                                    <v-radio value="" label="None"></v-radio>
+                                    <v-radio value="" label="None" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
                             <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5">
@@ -217,7 +217,7 @@
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id"></v-radio>
-                                    <v-radio value="" label="None"></v-radio>
+                                    <v-radio value="" label="None" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
                         </v-row>
@@ -561,7 +561,8 @@ export default {
             this.extra_left = "";
             this.extra_right = "";
             if (newValue !== "") {
-                this.matchedItem = this.items.find(item => String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+                this.matchedItem = this.items.find(item => String(item.name_en).includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+                console.log(this.matchedItem)
             } else {
                 this.matchedItem = { extra: [], flavor: [] };
             }
