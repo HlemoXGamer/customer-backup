@@ -114,7 +114,7 @@
                   </div>
                 </v-menu>
                 <v-badge :content="count" :value="count" overlap offset-y="20" color="#65382c" class="white--text">
-                  <v-btn icon color="dark" elevation="0" :to="localePath('/cart')">
+                  <v-btn :disabled="$route.path.includes('/pick-service')" icon color="dark" elevation="0" :to="localePath('/cart')">
                     <v-icon color="#65382c">mdi-cart</v-icon>
                   </v-btn>
                 </v-badge>

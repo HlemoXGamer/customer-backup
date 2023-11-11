@@ -186,7 +186,7 @@ export default {
     openImageDialog(product) {
       this.dialog.images = product.images;
       this.dialog.product_id = product.product_id;
-      this.dialog.count = 1;
+      this.dialog.count = 0;
       const theThis = this;
       setTimeout(function () {
         theThis.dialog.image_dialog = true;
