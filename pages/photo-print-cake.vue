@@ -123,10 +123,12 @@
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
-                            <v-radio-group v-if="matchedItem.flavor.length > 0" v-model="flavor" row class="d-flex align-center justify-center my-2">
-                                <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
-                                    :value="flavor.id"></v-radio>
-                            </v-radio-group>
+                            <v-col cols="12" class="px-5">
+                                <v-radio-group v-if="matchedItem.flavor.length > 0" v-model="flavor" row class="d-flex align-center justify-center my-2" color="#65382c">
+                                    <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
+                                        :value="flavor.id" color="#65382c"></v-radio>
+                                </v-radio-group>
+                            </v-col>
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
@@ -138,7 +140,7 @@
                                 <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
-                                        :value="extra.id"></v-radio>
+                                        :value="extra.id" color="#65382c"></v-radio>
                                     <v-radio value="" label="None"></v-radio>
                                 </v-radio-group>
                             </v-col>
@@ -147,8 +149,8 @@
                                 <v-radio-group v-model="extra_right" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
-                                        :value="extra.id"></v-radio>
-                                    <v-radio value="" label="None"></v-radio>
+                                        :value="extra.id" color="#65382c"></v-radio>
+                                    <v-radio value="" label="None" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
                         </v-row>
@@ -190,10 +192,12 @@
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="matchedItem?.flavor.length">
-                            <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2">
-                                <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
-                                    :value="flavor.id"></v-radio>
-                            </v-radio-group>
+                            <v-col cols="12" class="px-5">
+                                <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2" color="#65382c">
+                                    <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
+                                        :value="flavor.id" color="#65382c"></v-radio>
+                                </v-radio-group>
+                            </v-col>
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="matchedItem?.extra.length">
