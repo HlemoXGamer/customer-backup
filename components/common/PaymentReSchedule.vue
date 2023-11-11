@@ -15,7 +15,7 @@
                 <v-tab-item key="refund">
                     <v-card class="px-2 pb-2">
                         <v-card-text>
-                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
+                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px !important;">
                                 <scroll-picker :options="days" v-model="currentDay" />
                                 <scroll-picker :options="hours" v-model="currentHour" />
                                 <scroll-picker :options="minutes" v-model="currentMinute" />
@@ -127,3 +127,14 @@ export default {
     },
 }
 </script>
+
+
+<style scoped lang="scss">
+:deep(.vue-scroll-picker-layer) .top{
+    height: calc(53% - 1em);
+}
+
+:deep(.vue-scroll-picker-layer) .bottom{
+    height: calc(53% - 1em);
+}
+</style>

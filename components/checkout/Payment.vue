@@ -133,7 +133,7 @@ export default {
       // this.loading = true;
     },
     back() {
-      this.$store.commit("checkout/SHOW_TIME");
+      this.$store.commit("checkout/SHOW_SUMMARY");
     },
   },
 };

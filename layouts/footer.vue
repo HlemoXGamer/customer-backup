@@ -40,10 +40,10 @@
             {{ $t("common.contact_us") }}
           </p>
           <div class="d-flex flex-column mt-0 space-x-6 text-white-500">
-            <a class="hover:opacity-75" style="width: fit-content;" href target="_blank">
+            <a class="hover:opacity-75" style="width: fit-content;" href="https://wa.me/1822226" target="_blank">
               <v-icon color="#65382c">mdi-whatsapp</v-icon> {{ $t("common.whatsapp") }}
             </a>
-            <a class="hover:opacity-75 mt-2" href target="_blank" style="width: fit-content;">
+            <a class="hover:opacity-75 mt-2" href="tel:1822226" target="_blank" style="width: fit-content;">
               <v-icon color="#65382c">mdi-phone</v-icon> {{ $t("common.phone") }}
             </a>
             <a class="hover:opacity-75 mt-2" href="https://instagram.com/sable.kw" target="_blank" style="width: fit-content;">

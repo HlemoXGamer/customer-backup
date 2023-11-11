@@ -1,11 +1,11 @@
 <template>
-    <v-col cols="12">
+    <v-col cols="12" class="mt-n10">
         <v-row v-if="isPreOrder || isSameDay" class="align-center justify-center mb-5 mt-0 pt-0">
-            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
-                <scroll-picker :options="days" v-model="currentDay" />
-                <scroll-picker :options="hours" v-model="currentHour" />
-                <scroll-picker :options="minutes" v-model="currentMinute" />
-            </scroll-picker-group>
+                <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px !important;">
+                    <scroll-picker :options="days" v-model="currentDay" />
+                    <scroll-picker :options="hours" v-model="currentHour" />
+                    <scroll-picker :options="minutes" v-model="currentMinute" />
+                </scroll-picker-group>
         </v-row>
         <v-row v-if="isAsap" class="align-center justify-center text-h6">
             <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
@@ -135,4 +135,14 @@ export default {
         }
     },
 }
-</script>  
+</script>
+
+<style lang="scss" scoped>
+:deep(.vue-scroll-picker-layer) .top{
+    height: calc(53% - 1em);
+}
+
+:deep(.vue-scroll-picker-layer) .bottom{
+    height: calc(53% - 1em);
+}
+</style>

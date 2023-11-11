@@ -5,6 +5,7 @@ export function get(params = {}, guest) {
   const shipping_type = localStorage.getItem("shipping_type");
   if(shipping_type == "pre-order"){
     params["menuType"] = "pre-order"
+    params["branch_id"] = 2;
   }
   if (guest) {
     return client.get("/guest-apis/products", { params });
