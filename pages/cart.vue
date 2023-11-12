@@ -104,6 +104,9 @@
           {{ total + delivery_cost }} {{ $t("products.KWD") }}
         </p>
       </v-row>
+      <v-row no-gutters class="align-center justify-center" v-if="subTotal < minimum_charge">
+        <p class="text-center font-h6 red--text my-2 red--text font-weight-bold">{{ $t("cart.total_cost") }} {{ minimum_charge }} {{ $t("products.KWD") }}</p>
+      </v-row>
       <v-divider style="color: grey" class="my-3" />
       <v-row no-gutters class="mt-3 mb-0 align-center justify-space-around">
         <v-btn :disabled="disable_checkout" class="rounded-lg" elevation="0" color="#ecbaa8" @click="toCheckout()">{{ $t("cart.pay_now") }}</v-btn>
@@ -214,7 +217,7 @@ export default {
     async fetch() {
       this.productsLoading = true;
       const area = JSON.parse(localStorage.getItem(`default_${localStorage.getItem("default_location")}`));
-      await this.$store.dispatch("cart/get", { branch: area.branches ? area.branches[0] : area.branch_id }).then(() => {
+      await this.$store.dispatch("cart/get", { branch: area.branches ? area.branches[0].id : area.branch_id }).then(() => {
         this.products = this.items;
         this.subTotal = this.total;
       });
@@ -322,12 +325,12 @@ export default {
     }
   },
   computed: {
-    ...mapState("cart", ["total", "delivery_cost", "items"]),
+    ...mapState("cart", ["total", "delivery_cost", "items", "delivery_fee", "count", "delivery_cost", "minimum_charge"]),
     disable_checkout() {
       return this.items.find(
         (item) =>
           (item.product.has_image && item.quantity > item.images.length) ||
-          this.sub_total < this.minimum_charge ||
+          this.subTotal < this.minimum_charge ||
           !item.product.in_stock
       );
     },

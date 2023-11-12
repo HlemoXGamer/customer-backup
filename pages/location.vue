@@ -15,9 +15,7 @@ export default {
     
   },
   created () {
-    // if (!this.$auth.loggedIn) {
-    //   this.$router.replace(this.localePath('/login'))
-    // }
+    this.$router.push(this.localePath({ path: "/pick-service" }))
   }
 };
 </script>

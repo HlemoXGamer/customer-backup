@@ -1,4 +1,5 @@
 export default {
+  total_cost: "The Total Cost Must be More Than ",
   pay_now: "Pay Now",
   no_products: "There are currently no products in cart",
   order_details: "Order Details",

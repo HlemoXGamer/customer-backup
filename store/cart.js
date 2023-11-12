@@ -78,13 +78,17 @@ export const actions = {
       commit('SET_LOADING_REORDER', false)
     })
   },
-  get({ commit }) {
+  get({ commit }, area) {
     commit('SET_LOADING', true)
     const default_area = (window.localStorage.getItem('default_area'))
     let area_id;
     if (default_area) {
       const parsed = JSON.parse(default_area)
       area_id = parsed.id
+    }
+
+    if(area){
+      area_id = area.branch;
     }
     return get.call(this, area_id).then((data) => {
       commit("SET_ITEMS", data.data?.items || []);

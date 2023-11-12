@@ -1,4 +1,5 @@
 export default {
+    total_cost: "يجب أن تكون التكلفة الإجمالية أكثر من ",
     pay_now: "إدفع الأن",
     no_products: "لا يوجد منتجات في السلة",
     order_details: "معلومات الطلب",
