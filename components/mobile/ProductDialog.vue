@@ -11,18 +11,7 @@
             }}</v-icon>
           </v-btn>
           <nuxt-link
-      :to="
-        localePath(
-          $route.query.cart
-            ? ''
-            : {
-                query: {
-                  cart: true,
-                },
-              },
-          $i18n.locale
-        )
-      "
+      :to="localePath('/cart')"
       class="profile fixed-footer-item"
     >
       <v-badge
@@ -103,7 +92,7 @@
       <productNoteDialog :value="note_dialog" @close="note_dialog = false" :notes="notes" :count="qty"
         @add-note="(value) => addNote(value)" @update-notes="(note) => updateNote(note)" />
     </v-dialog>
-    <CartDialog v-model="dialogCart"/>
+    <!-- <CartDialog v-model="dialogCart"/> -->
   </v-row>
 </template>
 <script>
@@ -138,20 +127,20 @@ export default {
     update_notes: [],
     image_dialog: false,
     note_dialog: false,
-    dialogCart: vm.$route.query.cart ? true : false,
+    // dialogCart: vm.$route.query.cart ? true : false,
 
   }),
   watch: {
-    "$route.query": {
-      handler(query, oldQuery) {
-        this.dialogCart = false;
-         if (query.cart) {
-          this.dialogCart = true;
-        }
-      },
-      deep: true,
-      immediate: true,
-    },
+    // "$route.query": {
+      // handler(query, oldQuery) {
+      //   this.dialogCart = false;
+      //    if (query.cart) {
+      //     this.dialogCart = true;
+      //   }
+      // },
+      // deep: true,
+      // immediate: true,
+    // },
   },
   computed:{
     ...mapGetters("cart", ["getItems", "total", "delivery_fee", "count"]),
@@ -172,14 +161,18 @@ export default {
     },
     async addToCart() {
       this.loading = true;
+      for(let i = 0; i < this.qty; i++){
+          this.notes.push("");
+      }
       try {
         await this.$store.dispatch("cart/add", {
           extra_flavor: this.extra_flavor,
           product_id: this.product.id,
           images: this.images.map((image) => image.file),
-          notes: this.notes
-            ? this.notes.map((note) => note)
-            : ["", ...this.notes.map((note) => note)],
+          // notes: this.notes.length
+          //   ? this.notes.map((note) => note)
+          //   : ["", ...this.notes.map((note) => note)],
+          notes: [...this.notes.map((note) => note)],
           quantity: this.qty || 1,
           special_request: "",
         });

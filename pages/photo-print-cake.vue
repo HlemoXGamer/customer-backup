@@ -538,13 +538,16 @@ export default {
         async addToCart(product, data = {}) {
             this.addToCartLoading = true;
             this.$toast.success("Item Added to Your Cart successfully");
+            for(let i = 0; i < data.count; i++){
+                this.notes.push("");
+            }
             await this.$store.dispatch("cart/add", {
                 product_id: product.id,
                 mediaUrl: product.images[0]?.url,
                 quantity: data.count || 1,
                 images: this.images.map((image) => image.file),
-                // notes: this.notes.map((note) => note),
-                notes: ["", ...this.notes.map((note) => note.note)],
+                notes: [...this.notes.map((note) => note)],
+                // notes: ["", ...this.notes.map((note) => note.note)],
                 special_request: data.special_request || "",
                 extra_flavor: this.extra_flavor
             });
@@ -562,7 +565,6 @@ export default {
             this.extra_right = "";
             if (newValue !== "") {
                 this.matchedItem = this.items.find(item => String(item.name_en).includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
-                console.log(this.matchedItem)
             } else {
                 this.matchedItem = { extra: [], flavor: [] };
             }

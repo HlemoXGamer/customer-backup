@@ -67,11 +67,11 @@
                   'start',
                   'end'
                 )} align-center`">
-                  <v-btn :disabled="count <= 1" icon class="font-primary" @click="changeCount(-1)">
+                  <v-btn :disabled="count <= 1" icon class="font-primary" @click="count -= 1">
                     <v-icon>mdi-minus</v-icon>
                   </v-btn>
                   <input class="count_input font-primary" readonly style="border: 1px solid; width: 25px !important; border-radius: 3px !important; text-align: center !important; pointer-events: none !important; user-select: none !important;" v-model="count" />
-                  <v-btn icon class="font-primary" @click="changeCount(1)">
+                  <v-btn icon class="font-primary" @click="count += 1">
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </div>
@@ -333,17 +333,20 @@ export default {
     },
     async addToCart(product, data = {}) {
       this.addToCartLoading = true;
-      this.$toast.success("Item Added to Your Cart successfully");
+      for(let i = 0; i < data.count; i++){
+          this.notes.push("");
+      }
       await this.$store.dispatch("cart/add", {
         product_id: product.id,
         mediaUrl: product.images[0]?.url,
         quantity: data.count || 1,
         images: this.images.map((image) => image.file),
         // notes: this.notes.map((note) => note),
-        notes: ["", ...this.notes.map((note) => note.note)],
+        notes: [...this.notes.map((note) => note.note)],
         special_request: data.special_request || "",
       });
 
+      this.$toast.success("Item Added to Your Cart successfully");
       this.addToCartLoading = false;
     },
     addToWishList() {

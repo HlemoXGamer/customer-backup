@@ -179,18 +179,7 @@ export default {
     // this.getDefaultLocation();
     localStorage.removeItem("shipping_address");
     get().then(({ data }) => {
-      this.areas = data;
-      this.areas.sort((a, b) => {
-        let nameA = a.name_ar;
-        let nameB = b.name_ar;
-        let comparison = nameA.localeCompare(nameB, 'ar');
-        if (comparison !== 0) {
-            return comparison;
-        }
-        nameA = a.name_en;
-        nameB = b.name_en;
-        return nameA.localeCompare(nameB, 'en');
-      });
+      this.areas = this.sortAreas(data, this.$i18n.locale, `name_${this.$i18n.locale}`)
     });
   },
   props: {
@@ -241,6 +230,9 @@ export default {
     ]),
     phone_placeholder() {
       return this.$t("profile.addresses.phone_placeholder");
+    },
+    currentLocale() {
+      return this.$i18n.locale;
     },
   },
   methods: {
@@ -337,8 +329,14 @@ export default {
 
       return address_info.join(", ");
     },
+    sortAreas(array, locale, key) {
+      return array.sort((a, b) => a[key].localeCompare(b[key], locale));
+    }
   },
   watch: {
+    currentLocale(newLocale, oldLocale) {
+      this.areas = this.sortAreas(this.areas, newLocale, `name_${newLocale}`);
+    },
     theAddress(newAddress) {
       this.local.address.country_name =
       newAddress[newAddress.length - 2];

@@ -297,7 +297,7 @@ export default {
         JSON.stringify(this.addresses[newValue])
       );
       this.activeStep = 1;
-    },
+    }
   },
   computed: {
     ...mapState("checkout", ["type"]),

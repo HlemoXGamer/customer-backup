@@ -4,9 +4,9 @@
       style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index" :style="{ 'border': product.product.has_image == 1 &&  product.images.length < product.quantity ? '2px solid red' : '' }">
-      <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
+      <!-- <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
         lazy-src="https://placehold.co/70x70/png?text=Product" src="https://placehold.co/70x70/png?text=Product"
-        style="cursor: pointer;" />
+        style="cursor: pointer;" /> -->
       <v-card-text class="py-0 px-2 d-flex flex-row justify-space-between" style="height: 40px">
         <v-row no-gutters class="align-center justify-space-between h-100" style="height: 100%;">
           <v-col class="px-0 my-0 mx-0 py-0 d-flex flex-column justify-space-between h-100" style="height: 100%;">
@@ -104,12 +104,12 @@
           {{ total + delivery_cost }} {{ $t("products.KWD") }}
         </p>
       </v-row>
-      <v-row no-gutters class="align-center justify-center" v-if="subTotal < minimum_charge">
+      <v-row no-gutters class="align-center justify-center" v-if="products.length && (subTotal < minimum_charge)">
         <p class="text-center font-h6 red--text my-2 red--text font-weight-bold">{{ $t("cart.total_cost") }} {{ minimum_charge }} {{ $t("products.KWD") }}</p>
       </v-row>
       <v-divider style="color: grey" class="my-3" />
       <v-row no-gutters class="mt-3 mb-0 align-center justify-space-around">
-        <v-btn :disabled="disable_checkout" class="rounded-lg" elevation="0" color="#ecbaa8" @click="toCheckout()">{{ $t("cart.pay_now") }}</v-btn>
+        <v-btn :disabled="disable_checkout || subTotal == 0" class="rounded-lg" elevation="0" color="#ecbaa8" @click="toCheckout()">{{ $t("cart.pay_now") }}</v-btn>
         <v-btn class="rounded-lg" elevation="0" text style="border: 1px solid grey" :to="localePath('/products')">{{
           $t("cart.continue_shopping") }}</v-btn>
       </v-row>
@@ -300,10 +300,10 @@ export default {
       await this.fetch();
       this.addToCartLoading = false;
     },
-    changeCount(number, product_id, product, quantity) {
+    async changeCount(number, product_id, product, quantity) {
       if (quantity + number === 0) {
-        return this.$store.dispatch("cart/remove", product_id).then(() => {
-          this.fetch();
+        return await this.$store.dispatch("cart/remove", product_id).then(async () => {
+          await this.fetch();
         });
       }
       if(number == 1){

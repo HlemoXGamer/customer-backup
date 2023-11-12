@@ -1,7 +1,7 @@
 <template>
     <v-row justify="center">
         <v-dialog v-model="$props.dialog" persistent max-width="500" class="rounded-lg" style="background-color: #fff;">
-            <v-tabs color="#65382c" v-model="tab" style="width: 500px; background-color: #fff;"
+            <v-tabs color="#65382c" v-model="tab" style="max-width: 500px; background-color: #fff;"
                 class="align-center justify-center d-flex mt-0">
                 <v-tabs-slider></v-tabs-slider>
                 <v-tab key="reschedule">
@@ -15,7 +15,12 @@
                 <v-tab-item key="refund">
                     <v-card class="px-2 pb-2">
                         <v-card-text>
-                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px !important;">
+                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px;" v-if="!$vuetify.breakpoint.xs">
+                                <scroll-picker :options="days" v-model="currentDay" />
+                                <scroll-picker :options="hours" v-model="currentHour" />
+                                <scroll-picker :options="minutes" v-model="currentMinute" />
+                            </scroll-picker-group>
+                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 16px;" v-if="$vuetify.breakpoint.xs">
                                 <scroll-picker :options="days" v-model="currentDay" />
                                 <scroll-picker :options="hours" v-model="currentHour" />
                                 <scroll-picker :options="minutes" v-model="currentMinute" />
