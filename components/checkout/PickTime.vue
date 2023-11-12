@@ -1,11 +1,16 @@
 <template>
-    <v-col cols="12" class="mt-n10">
+    <v-col cols="12" :class="{ 'mt-n10': type !== 'asap', 'mt-n5': type == 'asap' }">
         <v-row v-if="isPreOrder || isSameDay" class="align-center justify-center mb-5 mt-0 pt-0">
-                <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px !important;">
-                    <scroll-picker :options="days" v-model="currentDay" />
-                    <scroll-picker :options="hours" v-model="currentHour" />
-                    <scroll-picker :options="minutes" v-model="currentMinute" />
-                </scroll-picker-group>
+            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px;" v-if="!$vuetify.breakpoint.xs">
+                <scroll-picker :options="days" v-model="currentDay" />
+                <scroll-picker :options="hours" v-model="currentHour" />
+                <scroll-picker :options="minutes" v-model="currentMinute" />
+            </scroll-picker-group>
+            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 16px;" v-if="$vuetify.breakpoint.xs">
+                <scroll-picker :options="days" v-model="currentDay" />
+                <scroll-picker :options="hours" v-model="currentHour" />
+                <scroll-picker :options="minutes" v-model="currentMinute" />
+            </scroll-picker-group>
         </v-row>
         <v-row v-if="isAsap" class="align-center justify-center text-h6">
             <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">

@@ -331,11 +331,11 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit("checkout/SET_TYPE", "");
     localStorage.removeItem("default_location");
     localStorage.removeItem("default_address");
     localStorage.removeItem("default_area");
     localStorage.removeItem("shipping_type");
-    this.$store.commit("checkout/SET_TYPE", "");
     // this.getAreas();\
     this.currentHour = new Date().getHours();
     if(this.$auth.loggedIn) this.getAddresses();

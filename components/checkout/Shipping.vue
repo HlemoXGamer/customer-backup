@@ -212,7 +212,7 @@ export default {
           address: "",
           city_id: null,
           area_id: null,
-          city_name: "x", // TODO: delete after the api update
+          city_name: "Kuwait", // TODO: delete after the api update
           area_name: "x", // TODO: delete after the api update
           building_num: "",
           block_no: "",
@@ -292,9 +292,9 @@ export default {
       }
       
       if (!valid) return;
-      console.log("HE")
       // this.local.address.address = this.theAddress.join(" ");
       if(!this.currentArea) return this.$toast.error(this.$t("checkout.shipping.choose_area"));
+      this.local.address.area_name = this.currentArea.name_en;
       this.local.address.address = this.transformAddress(this.local.address);
       localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
       this.$emit("address-updated", this.currentArea);
