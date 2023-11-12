@@ -18,7 +18,7 @@
           </v-btn>
         </v-row>
         <v-divider color="#65382c" class="rounded-lg" />
-        <v-row no-gutters class="justify-space-between align-center py-1">
+        <!-- <v-row no-gutters class="justify-space-between align-center py-1">
           <v-btn block text elevation="0" class="px-0">
             <v-row no-gutters class="justify-start align-center">
               <v-icon :class="i18n_me('ml-1', 'mr-1')" color="#65382c">mdi-clock-time-four</v-icon>
@@ -29,7 +29,7 @@
               <v-icon :class="i18n_me('mr-1', 'ml-1')" color="#65382c">mdi-chevron-{{i18n_me('left', 'right')}}</v-icon>
             </v-row>
           </v-btn>
-        </v-row>
+        </v-row> -->
       </v-col>
       <v-col cols="12" class="mt-1">
         <v-text-field :value="searchItem" @input="debounceSearch" hide-details clearable flat solo :placeholder="$t('categories.search_placeholder')" color="#65382c" style="border-radius: 12px;" background-color="#ededed" dense prepend-inner-icon="mdi-magnify" height="50" />

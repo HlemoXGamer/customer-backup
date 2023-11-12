@@ -274,14 +274,14 @@ export default {
       await this.$store.dispatch("cart/setAll", newItems);
       const newitem = {
         ...item,
-        quantity: item.quantity,
+        quantity: 1,
         images: item.images.map((image) => image.file),
         // notes: item.notes.map((note) => note.note),
         notes: ["", ...item.notes.map((note) => note.note)],
       };
       await this.$store.dispatch("cart/add", newitem);
+      await this.fetch();
       this.addToCartLoading = false;
-      this.fetch();
     },
     async decrement(item) {
       this.addToCartLoading = true;
@@ -297,8 +297,8 @@ export default {
         notes: item.notes.map((note) => note.note),
       };
       await this.$store.dispatch("cart/add", newitem);
+      await this.fetch();
       this.addToCartLoading = false;
-      this.fetch();
     },
     changeCount(number, product_id, product, quantity) {
       if (quantity + number === 0) {
