@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <commonReSchedule :dialog="!payment && $store.state.checkout.form.delivery_date !== null" @close="rescheduleDialog = false" />
+    <commonReSchedule :dialog="rescheduleDialog" @close="rescheduleDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
         <v-col :cols="$vuetify.breakpoint.mobile ? 1 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
@@ -178,6 +178,7 @@ export default {
       navOpen: false,
       drawer: false,
       items: [],
+      rescheduleDialog: false
     };
   },
   computed: {
@@ -265,6 +266,7 @@ export default {
     },
     payment(newValue, oldValue) {
       if(this.payment == false){
+        this.rescheduleDialog = true;
         const data = timeChecker("pre-order", this.time);
         this.$store.dispatch("timer/setData", data);
       }

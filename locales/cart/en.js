@@ -1,4 +1,5 @@
 export default {
+  remove_all: "Clear All",
   total_cost: "The Total Cost Must be More Than ",
   pay_now: "Pay Now",
   no_products: "There are currently no products in cart",

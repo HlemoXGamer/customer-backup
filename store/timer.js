@@ -23,7 +23,8 @@ export const mutations = {
     state.hours = data.hours || [];
     state.minutes = data.minutes || [];
     state.apmpm = data.apmpm || [];
-    state.payment = data.isPaymentTimeValid || true;
+    state.payment = data.isPaymentTimeValid;
+    console.log(data)
   },
   SET_DAYS(state, days) {
     state.days = days;

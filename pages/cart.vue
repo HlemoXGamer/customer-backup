@@ -1,8 +1,10 @@
 <template>
-  <div class="pt-5">
-    <p class="text-h7 font-weight-bold mb-5 mx-auto"
+  <div class="pt-5" style="position: relative;">
+    <p class="text-h6 font-weight-bold mb-5 mx-auto"
       style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
-    <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1" width="100%"
+      <!-- <v-btn :disabled="!products.length" v-if="$auth.loggedIn" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute;
+       top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon>mdi-close</v-icon>{{ $t("cart.remove_all") }}</v-btn> -->
+    <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1 py-2 px-2" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index" :style="{ 'border': product.product.has_image == 1 &&  product.images.length < product.quantity ? '2px solid red' : '' }">
       <!-- <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
         lazy-src="https://placehold.co/70x70/png?text=Product" src="https://placehold.co/70x70/png?text=Product"
@@ -28,13 +30,13 @@
           </div>
           <div class="d-flex align-center justify-center">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0"
-              @click="changeCount(1, product.product_id, product, product.quantity)">
+              @click="changeCount(1, product.product_id, product, product.quantity)" :disabled="removeAllLoading">
               <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">mdi-plus</v-icon>
             </v-btn>
             <input class="rounded text-center px-0 font-weight-bold" type="text" min="1" :value="product.quantity"
               readonly style="text-align: center; outline: none; width: 25px; color: #65382c;">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0"
-              @click="changeCount(-1, product.product_id, product, product.quantity)">
+              @click="changeCount(-1, product.product_id, product, product.quantity)" :disabled="removeAllLoading">
               <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">{{ product.quantity === 1 ? 'mdi-delete' :
                 'mdi-minus' }}</v-icon>
             </v-btn>
@@ -56,7 +58,7 @@
         v-model="voucher_code" :placeholder="$t('checkout.enter_voucher')">
         <template #append>
           <v-row no-gutters class="align-center justify-center" style="margin-top: -7px">
-            <v-btn :disabled="!voucher_code.length" class="my-auto mx-0 rounded-lg" elevation="0" text :loading="loading" @click="applyVoucher()">
+            <v-btn :disabled="!voucher_code.length || removeAllLoading" class="my-auto mx-0 rounded-lg" elevation="0" text :loading="loading" @click="applyVoucher()">
               {{ $t("checkout.apply") }}
             </v-btn>
           </v-row>
@@ -110,7 +112,7 @@
       <v-divider style="color: grey" class="my-3" />
       <v-row no-gutters class="mt-3 mb-0 align-center justify-space-around">
         <v-btn :disabled="disable_checkout || subTotal == 0" class="rounded-lg" elevation="0" color="#ecbaa8" @click="toCheckout()">{{ $t("cart.pay_now") }}</v-btn>
-        <v-btn class="rounded-lg" elevation="0" text style="border: 1px solid grey" :to="localePath('/products')">{{
+        <v-btn class="rounded-lg" elevation="0" text style="border: 1px solid grey" :to="localePath('/categories')">{{
           $t("cart.continue_shopping") }}</v-btn>
       </v-row>
     </v-col>
@@ -155,6 +157,7 @@ export default {
       newSubTotal: "",
       loading: false,
       productsLoading: false,
+      removeAllLoading: false,
       dialog: {
         image_dialog: false,
         images: [],
@@ -167,6 +170,15 @@ export default {
   },
   methods: {
     ...mapActions("cart", ["setItemNotes"]),
+    async emptyCart(){
+      this.removeAllLoading = true;
+
+      await this.$store.dispatch("cart/clear");
+
+      await this.fetch();
+
+      this.removeAllLoading = false;
+    },
     addImage(file) {
       this.images = [...this.images, { file, id: uuidv4(), type: "new" }];
     },

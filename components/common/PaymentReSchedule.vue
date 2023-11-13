@@ -110,7 +110,7 @@ export default {
             if (type == 'reschedule') {
                 try {
                     this.loading = true;
-                    await updateDate({ order_id: this.order, delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + this.currentMinute) })
+                    await updateDate({ order_id: this.order, delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute || '00')) })
                     this.$emit("close");
                 } catch (err) {
                     this.$toast.error("Something went wrong");

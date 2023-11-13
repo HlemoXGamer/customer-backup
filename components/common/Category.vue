@@ -40,7 +40,7 @@ export default {
 };
 </script>
   
-<style lang="scss">
+<style lang="scss" scoped>
 .a-category-card{
   transition: .3s;
   border: 2px solid transparent;

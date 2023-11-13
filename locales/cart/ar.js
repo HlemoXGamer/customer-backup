@@ -1,4 +1,5 @@
 export default {
+    remove_all: "حذف الكل",
     total_cost: "يجب أن تكون التكلفة الإجمالية أكثر من ",
     pay_now: "إدفع الأن",
     no_products: "لا يوجد منتجات في السلة",

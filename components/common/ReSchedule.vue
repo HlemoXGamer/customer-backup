@@ -2,11 +2,16 @@
     <v-row justify="center">
         <v-dialog v-model="$props.dialog" persistent max-width="500" class="rounded-lg">
             <v-card class="px-2 pb-2">
-                <v-card-title class="text-h6 pt-5 pb-0 font-primary">
-                    {{ $t("common.need_reschedule") }}
+                <v-card-title class="pt-5 pb-0">
+                    <p class="my-0 mx-0 text-center font-weight-bold font-primary text-h6">{{ $t("common.need_reschedule") }}</p>
                 </v-card-title>
                 <v-card-text>
-                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c;">
+                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px;" v-if="!$vuetify.breakpoint.xs">
+                        <scroll-picker :options="days" v-model="currentDay" />
+                        <scroll-picker :options="hours" v-model="currentHour" />
+                        <scroll-picker :options="minutes" v-model="currentMinute" />
+                    </scroll-picker-group>
+                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 16px;" v-if="$vuetify.breakpoint.xs">
                         <scroll-picker :options="days" v-model="currentDay" />
                         <scroll-picker :options="hours" v-model="currentHour" />
                         <scroll-picker :options="minutes" v-model="currentMinute" />
@@ -70,7 +75,9 @@ export default {
             return `${year}-${monthss}-${days} ${hours}:${minutes}:${seconds} ${ampm}`;
         },
         closeDialog() {
-            if (this.isPreOrder || this.isSameDay ) this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute ?? 0)));
+            localStorage.setItem("shipping_type", "pre-order");
+            this.$store.commit("checkout/SET_TYPE", "pre-order");
+            this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute || '00')));
             this.$emit("close");
         },
     },

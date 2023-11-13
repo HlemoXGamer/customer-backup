@@ -28,6 +28,8 @@
           v-model="mobileProductDialog"
           @update="(vlaue) => (this.mobileProductDialog = vlaue)"
         />
+      <v-pagination class="mt-5 w-100 mx-auto" v-if="products.length > 0" v-model="page" :total-visible="$vuetify.breakpoint.xs ? 5 : 10"
+        :length="pagination_total_items" color="#65382c" />
     </v-col>
   </v-row>
 </template>
@@ -170,6 +172,7 @@ export default {
     handleCategoryChange(id){
       localStorage.setItem("selected_category", id);
       this.$store.dispatch("category/setCategory", id[0]);
+      this.page = 1;
       this.getProducts();
     }
   },

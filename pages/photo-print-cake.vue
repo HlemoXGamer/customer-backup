@@ -492,7 +492,7 @@ export default {
             if (this.extra_right !== "") {
                 this.extra_flavor.push(this.extra_right);
             }
-            const product = this.items.find(item => String(item.name_en).includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+            const product = this.items.find(item => String(item.name_en).toLowerCase().includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
             this.product = product;
             this.id = this.product.id;
             this.dialog = true;
@@ -564,7 +564,12 @@ export default {
             this.extra_left = "";
             this.extra_right = "";
             if (newValue !== "") {
-                this.matchedItem = this.items.find(item => String(item.name_en).includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+                const product = this.items.find(item => String(item.name_en).toLowerCase().includes(this.size) && String(item.name_en).toLowerCase().includes(this.type) && String(item.name_en).toLowerCase().includes(this.parent) && String(item.name_en).toLowerCase().includes(this.color));
+                if(product.is_pre == 1){
+                    this.matchedItem = product;
+                }else{
+                    this.matchedItem = { extra: [], flavor: [] };    
+                }
             } else {
                 this.matchedItem = { extra: [], flavor: [] };
             }

@@ -62,7 +62,9 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { timeChecker } from "~/helpers/timeChecker";
+import { getServerTime } from "~/apis/time";
+import { mapGetters, mapState } from "vuex";
 import { mapFields } from "vuex-map-fields";
 import Visa from "./Visa";
 import Methods from "./Methods";
@@ -82,11 +84,13 @@ export default {
   computed: {
     ...("checkout", ["loading"]),
     ...mapFields("checkout", [
+      "type",
       "form.payment_method_code",
       "form.tipping",
       "form",
       "selectedTip",
     ]),
+    ...mapState("timer", ["time", "timePeriod", "payment"]),
     ...mapGetters("cart", ["getItems"]),
   },
   watch: {
@@ -117,18 +121,24 @@ export default {
       this.$store.commit("checkout/SET_TIP", parseInt(this.customTip));
     },
     async confirm() {
-      let time = this.form.delivery_time;
-      this.$store.dispatch("cart/get").then(() => {
-        if (
-          this.getItems.find((item) => !item.product.in_stock) === undefined
-        ) {
-          this.$store.dispatch("checkout/confirm");
-        } else {
-          this.$toast.error(this.$t("checkout.out_of_stock"));
-          // this.loading = false;
-        }
-      });
+      await getServerTime().then((response) => {
+        this.$store.dispatch("timer/setTime", response.timer);
+        const data = timeChecker(this.type, response.timer);
+        this.$store.dispatch("timer/setData", data).then(() => {
+          if(this.payment == false) return this.$toast.error(this.$t("common.need_reschedule"));
 
+          this.$store.dispatch("cart/get").then(() => {
+          if (
+            this.getItems.find((item) => !item.product.in_stock) === undefined
+          ) {
+            this.$store.dispatch("checkout/confirm");
+          } else {
+            this.$toast.error(this.$t("checkout.out_of_stock"));
+            // this.loading = false;
+          }
+        });
+        });
+      })
       // this.dialog = true;
       // this.loading = true;
     },
