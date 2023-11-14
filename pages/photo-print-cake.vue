@@ -471,6 +471,12 @@ export default {
                         this.extra_flavor = [];
                         this.extra_left = "";
                         this.extra_right = "";
+                    }else if(this.activeStep == 1){
+                        this.color = "";
+                        this.flavor = "";
+                        this.extra_flavor = [];
+                        this.extra_left = "";
+                        this.extra_right = "";
                     }
                 } else if (type == 'next') {
                     this.activeStep += 1;

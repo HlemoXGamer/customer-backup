@@ -28,7 +28,7 @@
               <v-icon color="#65382c">mdi-draw-pen</v-icon>
             </v-btn>
           </div>
-          <div class="d-flex align-center justify-center">
+          <div class="d-flex align-center justify-center" v-if="product.product.is_flavor == 0 && product.product.is_extra == 0">
             <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0"
               @click="changeCount(1, product.product_id, product, product.quantity)" :disabled="removeAllLoading">
               <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">mdi-plus</v-icon>
@@ -39,6 +39,12 @@
               @click="changeCount(-1, product.product_id, product, product.quantity)" :disabled="removeAllLoading">
               <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">{{ product.quantity === 1 ? 'mdi-delete' :
                 'mdi-minus' }}</v-icon>
+            </v-btn>
+          </div>
+          <div v-else class="d-flex align-center justify-center" v-if="product.product.is_flavor == 1 || product.product.is_extra == 1">
+            <v-btn :loading="addToCartLoading" small icon class="rounded-sm px-0 py-0 mx-0 my-0"
+              @click="changeCount(-1, product.product_id, product, product.quantity)" :disabled="removeAllLoading">
+              <v-icon small class="mx-0 my-0 rounded" style="color: #65382c;">mdi-delete</v-icon>
             </v-btn>
           </div>
         </v-row>
@@ -279,38 +285,44 @@ export default {
     },
     async increment(item) {
       this.addToCartLoading = true;
-      // TODO: wait for the user to stop, then send the whole qty
-      const Idx = this.products.findIndex((i) => i.product_id === item.product_id);
-      const newItems = JSON.parse(JSON.stringify(this.products));
-      newItems[Idx].quantity = newItems[Idx].quantity + 1;
-      await this.$store.dispatch("cart/setAll", newItems);
-      const newitem = {
-        ...item,
-        quantity: 1,
-        images: item.images.map((image) => image.file),
-        // notes: item.notes.map((note) => note.note),
-        notes: ["", ...item.notes.map((note) => note.note)],
-      };
-      await this.$store.dispatch("cart/add", newitem);
-      await this.fetch();
-      this.addToCartLoading = false;
+      try{
+        // TODO: wait for the user to stop, then send the whole qty
+        const Idx = this.products.findIndex((i) => i.product_id === item.product_id);
+        const newItems = JSON.parse(JSON.stringify(this.products));
+        newItems[Idx].quantity = newItems[Idx].quantity + 1;
+        await this.$store.dispatch("cart/setAll", newItems);
+        const newitem = {
+          ...item,
+          quantity: 1,
+          images: item.images.map((image) => image.file),
+          // notes: item.notes.map((note) => note.note),
+          notes: ["", ...item.notes.map((note) => note.note)],
+        };
+        await this.$store.dispatch("cart/add", newitem);
+        await this.fetch();
+      }finally{
+        this.addToCartLoading = false;
+      }
     },
     async decrement(item) {
       this.addToCartLoading = true;
-      const Idx = this.products.findIndex((i) => i.product_id === item.product_id);
-      const newItems = JSON.parse(JSON.stringify(this.products));
-      newItems[Idx].quantity = newItems[Idx].quantity - 1;
+      try{ 
+        const Idx = this.products.findIndex((i) => i.product_id === item.product_id);
+        const newItems = JSON.parse(JSON.stringify(this.products));
+        newItems[Idx].quantity = newItems[Idx].quantity - 1;
 
-      await this.$store.dispatch("cart/setAll", newItems);
-      const newitem = {
-        ...item,
-        quantity: -1,
-        images: item.images.map((image) => image.file),
-        notes: item.notes.map((note) => note.note),
-      };
-      await this.$store.dispatch("cart/add", newitem);
-      await this.fetch();
-      this.addToCartLoading = false;
+        await this.$store.dispatch("cart/setAll", newItems);
+        const newitem = {
+          ...item,
+          quantity: -1,
+          images: item.images.map((image) => image.file),
+          notes: item.notes.map((note) => note.note),
+        };
+        await this.$store.dispatch("cart/add", newitem);
+        await this.fetch();
+      }finally{
+        this.addToCartLoading = false;
+      }
     },
     async changeCount(number, product_id, product, quantity) {
       if (quantity + number === 0) {
