@@ -122,13 +122,13 @@ export default {
       this.$store.commit("checkout/SET_TIP", parseInt(this.customTip));
     },
     async confirm() {
+      this.confirmLoading = true;
       await getServerTime().then((response) => {
         this.$store.dispatch("timer/setTime", response.timer);
         const data = timeChecker(this.type, response.timer);
         this.$store.dispatch("timer/setData", data).then(() => {
           if(this.payment == false) return this.$toast.error(this.$t("common.need_reschedule"));
 
-          this.confirmLoading = true;
           this.$store.dispatch("cart/get").then(() => {
           if (
             this.getItems.find((item) => !item.product.in_stock) === undefined
