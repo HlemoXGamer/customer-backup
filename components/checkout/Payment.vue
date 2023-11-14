@@ -128,16 +128,17 @@ export default {
         this.$store.dispatch("timer/setData", data).then(() => {
           if(this.payment == false) return this.$toast.error(this.$t("common.need_reschedule"));
 
+          this.confirmLoading = true;
           this.$store.dispatch("cart/get").then(() => {
           if (
             this.getItems.find((item) => !item.product.in_stock) === undefined
           ) {
-            this.confirmLoading = true;
             this.$store.dispatch("checkout/confirm").then(() => {
               this.confirmLoading = false;
             });
           } else {
             this.$toast.error(this.$t("checkout.out_of_stock"));
+            this.confirmLoading = false;
             // this.loading = false;
           }
         });
