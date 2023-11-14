@@ -35,7 +35,7 @@
             </div>
           </div>
         </div> -->
-        <div class="col-md-2 col-sm-4 col-4">
+        <div class="col-md-3 col-sm-4 col-4">
           <p class="font-medium mb-2 font-weight-bold">
             {{ $t("common.contact_us") }}
           </p>
@@ -49,8 +49,10 @@
             <a class="hover:opacity-75 mt-2" href="https://instagram.com/sable.kw" target="_blank" style="width: fit-content;">
               <v-icon color="#65382c">mdi-instagram</v-icon> {{ $t("common.instagram") }}
             </a>
-            <a class="hover:opacity-75 mt-2" href target="_blank" style="width: fit-content;">
-              <v-icon color="#65382c">mdi-email-outline</v-icon> {{ $t("common.email") }}
+            <a class="hover:opacity-75 mt-2" href="mailto: orders@sablesweets.com" target="_blank" style="width: fit-content;">
+              <v-icon color="#65382c">mdi-email-outline</v-icon> 
+              <!-- {{ $t("common.email") }} -->
+              orders@sablesweets.com
             </a>
           </div>
         </div>

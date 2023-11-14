@@ -1,9 +1,9 @@
 <template>
     <v-row no-gutters>
         <v-col cols="12" class="mb-3 mt-7 pt-5" style="position: relative;">
-            <v-btn @click="$router.back()" color="#65382c" text style="position: absolute;" class="ml-n4 mt-n14" elevation="0"><v-icon>mdi-chevron-left</v-icon>{{ $t("checkout.shipping.back") }}</v-btn>
+            <v-btn @click="$router.back()" color="#65382c" text style="position: absolute;" class="ml-n4 mt-n14" elevation="0"><v-icon>mdi-chevron-{{ $i18n.locale == 'ar' ? 'right' : 'left' }}</v-icon>{{ $t("checkout.shipping.back") }}</v-btn>
             <v-btn @click="step('back')" large color="#65382c" icon style="position: absolute;" :class="{ 'ml-10': !$vuetify.breakpoint.xs }"
-                v-if="activeStep > 0"><v-icon>mdi-keyboard-backspace</v-icon></v-btn>
+                v-if="activeStep > 0"><v-icon>mdi-chevron-{{ $i18n.locale == 'ar' ? 'right' : 'left' }}</v-icon></v-btn>
             <p class="text-center text-h4 font-primary font-weight-bold" :class="{ 'pt-11': $vuetify.breakpoint.xs && activeStep > 0 }">{{ activeStep == 2 ? titles[activeStep + 1] :
                 titles[activeStep] }}</p>
         </v-col>
@@ -102,7 +102,7 @@
                                     v-for="(itemColor, index) in Object.values(categoryCriteria[parent][type]['sizes'][size]['colors'])"
                                     :key="index">
                                     <v-card
-                                        :color="String(itemColor).toLowerCase().trim() !== 'off white' ? String(itemColor).toLowerCase().trim() !== 'white' ? itemColor : '#fbf7f5' : ''"
+                                        :color="String(itemColor).toLowerCase().trim() !== 'white' ? String(itemColor).toLowerCase().trim() !== 'off white' ? colors[String(itemColor).toLowerCase()] ?? itemColor : '#fbf7f5' : ''"
                                         class="col-11 rounded-lg d-flex align-center justify-center"
                                         :class="{ 'active-color': itemColor == color }" @click="pickColor(itemColor)"
                                         height="80px" style="border: 1px solid #ecbaa8">
@@ -118,13 +118,13 @@
                         </div>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.flavor.length > 0">Flavors</p>
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.flavor.length > 0">{{ $t("products.flavors") }}</p>
                             <v-btn large color="#65382c" icon v-if="flavor !== '' && matchedItem.flavor.length > 0"
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
                             <v-col cols="12" class="px-5">
-                                <v-radio-group v-if="matchedItem.flavor.length > 0" v-model="flavor" row class="d-flex align-center justify-center my-2" color="#65382c">
+                                <v-radio-group v-if="matchedItem.flavor.length > 0" v-model="flavor" class="d-flex align-center justify-center my-2" color="#65382c">
                                     <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
                                         :value="flavor.id" color="#65382c"></v-radio>
                                 </v-radio-group>
@@ -132,31 +132,31 @@
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.extra.length > 0">Extras</p>
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.extra.length > 0">{{ $t("products.extras") }}</p>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('extra') && color !== ''">
-                            <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5" v-if="matchedItem.extra.length > 0">
-                                <p class="text-h6 font-primary font-weight-bold text-center">Left Half</p>
+                            <v-col cols="6" :style="{'border-right': $i18n.locale == 'en' ? '1px solid #65382c' : '', 'border-left': $i18n.locale == 'ar' ? '1px solid #65382c' : ''}" class="px-5" v-if="matchedItem.extra.length > 0">
+                                <p class="text-h6 font-primary font-weight-bold text-center">{{ $t("products.first_half") }}</p>
                                 <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id" color="#65382c"></v-radio>
-                                    <v-radio value="" label="None"></v-radio>
+                                    <v-radio value="" :label="$t('products.none')" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
-                            <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5" v-if="matchedItem.extra.length > 0">
-                                <p class="text-h6 font-primary font-weight-bold text-center">Right Half</p>
+                            <v-col cols="6" :style="{'border-right': $i18n.locale == 'ar' ? '1px solid #65382c' : '', 'border-left': $i18n.locale == 'en' ? '1px solid #65382c' : ''}" class="px-5" v-if="matchedItem.extra.length > 0">
+                                <p class="text-h6 font-primary font-weight-bold text-center">{{ $t("products.second_half") }}</p>
                                 <v-radio-group v-model="extra_right" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id" color="#65382c"></v-radio>
-                                    <v-radio value="" label="None" color="#65382c"></v-radio>
+                                    <v-radio value="" :label="$t('products.none')" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
                         </v-row>
                         <v-row v-if="color !== '' && size !== '' && type !== '' && parent !== ''" no-gutters
                             class="mt-7 align-center justify-center px-5"><v-btn large color="#65382c" class="white--text"
-                                @click="saveCake()"><v-icon>mdi-check</v-icon> Confrim</v-btn></v-row>
+                                @click="saveCake()"><v-icon>mdi-check</v-icon> {{ $t("products.confirm") }}</v-btn></v-row>
                     </div>
                     <div v-if="type == 'heart cake' && parent == 'heart cake'">
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4">
@@ -171,7 +171,7 @@
                                     v-for="(itemColor, index) in Object.values(categoryCriteria[parent][type]['colors'])"
                                     :key="index">
                                     <v-card
-                                        :color="String(itemColor).toLowerCase().trim() !== 'off white' ? String(itemColor).toLowerCase().trim() !== 'white' ? itemColor : '#fbf7f5' : ''"
+                                        :color="String(itemColor).toLowerCase().trim() !== 'white' ? String(itemColor).toLowerCase().trim() !== 'off white' ? colors[String(itemColor).toLowerCase()] ?? itemColor : '#fbf7f5' : ''"
                                         class="col-11 rounded-lg d-flex align-center justify-center"
                                         :class="{ 'active-color': itemColor == color }" @click="pickColor(itemColor)"
                                         height="80px" style="border: 1px solid #ecbaa8">
@@ -187,13 +187,13 @@
                         </div>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="matchedItem?.flavor.length">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Flavors</p>
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">{{ $t("products.flavors") }}</p>
                             <v-btn large color="#65382c" icon v-if="flavor !== ''"
                                 @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="matchedItem?.flavor.length">
                             <v-col cols="12" class="px-5">
-                                <v-radio-group v-model="flavor" row class="d-flex align-center justify-center my-2" color="#65382c">
+                                <v-radio-group v-model="flavor" class="d-flex align-center justify-center my-2" color="#65382c">
                                     <v-radio v-for="(flavor, index) in matchedItem?.flavor" :key="index" :label="flavor.name"
                                         :value="flavor.id" color="#65382c"></v-radio>
                                 </v-radio-group>
@@ -201,29 +201,31 @@
                         </v-row>
                         <v-row no-gutters class=" d-flex align-center justify-space-between px-4"
                             v-if="matchedItem?.extra.length">
-                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">Extras</p>
+                            <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5">{{ $t("products.extras") }}</p>
                         </v-row>
                         <v-row no-gutters v-if="matchedItem?.extra.length">
-                            <v-col cols="6" style="border-right: 1px solid #65382c;" class="px-5">
+                            <v-col cols="6" :style="{'border-right': $i18n.locale == 'en' ? '1px solid #65382c' : '', 'border-left': $i18n.locale == 'ar' ? '1px solid #65382c' : ''}" class="px-5">
+                                <p class="text-h6 font-primary font-weight-bold text-center">{{ $t("products.first_half") }}</p>
                                 <v-radio-group v-model="extra_left" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id"></v-radio>
-                                    <v-radio value="" label="None" color="#65382c"></v-radio>
+                                    <v-radio value="" :label="$t('products.none')" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
-                            <v-col cols="6" style="border-left: 1px solid #65382c;" class="px-5">
+                            <v-col cols="6" :style="{'border-right': $i18n.locale == 'ar' ? '1px solid #65382c' : '', 'border-left': $i18n.locale == 'en' ? '1px solid #65382c' : ''}" class="px-5">
+                                <p class="text-h6 font-primary font-weight-bold text-center">{{ $t("products.second_half") }}</p>
                                 <v-radio-group v-model="extra_right" class="d-flex align-center justify-center my-2"
                                     color="#65382c" hide-details>
                                     <v-radio v-for="(extra, index) in matchedItem?.extra" :key="index" :label="extra.name"
                                         :value="extra.id"></v-radio>
-                                    <v-radio value="" label="None" color="#65382c"></v-radio>
+                                    <v-radio value="" :label="$t('products.none')" color="#65382c"></v-radio>
                                 </v-radio-group>
                             </v-col>
                         </v-row>
                         <v-row v-if="color !== '' && type !== '' && parent !== ''" no-gutters
                             class="mt-7 align-center justify-center px-5"><v-btn large color="#65382c" class="white--text"
-                                @click="saveCake()"><v-icon>mdi-check</v-icon> Confrim</v-btn></v-row>
+                                @click="saveCake()"><v-icon>mdi-check</v-icon> {{ $t("products.confirm") }}</v-btn></v-row>
                     </div>
                 </v-tab-item>
             </v-tabs-items>
@@ -382,6 +384,12 @@ export default {
             special_request: "",
             showAlert: false,
             id: "",
+            colors: {
+                "pink": "#FDAAD6",
+                "blue": "#00AFDB",
+                "yellow": "#FFF36D",
+                "purple": "#BF9BDE"
+            }
         }
     },
     methods: {

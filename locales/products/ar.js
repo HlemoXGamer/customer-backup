@@ -1,4 +1,10 @@
 export default {
+    none: "لا شيئ",
+    flavors: "النكهات",
+    extras: "الإضافات",
+    confirm: "تأكيد",
+    first_half: "النصف الأول",
+    second_half: "النصف الثاني",
     save: "حفظ",
     cake_type: "نوع الكيك",
     choose_color: "اختر اللون",

@@ -19,7 +19,7 @@
         </v-row>
         <v-card>
             <v-card-actions class="d-flex px-0" :class="{ 'flex-column justify-center align-start': $vuetify.breakpoint.xs, 'justify-space-between': !$vuetify.breakpoint.xs }">
-                <v-btn @click="back" elevation="0" text color="grey" large dark style="background: transparent !important"
+                <v-btn @click="$router.push(localePath('/categories'))" elevation="0" text color="grey" large dark style="background: transparent !important"
                     :class="$vuetify.breakpoint.xs ? 'mt-4' : ''">
                     <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
                         mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
@@ -85,9 +85,6 @@ export default {
                 this.$store.commit("checkout/SET_DELIVERY_DATE", this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute || '00')));
             }
             this.$store.commit("checkout/SHOW_SUMMARY");
-        },
-        back() {
-            this.$store.commit("checkout/SHOW_SHIPPING");
         },
         transformDate(dateTime) {
             const parts = dateTime.split(' ');

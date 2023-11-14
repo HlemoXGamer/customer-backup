@@ -1,4 +1,10 @@
 export default {
+    none: "None",
+    flavors: "Flavors",
+    extras: "Extras",
+    confirm: "Confirm",
+    first_half: "First Half",
+    second_half: "Second Half",
     save: "Save",
     cake_type: "Cake Type",
     choose_color: "Pick a Color",

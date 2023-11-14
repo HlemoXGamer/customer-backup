@@ -1,5 +1,5 @@
 <template>
-  <div :style="$vuetify.breakpoint.width > 414 ? 'width: 229px;' : 'width: 47%;'" class="my-1 mx-1">
+  <div :style="$vuetify.breakpoint.xs && !($vuetify.breakpoint.width > 768) ? 'width: calc((100% - 16px) / 2);' : 'width: 229px;'" class="my-1 mx-1">
     <v-card class="a-product-card" :width="$vuetify.breakpoint.width > 414 ? 229 : '100%'" min-height="200"
       style="border-radius: 10px;" color="#ecbaa8">
       <v-img @click="productViewed(product.id)" cover :height="$vuetify.breakpoint.width > 414 ? 200 : 150"

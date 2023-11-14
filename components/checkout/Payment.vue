@@ -53,7 +53,7 @@
         </v-icon>
         {{ $t("checkout.payment.return") }}
       </v-btn>
-      <v-btn x-large class="rounded-lg" height="57" color="#65382c" elevation="0" dark :loading="loading"
+      <v-btn x-large class="rounded-lg" height="57" color="#65382c" elevation="0" dark :loading="confirmLoading"
         :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }" @click="confirm">
         {{ $t("checkout.payment.confirm") }}
       </v-btn>
@@ -79,6 +79,7 @@ export default {
       tips: [5, 15, 20],
       customTip: null,
       loading: false,
+      confirmLoading: false
     };
   },
   computed: {
@@ -131,7 +132,10 @@ export default {
           if (
             this.getItems.find((item) => !item.product.in_stock) === undefined
           ) {
-            this.$store.dispatch("checkout/confirm");
+            this.confirmLoading = true;
+            this.$store.dispatch("checkout/confirm").then(() => {
+              this.confirmLoading = false;
+            });
           } else {
             this.$toast.error(this.$t("checkout.out_of_stock"));
             // this.loading = false;
