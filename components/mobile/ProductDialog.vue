@@ -57,7 +57,7 @@
                 {{ product.price }} <span>{{ i18n_me("دينار", "KWD") }}</span>
               </p>
             </div>
-            <div class="product_content__info_description">
+            <div class="product_content__info_description" v-if="product.is_pre == 0">
               {{ i18n_me(product.description_ar, product.description_en) }}
             </div>
           </div>

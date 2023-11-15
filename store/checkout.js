@@ -181,14 +181,14 @@ export const mutations = {
   SHOW_SHIPPING(state) {
     state.step = 1;
   },
-  SHOW_PAYMENT(state) {
-    state.step = 3;
-  },
-  SHOW_SUMMARY(state) {
+  SHOW_TIME(state) {
     state.step = 2;
   },
-  SHOW_TIME(state) {
-    state.step = 1;
+  SHOW_SUMMARY(state) {
+    state.step = 3;
+  },
+  SHOW_PAYMENT(state) {
+    state.step = 4;
   },
   SHOW_REVIEW(state) {
     state.step = 4;

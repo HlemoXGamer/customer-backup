@@ -1,20 +1,22 @@
 <template>
-  <v-row no-gutters class="py-5">
-    <v-col class="py-0 px-0 mx-0 my-0">
-      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ titles[activeStep] }}</p>
-      <v-tabs-items v-model="activeStep">
-        <v-tab-item key="0">
+  <v-row no-gutters class="pb-5">
+    <v-col cols="12">
+      <Banner></Banner>
+    </v-col>
+    <v-col class="py-0 px-0 mx-0 mb-0 mt-7">
+      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("checkout.shipping.shipping_label") }}</p>
           <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
-            <v-tab value="areas" style="width: 200px" class="rounded-lg">
+            <v-tab value="areas" style="width: 200px" class="font-weight-bold">
               {{ $t("location.select_your_area") }}
             </v-tab>
-            <v-tab value="addresses" style="width: 200px" :disabled="!$auth.loggedIn">
+            <v-tab value="addresses" style="width: 200px" :disabled="!$auth.loggedIn" class="font-weight-bold">
               {{ $t("location.saved_addresses") }}
             </v-tab>
           </v-tabs>
         <v-tabs-items v-model="currentTab">
           <v-tab-item key="areas">
-            <v-col class="mx-0 mt-2 px-0 py-0">
+            <v-col class="mx-0 mt-5 px-0 py-0">
+              <v-combobox :loading="loading" :items="areas" :item-text="`name_${$i18n.locale}`" item-value="id" height="57" outlined flat class="rounded-lg" placeholder="Pick an Area" color="#65382c" v-model="currentArea" />
               <!-- Old Address List -->
               <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
                 height="40px" style="border-bottom: 1px solid gray"
@@ -30,7 +32,7 @@
                 <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
               </v-col> -->
               <!-- <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" /> -->
-              <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/>
+              <!-- <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/> -->
             </v-col>
           </v-tab-item>
           <v-tab-item key="addresses">
@@ -64,10 +66,10 @@
             </v-item-group>
           </v-tab-item>
         </v-tabs-items>
-      </v-tab-item>
-      <v-tab-item key="1">
-        <v-row no-gutters class="justify-center align-center py-2 flex-wrap mt-6">
-          <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0 d-flex align-center justify-center flex-wrap">
+        <v-row no-gutters class="justify-center align-center py-2 flex-wrap mt-3">
+          <v-col cols="12">
+            <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("common.choose_service") }}</p>
+            <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0 d-flex align-center justify-center flex-wrap mt-6">
             <v-btn outlined x-large class="py-0 my-1 me-3 px-4 rounded-lg font-weight-bold" style="text-transform: unset; border-width: 2px;" value="asap"
               @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
               Deliver now
@@ -81,53 +83,38 @@
               Pre Order
             </v-btn>
           </v-btn-toggle>
+          </v-col>
         </v-row>
-        <!-- <v-row no-gutters class="align-center justify-end">
-          <v-btn
-            x-large
-            class="rounded-lg mt-10"
-            height="57"
-            color="#65382c"
-            elevation="0"
-            dark
-            :block="$vuetify.breakpoint.xs"
-            :disabled="shipping_type == ''"
-            :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
-            @click="$router.push({ path: '/categories' })"
-          >
+        <v-row no-gutters class="align-center justify-end mt-12">
+          <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' && (!currentArea || !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
             {{ $t("checkout.shipping.continue_shopping") }}
           </v-btn>
-        </v-row> -->
-      </v-tab-item>
-    </v-tabs-items>
+        </v-row>
     </v-col>
   </v-row>
 </template>
 <script>
+import Banner from "@/components/home/Banner";
 // import { get } from "@/apis/areas";
 import { get as getAddresses, setDefault } from "@/apis/addresses";
 import { update } from '@/apis/addresses'
+import { get as getAreas } from '@/apis/areas'
 import { mapState } from "vuex";
 
 export default {
+  components: {
+    Banner
+  },
   data() {
     return {
+      currentArea: null,
       titles: {
-        0: this.$t("location.set_address"),
+        0: this.$t("location.select_your_area"),
         1: this.$t("common.choose_service")
       },
       shipping_type: this.$store.state.checkout.type,
       currentTab: "areas",
-      currentDay: new Date().getDate(),
-      currentHour: "",
-      currentMinute: "",
-      current: [],
-      days: [],
-      hours: [],
-      minutes: [],
-      searchTerm: "",
       areas: [],
-      filteredAreas: [],
       addresses: [],
       currentAddress: "",
       loading: false,
@@ -136,7 +123,6 @@ export default {
       savedAddrMapDialog: false,
       gmapDialog: true,
       currentMapAddress: "",
-      activeStep: 0
     };
   },
   methods: {
@@ -164,15 +150,14 @@ export default {
         this.filteredAreas = this.areas;
       }
     },
-    // getAreas() {
-    //   this.loading = true;
-    //   get().then(({ data }) => {
-    //     this.areas = data;
-    //     this.filteredAreas = data;
-    //   }).finally(() => {
-    //     this.loading = false;
-    //   })
-    // },
+    getAreas() {
+      this.loading = true;
+      getAreas().then(({ data }) => {
+        this.areas = data;
+      }).finally(() => {
+        this.loading = false;
+      })
+    },
     async getAddresses() {
       const { data } = await getAddresses();
       this.addresses = data.map(this.transformAddress);
@@ -253,7 +238,6 @@ export default {
           localStorage.setItem("guest_city_name", "Kuwait");
           //await setDefault({ branch_id: id, area_id: area.id });
         }
-        this.activeStep = 1;
         // this.$router.replace(this.localePath("/categories"));
       } else {
         this.$toast.error(this.$t("location.no_branches"));
@@ -280,11 +264,19 @@ export default {
     }
   },
   watch: {
+    currentLocale(newLocale, oldLocale) {
+      this.areas = this.sortAreas(this.areas, newLocale, `name_${newLocale}`);
+    },
+    currentArea(newArea, oldArea){
+      if(newArea !== null && newArea !== "" && newArea !== undefined){
+        this.setDefaultBranch(this.areas.find(area => area.id == this.currentArea.id));
+      }
+    },
     shipping_type(newValue, oldValue) {
       if(newValue !== undefined){
         this.$store.commit("checkout/SET_TYPE", newValue);
         localStorage.setItem("shipping_type", newValue);
-        this.$router.replace(this.localePath("/categories"));
+        // this.$router.replace(this.localePath("/categories"));
       }
     },
     type(newValue, oldValue){
@@ -292,14 +284,16 @@ export default {
     },
     currentAddress(newValue, oldValue) {
       this.setDefaultAddress(this.addresses[newValue]);
-      localStorage.setItem(
-        "shipping_address",
-        JSON.stringify(this.addresses[newValue])
-      );
-      this.activeStep = 1;
+      // localStorage.setItem(
+      //   "shipping_address",
+      //   JSON.stringify(this.addresses[newValue])
+      // );
     }
   },
   computed: {
+    currentLocale() {
+      return this.$i18n.locale;
+    },
     ...mapState("checkout", ["type"]),
     isDeliveryNowDimmed() {
       const now = new Date();
@@ -331,12 +325,14 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit("checkout/SET_TYPE", "");
-    localStorage.removeItem("default_location");
-    localStorage.removeItem("default_address");
-    localStorage.removeItem("default_area");
-    localStorage.removeItem("shipping_type");
-    // this.getAreas();\
+    setTimeout(() => { 
+      this.$store.commit("checkout/SET_TYPE", "");
+      localStorage.removeItem("default_location");
+      localStorage.removeItem("default_address");
+      localStorage.removeItem("default_area");
+      localStorage.removeItem("shipping_type");
+     }, 100)
+    this.getAreas();
     this.currentHour = new Date().getHours();
     if(this.$auth.loggedIn) this.getAddresses();
   }

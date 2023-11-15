@@ -250,11 +250,11 @@ export default {
       const okPaths = ["profile", "login", "/ar/profile", "/ar/login"];
       const okQueries = ["cart", "menu"];
       if(!okPaths.some(path => to.path.includes(path)) && !okQueries.some(query => Object.keys(to.query).includes(query))){
-        let shipping = localStorage.getItem("shipping_address");
+        // let shipping = localStorage.getItem("shipping_address");
         let shipping_type = localStorage.getItem("shipping_type");
         let default_location = localStorage.getItem("default_location");
 
-        if(!shipping || !default_location || !shipping_type){
+        if(!default_location || !shipping_type){
           this.$router.push(this.localePath("/pick-service"));
         }
       }

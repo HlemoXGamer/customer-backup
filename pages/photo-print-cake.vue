@@ -252,7 +252,7 @@
                         </div>
 
                         <div>
-                            <small class="desc">{{
+                            <small class="desc" v-if="!product.hasOwnProperty('is_pre') || product.is_pre == 0">{{
                                 i18n_me(product.description_ar, product.description_en)
 }}</small>
                         </div>

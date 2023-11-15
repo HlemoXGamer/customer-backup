@@ -10,7 +10,7 @@ export default {
   area: "المنطقة",
   address: "العنوان",
   building_floor_apartment: "المبنى/الطابق/رقم الشقة/رقم الفيلا",
-  continue: "متابعة",
+  continue: "متابعة إلي الوقت",
   continue_shopping: "بدأ التسوق",
   back: "الرجوع للتسوق",
   time: "الوقت",

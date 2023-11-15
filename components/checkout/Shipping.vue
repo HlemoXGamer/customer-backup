@@ -1,11 +1,11 @@
 <template>
   <div>
-    <p class="text-h6 font-weight-bold mt-8 font-primary" :class="{ 'text-center': $vuetify.breakpoint.smAndDown }">
+    <!-- <p class="text-h6 font-weight-bold mt-8 font-primary" :class="{ 'text-center': $vuetify.breakpoint.smAndDown }">
       {{ $t("checkout.shipping.shipping_label") }}
-    </p>
+    </p> -->
     <!-- <p>Shipping Address: {{ theAddress?.join(' ') }}</p> -->
     <v-card>
-      <v-row>
+      <v-row v-if="location_type !== 'address'">
         <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 10">
           <v-card>
             <v-card-text>
@@ -27,12 +27,12 @@
                   }
                 "
               ></CommonCountryCityCombo> -->
-              <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
+              <!-- <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.area") }} <Sup>*</Sup>
-              </p>
-              <v-combobox :items="areas" :loading="loading.city" :item-text="`name_${$i18n.locale}`" item-value="id"
+              </p> -->
+              <!-- <v-combobox :items="areas" :loading="loading.city" :item-text="`name_${$i18n.locale}`" item-value="id"
                 height="57" outlined flat class="rounded-lg" v-model="currentArea"
-                :error-messages="$validationMsgs($v.currentArea)" @input="$v.currentArea.$touch()" color="#65382c" />
+                :error-messages="$validationMsgs($v.currentArea)" @input="$v.currentArea.$touch()" color="#65382c" /> -->
 
               <p class="text-subtitle-1 font-weight-bold mb-2 font-primary">
                 {{ $t("profile.addresses.block_no") }} <Sup>*</Sup>
@@ -103,7 +103,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <!-- <div v-else>
+      <div v-else>
         <v-card outlined rounded="lg" class="d-flex align-center" height="150">
           <v-card-text>
             <v-scroll-y-transition>
@@ -118,10 +118,9 @@
             </v-scroll-y-transition>
           </v-card-text>
         </v-card>
-      </div> -->
+      </div>
       <v-card-actions class="justify-space-between px-0">
-        <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/cart" elevation="0" text color="grey" large dark
-          style="visibility: hidden">
+        <v-btn v-if="!$vuetify.breakpoint.mobile" nuxt to="/categories" elevation="0" text color="grey" large dark>
           <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
             mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
           </v-icon>
@@ -137,7 +136,7 @@
           dark
           :block="$vuetify.breakpoint.xs"
           :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.7 }"
-          @click="showShopping"
+          @click="showTime"
         >
           {{ $t("checkout.shipping.continue") }}
         </v-btn>
@@ -147,8 +146,6 @@
 </template>
 <script>
 import OrderSummary from "@/components/checkout/OrderSummary.vue";
-import { get } from "@/apis/areas";
-
 import { mapFields } from "vuex-map-fields";
 import { getDefaultLocation } from "@/apis/addresses";
 import ShippingIcon from "~/static/images/shipping.svg?inline";
@@ -176,11 +173,7 @@ export default {
     OfficeIcon,
   },
   mounted() {
-    // this.getDefaultLocation();
-    localStorage.removeItem("shipping_address");
-    get().then(({ data }) => {
-      this.areas = this.sortAreas(data, this.$i18n.locale, `name_${this.$i18n.locale}`)
-    });
+    this.getDefaultLocation();
   },
   props: {
     theAddress: Array,
@@ -191,7 +184,7 @@ export default {
       showAddMessage: false,
       location_type: null,
       cityErrorMessages: [],
-      currentArea: null,
+      // currentArea: null,
       local: {
         address: {
           // TODO: why country name ?
@@ -264,16 +257,16 @@ export default {
     checkPhone({ isValid }) {
       this.phoneValid = isValid;
     },
-    showShopping() {
+    showTime() {
       // if (this.lat == null || this.lng == null) {
       //   this.$toast.error('Please put your address on the map');
       //   this.$emit('openGMap');
       //   return;
       // }
-      if(this.currentArea !== null) {
-        this.local.address.area_id = this.currentArea.id;
-        this.local.address.city_id = this.currentArea.city_id;
-      };
+      // if(this.currentArea !== null) {
+      //   this.local.address.area_id = this.currentArea.id;
+      //   this.local.address.city_id = this.currentArea.city_id;
+      // };
       let valid = true;
       if (
         !this.$auth.loggedIn ||
@@ -285,12 +278,14 @@ export default {
       
       if (!valid) return;
       // this.local.address.address = this.theAddress.join(" ");
-      if(!this.currentArea) return this.$toast.error(this.$t("checkout.shipping.choose_area"));
-      this.local.address.area_name = this.currentArea.name_en;
+      // if(!this.currentArea) return this.$toast.error(this.$t("checkout.shipping.choose_area"));
+      // this.local.address.area_name = this.currentArea.name_en;
+      // this.$emit("address-updated", this.currentArea);
+      // this.$emit("address-updated", this.city);
+
       this.local.address.address = this.transformAddress(this.local.address);
       localStorage.setItem("shipping_address", JSON.stringify(this.local.address));
-      this.$emit("address-updated", this.currentArea);
-      // this.$emit("address-updated", this.city);
+      this.$store.commit("checkout/SHOW_TIME")
     },
     transformAddress(address) {
       const address_info = [];
@@ -369,14 +364,14 @@ export default {
   },
   validations() {
     return {
-      currentArea: {
-        required: helpers.withParams(
-          {
-            lang: this.$i18n.locale,
-          },
-          required
-        ),
-      },
+      // currentArea: {
+      //   required: helpers.withParams(
+      //     {
+      //       lang: this.$i18n.locale,
+      //     },
+      //     required
+      //   ),
+      // },
       local: {
         address: {
           description: {
@@ -391,22 +386,22 @@ export default {
               value => typeof value === 'string'
             ),
           },
-          city_id: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
-            ),
-          },
-          area_id: {
-            required: helpers.withParams(
-              {
-                lang: this.$i18n.locale,
-              },
-              required
-            ),
-          },
+          // city_id: {
+          //   required: helpers.withParams(
+          //     {
+          //       lang: this.$i18n.locale,
+          //     },
+          //     required
+          //   ),
+          // },
+          // area_id: {
+          //   required: helpers.withParams(
+          //     {
+          //       lang: this.$i18n.locale,
+          //     },
+          //     required
+          //   ),
+          // },
           building_num: {
             numeric: helpers.withParams(
               {

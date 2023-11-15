@@ -54,7 +54,7 @@
                         <p><strong>Phone:</strong> {{ user?.phone }}</p>
                     </v-col>
                     <v-col cols="6">
-                        <p><strong>Address:</strong> {{ user?.city_name + ", " + user?.area_name + ", " +  (user?.address || user?.address_info) }}</p>
+                        <p><strong>Address:</strong> {{ user?.city_name + ", " + user?.area_name + ", " +  (user?.address ?? user?.address_info) }}</p>
                     </v-col>
                 </v-row>
             </v-card-text>

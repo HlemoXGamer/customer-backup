@@ -6,7 +6,7 @@
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
             </scroll-picker-group>
-            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 16px;" v-if="$vuetify.breakpoint.xs">
+            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: calc(1em);" v-if="$vuetify.breakpoint.xs">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
@@ -19,7 +19,7 @@
         </v-row>
         <v-card>
             <v-card-actions class="d-flex px-0" :class="{ 'flex-column justify-center align-start': $vuetify.breakpoint.xs, 'justify-space-between': !$vuetify.breakpoint.xs }">
-                <v-btn @click="$router.push(localePath('/categories'))" elevation="0" text color="grey" large dark style="background: transparent !important"
+                <v-btn @click="back()" elevation="0" text color="grey" large dark style="background: transparent !important"
                     :class="$vuetify.breakpoint.xs ? 'mt-4' : ''">
                     <v-icon :left="$i18n.locale === 'en'" :right="$i18n.locale === 'ar'" large>
                         mdi-chevron-{{ $i18n.locale === "en" ? "left" : "right" }}
@@ -79,6 +79,9 @@ export default {
         }
     },
     methods: {
+        back(){
+            this.$store.commit("checkout/SHOW_SHIPPING")
+        },
         showSummary() {
             if(this.type == "pre-order" || this.type == "same-day"){
                 if ((!this.currentDay || !this.currentHour)) return this.$toast.error(this.$t("checkout.delivery_time_required"))
