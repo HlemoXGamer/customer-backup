@@ -85,7 +85,7 @@
           </v-btn-toggle>
           </v-col>
         </v-row>
-        <v-row no-gutters class="align-center justify-end mt-12">
+        <v-row no-gutters class="align-center justify-center mt-12">
           <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' && (!currentArea || !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
             {{ $t("checkout.shipping.continue_shopping") }}
           </v-btn>
