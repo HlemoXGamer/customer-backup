@@ -153,7 +153,7 @@ export default {
     getAreas() {
       this.loading = true;
       getAreas().then(({ data }) => {
-        this.areas = data;
+        this.areas = this.sortAreas(data, this.$i18n.locale, `name_${this.$i18n.locale}`);
       }).finally(() => {
         this.loading = false;
       })
