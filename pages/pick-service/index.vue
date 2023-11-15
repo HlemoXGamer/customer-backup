@@ -158,6 +158,9 @@ export default {
         this.loading = false;
       })
     },
+    sortAreas(array, locale, key) {
+      return array.sort((a, b) => a[key].localeCompare(b[key], locale));
+    },
     async getAddresses() {
       const { data } = await getAddresses();
       this.addresses = data.map(this.transformAddress);
