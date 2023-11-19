@@ -66,7 +66,7 @@
             </v-stepper-content>
 
             <v-stepper-content step="3">
-              <CheckoutSummary />
+              <CheckoutSummary v-if="step == 3" />
             </v-stepper-content>
 
             <v-stepper-content step="4">
