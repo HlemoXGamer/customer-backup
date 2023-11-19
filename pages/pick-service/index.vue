@@ -125,10 +125,11 @@ export default {
     };
   },
   methods: {
-    isToggle(value) {
+    async isToggle(value) {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
       }, 100);
+      await this.$store.dispatch("cart/get", { branch: 0 })
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
@@ -156,6 +157,9 @@ export default {
       }).finally(() => {
         this.loading = false;
       })
+    },
+    sortAreas(array, locale, key) {
+      return array.sort((a, b) => a[key].localeCompare(b[key], locale));
     },
     sortAreas(array, locale, key) {
       return array.sort((a, b) => a[key].localeCompare(b[key], locale));
