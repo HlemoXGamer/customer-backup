@@ -552,8 +552,10 @@ export default {
         async addToCart(product, data = {}) {
             this.addToCartLoading = true;
             this.$toast.success("Item Added to Your Cart successfully");
-            for(let i = 0; i < data.count; i++){
+            if(this.notes.length !== data.count){
+              for(let i = this.notes.length; i < data.count; i++){
                 this.notes.push("");
+              }
             }
             await this.$store.dispatch("cart/add", {
                 product_id: product.id,

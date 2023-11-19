@@ -3,8 +3,7 @@
     <v-col cols="12">
       <Banner></Banner>
     </v-col>
-    <v-col class="py-0 px-0 mx-0 mb-0 mt-7">
-      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("checkout.shipping.shipping_label") }}</p>
+    <v-col class="py-0 px-0 mx-0 mb-0 mt-4">
           <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
             <v-tab value="areas" style="width: 200px" class="font-weight-bold">
               {{ $t("location.select_your_area") }}
@@ -85,8 +84,8 @@
           </v-btn-toggle>
           </v-col>
         </v-row>
-        <v-row no-gutters class="align-center justify-end mt-12">
-          <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' && (!currentArea || !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
+        <v-row no-gutters class="align-center justify-center mt-12">
+          <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' || (!currentArea && !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
             {{ $t("checkout.shipping.continue_shopping") }}
           </v-btn>
         </v-row>
@@ -153,10 +152,13 @@ export default {
     getAreas() {
       this.loading = true;
       getAreas().then(({ data }) => {
-        this.areas = data;
+        this.areas = this.sortAreas(data, this.$i18n.locale, `name_${this.$i18n.locale}`);
       }).finally(() => {
         this.loading = false;
       })
+    },
+    sortAreas(array, locale, key) {
+      return array.sort((a, b) => a[key].localeCompare(b[key], locale));
     },
     async getAddresses() {
       const { data } = await getAddresses();

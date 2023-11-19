@@ -161,8 +161,10 @@ export default {
     },
     async addToCart() {
       this.loading = true;
-      for(let i = 0; i < this.qty; i++){
+      if(this.notes.length !== this.qty){
+        for(let i = this.notes.length; i < this.qty; i++){
           this.notes.push("");
+        }
       }
       try {
         await this.$store.dispatch("cart/add", {
