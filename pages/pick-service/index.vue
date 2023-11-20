@@ -115,7 +115,7 @@ export default {
       currentTab: "areas",
       areas: [],
       addresses: [],
-      currentAddress: "",
+      currentAddress: null,
       loading: false,
       theAddress: null,
       center: { lat: 0, lng: 0 },
