@@ -346,6 +346,7 @@
 
 <script>
 import { get } from '~/apis/products';
+import { mapState } from 'vuex';
 export default {
     data() {
         return {
@@ -392,6 +393,9 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState("timer", ["time"]),
+    },
     methods: {
         i18n_me(ar, en) {
             if (this.$i18n.locale === "en") {
@@ -401,8 +405,20 @@ export default {
         },
         async getCategory() {
             this.loading = true;
+            let menuType;
+            var currentDate = new Date(this.time);
 
-            const { data } = await get({ category: 2, branch_id: !this.$auth.loggedIn ? localStorage.getItem("guest_branch") : '' }, !this.$auth.loggedIn);
+            var startTime = new Date(currentDate);
+            startTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
+
+            var endTime = new Date(currentDate);
+            endTime.setHours(4, 55, 0, 0); // Set to 4:55 AM
+
+            if (currentDate >= startTime && currentDate <= endTime) {
+              menuType = "pre-order";
+            }
+
+            const { data } = await get({ category: 2, branch_id: !this.$auth.loggedIn ? localStorage.getItem("guest_branch") : '', menuType }, !this.$auth.loggedIn);
 
             if (!data.length) {
                 this.$toast.error(this.$t("products.not_found"));

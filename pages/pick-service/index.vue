@@ -319,8 +319,9 @@ export default {
       return this.$i18n.locale;
     },
     ...mapState("checkout", ["type"]),
+    ...mapState("timer", ["time"]),
     isDeliveryNowDimmed() {
-      const now = new Date();
+      const now = new Date(this.time);
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;
@@ -334,7 +335,7 @@ export default {
       return totalMinutes >= startDimMinutes || totalMinutes <= endDimMinutes;
     },
     isLaterTodayDimmed() {
-      const now = new Date();
+      const now = new Date(this.time);
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;

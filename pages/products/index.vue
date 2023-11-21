@@ -39,6 +39,7 @@ import { get } from "~/apis/products";
 import { categoryView, get as getCategoriesApi } from "~/apis/categories";
 import debounce from "debounce";
 import { mapFields } from "vuex-map-fields";
+import { mapState } from "vuex";
 import Banner from "@/components/home/Banner";
 import { cateogryView } from "~/apis/categories";
 export default {
@@ -64,6 +65,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("timer", ["time"]),
     ...mapFields("search", ["text"]),
     category_filter() {
       return this.filter.categories.join(",");
@@ -124,7 +126,7 @@ export default {
         behavior: 'smooth'
       });
       let menuType;
-      var currentDate = new Date();
+      var currentDate = new Date(this.time);
 
       var startTime = new Date(currentDate);
       startTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
