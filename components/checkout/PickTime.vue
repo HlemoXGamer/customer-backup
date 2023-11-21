@@ -1,12 +1,12 @@
 <template>
     <v-col cols="12" :class="{ 'mt-n10': type !== 'asap', 'mt-n5': type == 'asap' }">
         <v-row v-if="isPreOrder || isSameDay" class="align-center justify-center mb-5 mt-0 pt-0">
-            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold" style="color: #65382c; font-size: 23px;" v-if="!$vuetify.breakpoint.xs">
+            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold" style="color: #65382c; font-size: 23px; width: 100%;" v-if="!$vuetify.breakpoint.xs">
                 <scroll-picker :options="days" v-model="currentDay" />
                 <scroll-picker :options="hours" v-model="currentHour" />
                 <scroll-picker :options="minutes" v-model="currentMinute" />
             </scroll-picker-group>
-            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em);" v-if="$vuetify.breakpoint.xs">
+            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em); width: 100%;" v-if="$vuetify.breakpoint.xs">
                 <scroll-picker class="first-layer" :options="days" v-model="currentDay" />
                 <scroll-picker class="middle-layer" :options="hours" v-model="currentHour" />
                 <scroll-picker class="last-layer" :options="minutes" v-model="currentMinute" />

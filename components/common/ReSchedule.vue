@@ -6,12 +6,12 @@
                     <p class="my-0 mx-0 text-center font-weight-bold font-primary text-h6">{{ $t("common.need_reschedule") }}</p>
                 </v-card-title>
                 <v-card-text>
-                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px;" v-if="!$vuetify.breakpoint.xs">
+                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px; width: 100%;" v-if="!$vuetify.breakpoint.xs">
                         <scroll-picker :options="days" v-model="currentDay" />
                         <scroll-picker :options="hours" v-model="currentHour" />
                         <scroll-picker :options="minutes" v-model="currentMinute" />
                     </scroll-picker-group>
-                    <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em);" v-if="$vuetify.breakpoint.xs">
+                    <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em); width: 100%;" v-if="$vuetify.breakpoint.xs">
                         <scroll-picker class="first-layer" :options="days" v-model="currentDay" />
                         <scroll-picker class="middle-layer" :options="hours" v-model="currentHour" />
                         <scroll-picker class="last-layer" :options="minutes" v-model="currentMinute" />
