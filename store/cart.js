@@ -6,6 +6,7 @@ export const state = () => ({
   items: [],
   extra_flavors: [],
   total: 0,
+  id: null,
   delivery_fee: null,
   delivery_cost: null,
   minimum_charge: null,
@@ -92,6 +93,7 @@ export const actions = {
     }
     console.log(defaultLocation)
     return get.call(this, !area ? area_id : area.branch).then((data) => {
+      commit("SET_CART_ID", data.data?.id || null);
       commit("SET_ITEMS", data.data?.items || []);
       commit("SET_EXTRAS_FLAVORS", data.data?.extra_flavors || []);
       commit("SET_TOTAL", data.data?.total || 0);
@@ -156,6 +158,9 @@ export const mutations = {
   },
   SET_TOTAL(state, total) {
     state.total = total
+  },
+  SET_CART_ID(state, cart_id) {
+    state.id = cart_id;
   },
   SET_DELIVERY_FEE(state, delivery_fee) {
     state.delivery_fee = delivery_fee
