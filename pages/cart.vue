@@ -2,7 +2,7 @@
   <div class="pt-5" style="position: relative;">
     <p class="text-h6 font-weight-bold mb-5 mx-auto"
       style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
-      <v-btn :disabled="!products.length" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute; top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon class="mx-2">{{ $vuetify.breakpoint.xs ? 'mdi-cart-off' : 'mdi-cart-off' }}</v-icon>{{ !$vuetify.breakpoint.xs ? $t("cart.remove_all") : '' }}</v-btn>
+      <v-btn :disabled="!products.length" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute; top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon class="mx-2">mdi-cart-off</v-icon>{{ !$vuetify.breakpoint.xs ? $t("cart.remove_all") : '' }}</v-btn>
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1 py-2 px-2" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index" :style="{ 'border': product.product.has_image == 1 &&  product.images.length < product.quantity ? '2px solid red' : '' }">
       <!-- <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
