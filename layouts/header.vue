@@ -314,7 +314,7 @@ export default {
   async mounted() {
     this.$store.commit("checkout/SET_TYPE", localStorage.getItem("shipping_type"));
     const types = ["same-day", "pre-order", "asap"];
-    if(types.includes(this.type)){
+    // if(types.includes(this.type)){
       await getServerTime().then((response) => {
       this.$store.dispatch("timer/setTime", response.timer);
       const data = timeChecker(this.type, response.timer);
@@ -327,7 +327,7 @@ export default {
         this.$store.dispatch("timer/setData", data);
       })
     }, this.timePeriod);
-    }
+    // }
   },
   beforeDestroy() {
     clearInterval(timeUpdateInterval);

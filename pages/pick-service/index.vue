@@ -321,6 +321,7 @@ export default {
     ...mapState("checkout", ["type"]),
     ...mapState("timer", ["time"]),
     isDeliveryNowDimmed() {
+      console.log(this.time)
       const now = new Date(this.time);
       const hours = now.getHours();
       const minutes = now.getMinutes();
