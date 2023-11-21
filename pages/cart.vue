@@ -2,8 +2,7 @@
   <div class="pt-5" style="position: relative;">
     <p class="text-h6 font-weight-bold mb-5 mx-auto"
       style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
-      <!-- <v-btn :disabled="!products.length" v-if="$auth.loggedIn" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute;
-       top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon>mdi-close</v-icon>{{ $t("cart.remove_all") }}</v-btn> -->
+      <!-- <v-btn :disabled="!products.length" v-if="$auth.loggedIn" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute; top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon>{ $vuetify.breakpoint.xs ? 'mdi-delete-empty' : 'mdi-close' }</v-icon>{{ $t("cart.remove_all") }}</v-btn> -->
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1 py-2 px-2" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index" :style="{ 'border': product.product.has_image == 1 &&  product.images.length < product.quantity ? '2px solid red' : '' }">
       <!-- <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
@@ -179,7 +178,7 @@ export default {
     async emptyCart(){
       this.removeAllLoading = true;
 
-      await this.$store.dispatch("cart/clear");
+      await this.$store.dispatch("cart/get", { branch: 0 });
 
       await this.fetch();
 
@@ -234,11 +233,16 @@ export default {
     },
     async fetch() {
       this.productsLoading = true;
-      const area = JSON.parse(localStorage.getItem(`default_${localStorage.getItem("default_location")}`));
-      await this.$store.dispatch("cart/get", { branch: area.branches ? area.branches[0].id : area.branch_id }).then(() => {
-        this.products = this.items;
-        this.subTotal = this.total;
-      });
+      const defaultLocation = localStorage.getItem(`default_location`);
+      if(defaultLocation == "area"){
+        const area = JSON.parse(localStorage.getItem('default_area'));
+        await this.$store.dispatch("cart/get", { branch: area.id });
+      }else if(defaultLocation == "address"){
+        const area = JSON.parse(localStorage.getItem(`default_address`));
+        await this.$store.dispatch("cart/get", { branch: area.branch_id });
+      }
+      this.products = this.items;
+      this.subTotal = this.total;
       this.productsLoading = false;
     },
     i18n_me(ar, en) {

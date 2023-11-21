@@ -11,10 +11,10 @@
                         <scroll-picker :options="hours" v-model="currentHour" />
                         <scroll-picker :options="minutes" v-model="currentMinute" />
                     </scroll-picker-group>
-                    <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 16px;" v-if="$vuetify.breakpoint.xs">
-                        <scroll-picker :options="days" v-model="currentDay" />
-                        <scroll-picker :options="hours" v-model="currentHour" />
-                        <scroll-picker :options="minutes" v-model="currentMinute" />
+                    <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em);" v-if="$vuetify.breakpoint.xs">
+                        <scroll-picker class="first-layer" :options="days" v-model="currentDay" />
+                        <scroll-picker class="middle-layer" :options="hours" v-model="currentHour" />
+                        <scroll-picker class="last-layer" :options="minutes" v-model="currentMinute" />
                     </scroll-picker-group>
                 </v-card-text>
                 <v-card-actions class="d-flex align-center justify-end">
@@ -83,3 +83,43 @@ export default {
     },
 }
 </script>
+
+<style lang="scss">
+:deep(.vue-scroll-picker-layer) .top{
+    height: calc(53% - 1em);
+}
+
+:deep(.vue-scroll-picker-layer) .bottom{
+    height: calc(53% - 1em);
+}
+
+:deep(.last-layer) {
+    width: 80px;
+    .vue-scroll-picker-layer {
+        width: 80px;
+    }
+    .vue-scroll-picker-list {
+        width: 80px;
+    }
+}
+
+:deep(.first-layer){
+    width: 170px;
+    .vue-scroll-picker-layer {
+        width: 170px;
+    }
+    .vue-scroll-picker-list {
+        width: 170px;
+    }
+}
+
+:deep(.middle-layer){
+    width: 80px;
+    .vue-scroll-picker-layer {
+        width: 80px;
+    }
+    .vue-scroll-picker-list {
+        width: 80px;
+    }
+}
+</style>

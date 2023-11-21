@@ -145,14 +145,26 @@ export const timeChecker = (orderType, currentTime) => {
                 paymentTimeSameDay.getTime() + 40 * 60000
             ); // 40 minutes later
 
+            // Get the current date and time
+            let currentDate = new Date(currentTime);
+
+            // Set the start and end times for the range (12:00 AM to 4:55 AM)
+            let startTime = new Date(currentDate);
+            startTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
+
+            let endTime = new Date(currentDate);
+            endTime.setHours(4, 55, 0, 0); // Set to 4:55 AM
             // Define payment time conditions based on the current time
             let isPaymentTimeValidSameDay = false;
             if (
                 (nowSameDay.getHours() >= 8 && nowSameDay.getHours() < 20) ||
                 (nowSameDay.getHours() === 7 && nowSameDay.getMinutes() < 60) ||
                 (nowSameDay.getHours() === 0 && nowSameDay.getMinutes() < 5) ||
-                (nowSameDay.getHours() === 4 && nowSameDay.getMinutes() < 60)
-            ) {
+                (nowSameDay.getHours() === 4 && nowSameDay.getMinutes() < 60)) {
+                isPaymentTimeValidSameDay = true;
+            }
+
+            if(currentDate >= startTime && currentDate <= endTime){
                 isPaymentTimeValidSameDay = true;
             }
 
