@@ -4,6 +4,7 @@ import { reorder } from '~/apis/orders';
 
 export const state = () => ({
   items: [],
+  extra_flavors: [],
   total: 0,
   delivery_fee: null,
   delivery_cost: null,
@@ -92,6 +93,7 @@ export const actions = {
     console.log(defaultLocation)
     return get.call(this, !area ? area_id : area.branch).then((data) => {
       commit("SET_ITEMS", data.data?.items || []);
+      commit("SET_EXTRAS_FLAVORS", data.data?.extra_flavors || []);
       commit("SET_TOTAL", data.data?.total || 0);
       commit("SET_DELIVERY_FEE", data.delivery_fee || 0);
       commit("SET_DELIVERY_COST", data.delivery_cost || 0);
@@ -145,6 +147,9 @@ export const mutations = {
   },
   SET_ITEMS(state, items) {
     state.items = items;
+  },
+  SET_EXTRAS_FLAVORS(state, items){
+    state.extra_flavors = items;
   },
   SET_EST_TIME(state, payload) {
     state.est_time = payload

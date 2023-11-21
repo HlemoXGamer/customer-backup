@@ -51,5 +51,6 @@ export default {
         size: "Pick a Size",
         color: "Pick a Color",
         flavors_extra: "Pick Flavors & Extras"
-    }
+    },
+    extras_flavors: "Flavors & Extras"
 }

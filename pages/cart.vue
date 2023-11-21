@@ -20,6 +20,9 @@
             </p>
           </v-col>
           <div class="d-flex align-center justify-space-between">
+            <v-btn v-if="hasExtraFlavor(product.product_id)" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product.product_id, 'extras_flavors')">
+              <v-icon color="#65382c">mdi-candy-outline</v-icon>
+            </v-btn>
             <v-btn v-if="product.product.has_image == 1" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product, 'image')">
               <v-icon color="#65382c">mdi-image</v-icon>
             </v-btn>
@@ -140,6 +143,7 @@
       :self="true"
       @updated="fetch()"
     />
+    <commonFlavorsExtras :dialog="dialog.extras_flavors_dialog" :items="dialog.extras_flavors" :loading="removeExtraFlavorLoading" @close="dialog.extras_flavors_dialog = false" @remove="removeExtraFlavor"/>
   </div>
 </template>
 
@@ -153,6 +157,7 @@ export default {
       mobileProductDialogData: {},
       initCheckout: false,
       products: [],
+      allExtrasFlavors: [],
       addToCartLoading: false,
       subTotal: 0,
       voucher_code: "",
@@ -163,11 +168,14 @@ export default {
       loading: false,
       productsLoading: false,
       removeAllLoading: false,
+      removeExtraFlavorLoading: false,
       dialog: {
         image_dialog: false,
         images: [],
         note_dialog: false,
         notes: [],
+        extras_flavors_dialog: false,
+        extras_flavors: [],
         product_id: "",
         count: 0,
       },
@@ -175,6 +183,9 @@ export default {
   },
   methods: {
     ...mapActions("cart", ["setItemNotes"]),
+    hasExtraFlavor(product_id){
+      return this.extra_flavors.map(item => item.product_id).includes(product_id);
+    },
     async emptyCart(){
       this.removeAllLoading = true;
 
@@ -199,8 +210,10 @@ export default {
     openDialog(product, type) {
       if (type === "image") {
         this.openImageDialog(product);
-      } else {
+      } else if(type === "note") {
         this.openNoteDialog(product);
+      } else if(type === "extras_flavors"){
+        this.openExtrasFlavorsDialog(product);
       }
     },
     openImageDialog(product) {
@@ -226,6 +239,10 @@ export default {
         productId: product.product_id,
       });
     },
+    openExtrasFlavorsDialog(product) {
+      this.dialog.extras_flavors = this.allExtrasFlavors.filter(item => item.product_id == product);
+      this.dialog.extras_flavors_dialog = true;
+    },
     toCheckout() {
       this.$router.push(
         this.localePath(this.$auth.loggedIn ? "/checkout/finalize" : "/checkout")
@@ -242,6 +259,7 @@ export default {
         await this.$store.dispatch("cart/get", { branch: area.branch_id });
       }
       this.products = this.items;
+      this.allExtrasFlavors = this.extra_flavors;
       this.subTotal = this.total;
       this.productsLoading = false;
     },
@@ -329,7 +347,7 @@ export default {
       }
     },
     async changeCount(number, product_id, product, quantity) {
-      if (quantity + number === 0) {
+      if (quantity + number <= 0) {
         return await this.$store.dispatch("cart/remove", product_id).then(async () => {
           await this.fetch();
         });
@@ -339,6 +357,11 @@ export default {
       }else if(number == -1){
         this.decrement(product);
       }
+    },
+    async removeExtraFlavor(id){
+      this.removeExtraFlavorLoading = true;
+      await this.$store.dispatch("cart/remove", id);
+      this.removeExtraFlavorLoading = false;
     },
     async addToCart(product, data = {}) {
       this.addToCartLoading = true;
@@ -353,7 +376,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("cart", ["total", "delivery_cost", "items", "delivery_fee", "count", "delivery_cost", "minimum_charge"]),
+    ...mapState("cart", ["total", "delivery_cost", "items", "delivery_fee", "count", "delivery_cost", "minimum_charge", "extra_flavors"]),
     disable_checkout() {
       return this.items.find(
         (item) =>

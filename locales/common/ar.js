@@ -51,5 +51,6 @@ export default {
     size: "إختر حجم",
     color: "إختر لون",
     flavors_extra: "إختر النكهات والإضافات"
-}
+  },
+  extras_flavors: "النكهات والإضافات"
 };
