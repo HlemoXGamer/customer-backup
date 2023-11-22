@@ -123,12 +123,25 @@ export default {
         top: 520,
         behavior: 'smooth'
       });
+      let menuType;
+      var currentDate = new Date();
+
+      var startTime = new Date(currentDate);
+      startTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
+
+      var endTime = new Date(currentDate);
+      endTime.setHours(4, 55, 0, 0); // Set to 4:55 AM
+
+      if (currentDate >= startTime && currentDate <= endTime) {
+        menuType = "pre-order";
+      }
       get(
         {
           name: this.searchItem,
           page: this.page,
           branch_id: this.branch_id,
-          category: this.$store.state.category.selected_category[0]
+          category: this.$store.state.category.selected_category[0],
+          menuType
         },
         this.guest
       ).then((data) => {

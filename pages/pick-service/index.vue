@@ -43,7 +43,7 @@
               <v-col v-for="address in addresses" :key="address?.id" cols="12">
                 <v-item v-slot="{ active, toggle }">
                   <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                    :color="active ? '#65382c' : ''" @click="toggle()">
+                    :color="currentAddress !== null && currentAddress !== undefined ? addresses[currentAddress].id == address.id ? '#65382c' : '' : ''" @click="toggle()">
                     <v-card-text>
                       <v-scroll-y-transition>
                         <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
@@ -85,7 +85,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters class="align-center justify-center mt-12">
-          <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' || (!currentArea && !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
+          <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
             {{ $t("checkout.shipping.continue_shopping") }}
           </v-btn>
         </v-row>
@@ -125,11 +125,22 @@ export default {
     };
   },
   methods: {
+    async confirm(){
+      const defaultLocation = localStorage.getItem(`default_location`);
+      if(defaultLocation == "area"){
+        const area = JSON.parse(localStorage.getItem('default_area'));
+        await this.$store.dispatch("cart/get", { branch: area.id });
+      }else if(defaultLocation == "address"){
+        const area = JSON.parse(localStorage.getItem(`default_address`));
+        await this.$store.dispatch("cart/get", { branch: area.area_id });
+      }
+      this.$router.replace(this.localePath('/categories'))
+    },
     async isToggle(value) {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
       }, 100);
-      await this.$store.dispatch("cart/get", { branch: 0 })
+      await this.$store.dispatch("cart/get", { branch: 0 });
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
@@ -209,7 +220,7 @@ export default {
       localStorage.setItem("default_address", JSON.stringify(address));
       await setDefault({ address_id: address.id });
       // this.$router.replace(this.localePath("/categories"));
-      this.$store.dispatch("cart/get");
+      // this.$store.dispatch("cart/get");
       this.loading = false;
     },
     async setDefaultBranch(area) {  
@@ -248,7 +259,7 @@ export default {
       } else {
         this.$toast.error(this.$t("location.no_branches"));
       }
-      this.$store.dispatch("cart/get", { branch: branches[0] });
+      // this.$store.dispatch("cart/get", { branch: branches[0] }); 
     },
     checkLatLng(address) {
       if (address && !address.lat && !address.lng) {
@@ -270,6 +281,13 @@ export default {
     }
   },
   watch: {
+    currentTab(newValue, oldValue){
+      if(newValue == "areas"){
+        this.currentAddress = null;
+      }else if(newValue == "addresses"){
+        this.currentArea = null;
+      }
+    },
     currentLocale(newLocale, oldLocale) {
       this.areas = this.sortAreas(this.areas, newLocale, `name_${newLocale}`);
     },

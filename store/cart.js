@@ -80,17 +80,17 @@ export const actions = {
   },
   get({ commit }, area) {
     commit('SET_LOADING', true)
-    const default_area = (window.localStorage.getItem('default_area'))
     let area_id;
-    if (default_area) {
-      const parsed = JSON.parse(default_area)
-      area_id = parsed.id
+    const defaultLocation = localStorage.getItem(`default_location`);
+    if(!area){
+      if(defaultLocation == "area"){
+        area_id = JSON.parse(localStorage.getItem('default_area')).id;
+      }else if(defaultLocation == "address"){
+        area_id = JSON.parse(localStorage.getItem(`default_address`)).area_id;
+      }
     }
-
-    if(area){
-      area_id = area.branch;
-    }
-    return get.call(this, area_id).then((data) => {
+    console.log(defaultLocation)
+    return get.call(this, !area ? area_id : area.branch).then((data) => {
       commit("SET_ITEMS", data.data?.items || []);
       commit("SET_TOTAL", data.data?.total || 0);
       commit("SET_DELIVERY_FEE", data.delivery_fee || 0);
