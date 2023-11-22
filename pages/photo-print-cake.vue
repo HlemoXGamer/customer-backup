@@ -120,7 +120,7 @@
                             v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
                             <p class="text-left text-h5 font-primary font-weight-bold mb-5 mt-5" v-if="matchedItem.flavor.length > 0">{{ $t("products.flavors") }}</p>
                             <v-btn large color="#65382c" icon v-if="flavor !== '' && matchedItem.flavor.length > 0"
-                                @click="flavor = ''"><v-icon>mdi-reload</v-icon></v-btn>
+                                @click="flavor = ''; extra_left = ''; extra_right = ''"><v-icon>mdi-reload</v-icon></v-btn>
                         </v-row>
                         <v-row no-gutters v-if="Object.keys(matchedItem).includes('flavor') && color !== ''">
                             <v-col cols="12" class="px-5">
