@@ -99,6 +99,7 @@ import { get as getAddresses, setDefault } from "@/apis/addresses";
 import { update } from '@/apis/addresses'
 import { get as getAreas } from '@/apis/areas'
 import { mapState } from "vuex";
+import { removeCart } from "~/apis/cart";
 
 export default {
   components: {
@@ -140,7 +141,9 @@ export default {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
       }, 100);
-      await this.$store.dispatch("cart/get", { branch: 0 });
+      if(this.id !== null && this.id !== undefined){
+        await removeCart(this.id, this.$auth.loggedIn);        
+      }
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
@@ -318,6 +321,7 @@ export default {
     currentLocale() {
       return this.$i18n.locale;
     },
+    ...mapState("cart", ["id"]),
     ...mapState("checkout", ["type"]),
     ...mapState("timer", ["time"]),
     isDeliveryNowDimmed() {
