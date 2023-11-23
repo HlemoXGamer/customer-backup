@@ -123,7 +123,7 @@
                                     {{ item.quantity }}
                                 </span>
                                 <span class="col-4 dropcart__product-price">
-                                    KWD {{ item.price }}</span>
+                                    {{ hasExtraFlavor(item.product_id) ? Number(item.price) +  Number(getProductPrice(item.product_id)) : product.price }} KWD</span>
                             </div>
                         </div>
                     </div>
@@ -235,6 +235,7 @@ export default {
             discount_type: "",
             discount_rate: "",
             newSubTotal: "",
+            totalWithExtrasFlavors: this.total,
             user: JSON.parse(localStorage.getItem('shipping_address')),
             authedUser: JSON.parse(localStorage.getItem('user')),
             // quantity: 1,
@@ -285,6 +286,7 @@ export default {
         ...mapActions("cart", ["setItemNotes"]),
         getProductPrice(product_id){
             const sum = this.extra_flavors.filter(item => item.product_id == product_id).map(item => item.price * item.quantity).reduce((accumulator, currentValue) => accumulator + parseFloat(currentValue), 0);
+            this.totalWithExtrasFlavors = Number(this.total) + Number(sum).toFixed(2);
             return Number(sum).toFixed(2);
         },
         hasExtraFlavor(product_id){

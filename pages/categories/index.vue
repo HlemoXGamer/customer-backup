@@ -95,11 +95,18 @@
           top: 520,
           behavior: 'smooth'
         });
+        let area_id;
+        const defaultLocation = localStorage.getItem(`default_location`);
+        if(defaultLocation == "area"){
+          area_id = JSON.parse(localStorage.getItem('default_area')).id;
+        }else if(defaultLocation == "address"){
+          area_id = JSON.parse(localStorage.getItem(`default_address`)).area_id;
+        }
         get(
           {
             name: this.searchItem,
             page: this.page,
-            area: this.area_id,
+            area: area_id,
           },
           this.guest
         ).then((data) => {

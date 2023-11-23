@@ -91,7 +91,6 @@ export const actions = {
         area_id = JSON.parse(localStorage.getItem(`default_address`)).area_id;
       }
     }
-    console.log(defaultLocation)
     return get.call(this, !area ? area_id : area.branch).then((data) => {
       commit("SET_CART_ID", data.data?.id || null);
       commit("SET_ITEMS", data.data?.items || []);

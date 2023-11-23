@@ -135,6 +135,10 @@ export default {
           ) {
             this.$store.dispatch("checkout/confirm").then(() => {
               this.confirmLoading = false;
+            }).catch((err) => {
+              this.confirmLoading = false;
+            }).finally(() => {
+              this.confirmLoading = false;              
             });
           } else {
             this.$toast.error(this.$t("checkout.out_of_stock"));

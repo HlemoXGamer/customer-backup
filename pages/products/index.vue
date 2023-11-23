@@ -53,6 +53,8 @@ export default {
       pagination_total_items: 0,
       apply: false,
       categories: [],
+      default_location: localStorage.getItem("default_location"),
+      area_id: JSON.parse(localStorage.getItem(`default_${this.default_location}`))?.id,
       products: [],
       searchItem: null,
       loading: false,
@@ -156,7 +158,14 @@ export default {
       });
     },
     getCategories() {
-      getCategoriesApi({}, this.guest).then(({ data }) => {
+      let area_id;
+      const defaultLocation = localStorage.getItem(`default_location`);
+        if(defaultLocation == "area"){
+          area_id = JSON.parse(localStorage.getItem('default_area')).id;
+        }else if(defaultLocation == "address"){
+          area_id = JSON.parse(localStorage.getItem(`default_address`)).area_id;
+        }
+      getCategoriesApi({ area: area_id }, this.guest).then(({ data }) => {
         this.categories = data;
       });
     },
