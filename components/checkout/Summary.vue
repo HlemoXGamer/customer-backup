@@ -123,7 +123,8 @@
                                     {{ item.quantity }}
                                 </span>
                                 <span class="col-4 dropcart__product-price">
-                                    {{ hasExtraFlavor(item.product_id) ? Number(item.price) +  Number(getProductPrice(item.product_id)) : product.price }} KWD</span>
+                                    {{ hasExtraFlavor(item.product_id) ? Number(item.price) +  Number(getProductPrice(item.product_id)) : item.price }} KWD
+                                </span>
                             </div>
                         </div>
                     </div>
