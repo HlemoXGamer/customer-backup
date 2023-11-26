@@ -2,8 +2,7 @@
   <div class="pt-5" style="position: relative;">
     <p class="text-h6 font-weight-bold mb-5 mx-auto"
       style="width: fit-content; color: #65382c; border-bottom: 1px solid #65382c;">{{ $t('cart.order_details') }}</p>
-      <!-- <v-btn :disabled="!products.length" v-if="$auth.loggedIn" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute;
-       top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon>mdi-close</v-icon>{{ $t("cart.remove_all") }}</v-btn> -->
+      <v-btn :disabled="!products.length" :loading="removeAllLoading" text color="#65382c" @click="emptyCart()" style="position: absolute; top: 20px;" :style="{ 'left': $i18n.locale === 'ar' ? 0 : '', 'right': $i18n.locale === 'en' ? 0 : ''}" class="font-weight-bold rounded-lg"><v-icon class="mx-2">mdi-cart-off</v-icon>{{ !$vuetify.breakpoint.xs ? $t("cart.remove_all") : '' }}</v-btn>
     <v-card v-if="products.length" class="a-product-card d-flex align-center justify-space-betweenm my-1 py-2 px-2" width="100%"
       style="border-radius: 10px;" color="#fff" v-for="(product, index) in products" :key="index" :style="{ 'border': product.product.has_image == 1 &&  product.images.length < product.quantity ? '2px solid red' : '' }">
       <!-- <v-img @click="productViewed(product.product_id)" cover height="50" width="50" class="rounded-lg"
@@ -21,6 +20,9 @@
             </p>
           </v-col>
           <div class="d-flex align-center justify-space-between">
+            <v-btn v-if="hasExtraFlavor(product.product_id)" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product.product_id, 'extras_flavors')">
+              <v-icon color="#65382c">mdi-candy-outline</v-icon>
+            </v-btn>
             <v-btn v-if="product.product.has_image == 1" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product, 'image')">
               <v-icon color="#65382c">mdi-image</v-icon>
             </v-btn>
@@ -141,12 +143,14 @@
       :self="true"
       @updated="fetch()"
     />
+    <commonFlavorsExtras :dialog="dialog.extras_flavors_dialog" :items="dialog.extras_flavors" :loading="removeExtraFlavorLoading" @close="dialog.extras_flavors_dialog = false" @remove="removeExtraFlavor"/>
   </div>
 </template>
 
 <script>
 import { checkVoucher } from "~/apis/checkout";
 import { mapState, mapActions, mapGetters } from "vuex";
+import { removeCart } from "~/apis/cart";
 export default {
   data() {
     return {
@@ -154,6 +158,7 @@ export default {
       mobileProductDialogData: {},
       initCheckout: false,
       products: [],
+      allExtrasFlavors: [],
       addToCartLoading: false,
       subTotal: 0,
       voucher_code: "",
@@ -164,11 +169,14 @@ export default {
       loading: false,
       productsLoading: false,
       removeAllLoading: false,
+      removeExtraFlavorLoading: false,
       dialog: {
         image_dialog: false,
         images: [],
         note_dialog: false,
         notes: [],
+        extras_flavors_dialog: false,
+        extras_flavors: [],
         product_id: "",
         count: 0,
       },
@@ -176,10 +184,13 @@ export default {
   },
   methods: {
     ...mapActions("cart", ["setItemNotes"]),
+    hasExtraFlavor(product_id){
+      return this.extra_flavors.map(item => item.product_id).includes(product_id);
+    },
     async emptyCart(){
       this.removeAllLoading = true;
 
-      await this.$store.dispatch("cart/clear");
+      await removeCart(this.id, this.$auth.loggedIn);
 
       await this.fetch();
 
@@ -200,8 +211,10 @@ export default {
     openDialog(product, type) {
       if (type === "image") {
         this.openImageDialog(product);
-      } else {
+      } else if(type === "note") {
         this.openNoteDialog(product);
+      } else if(type === "extras_flavors"){
+        this.openExtrasFlavorsDialog(product);
       }
     },
     openImageDialog(product) {
@@ -227,6 +240,10 @@ export default {
         productId: product.product_id,
       });
     },
+    openExtrasFlavorsDialog(product) {
+      this.dialog.extras_flavors = this.allExtrasFlavors.filter(item => item.product_id == product);
+      this.dialog.extras_flavors_dialog = true;
+    },
     toCheckout() {
       this.$router.push(
         this.localePath(this.$auth.loggedIn ? "/checkout/finalize" : "/checkout")
@@ -234,11 +251,17 @@ export default {
     },
     async fetch() {
       this.productsLoading = true;
-      const area = JSON.parse(localStorage.getItem(`default_${localStorage.getItem("default_location")}`));
-      await this.$store.dispatch("cart/get", { branch: area.branches ? area.branches[0].id : area.branch_id }).then(() => {
-        this.products = this.items;
-        this.subTotal = this.total;
-      });
+      const defaultLocation = localStorage.getItem(`default_location`);
+      if(defaultLocation == "area"){
+        const area = JSON.parse(localStorage.getItem('default_area'));
+        await this.$store.dispatch("cart/get", { branch: area.id });
+      }else if(defaultLocation == "address"){
+        const area = JSON.parse(localStorage.getItem(`default_address`));
+        await this.$store.dispatch("cart/get", { branch: area.branch_id });
+      }
+      this.products = this.items;
+      this.allExtrasFlavors = this.extra_flavors;
+      this.subTotal = this.total;
       this.productsLoading = false;
     },
     i18n_me(ar, en) {
@@ -325,7 +348,7 @@ export default {
       }
     },
     async changeCount(number, product_id, product, quantity) {
-      if (quantity + number === 0) {
+      if (quantity + number <= 0) {
         return await this.$store.dispatch("cart/remove", product_id).then(async () => {
           await this.fetch();
         });
@@ -335,6 +358,11 @@ export default {
       }else if(number == -1){
         this.decrement(product);
       }
+    },
+    async removeExtraFlavor(id){
+      this.removeExtraFlavorLoading = true;
+      await this.$store.dispatch("cart/remove", id);
+      this.removeExtraFlavorLoading = false;
     },
     async addToCart(product, data = {}) {
       this.addToCartLoading = true;
@@ -349,7 +377,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("cart", ["total", "delivery_cost", "items", "delivery_fee", "count", "delivery_cost", "minimum_charge"]),
+    ...mapState("cart", ["id", "total", "delivery_cost", "items", "delivery_fee", "count", "delivery_cost", "minimum_charge", "extra_flavors"]),
     disable_checkout() {
       return this.items.find(
         (item) =>

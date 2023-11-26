@@ -39,6 +39,7 @@ import { get } from "~/apis/products";
 import { categoryView, get as getCategoriesApi } from "~/apis/categories";
 import debounce from "debounce";
 import { mapFields } from "vuex-map-fields";
+import { mapState } from "vuex";
 import Banner from "@/components/home/Banner";
 import { cateogryView } from "~/apis/categories";
 export default {
@@ -52,6 +53,8 @@ export default {
       pagination_total_items: 0,
       apply: false,
       categories: [],
+      default_location: localStorage.getItem("default_location"),
+      area_id: JSON.parse(localStorage.getItem(`default_${this.default_location}`))?.id,
       products: [],
       searchItem: null,
       loading: false,
@@ -64,6 +67,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("timer", ["time"]),
     ...mapFields("search", ["text"]),
     category_filter() {
       return this.filter.categories.join(",");
@@ -123,12 +127,25 @@ export default {
         top: 520,
         behavior: 'smooth'
       });
+      let menuType;
+      var currentDate = new Date(this.time);
+
+      var startTime = new Date(currentDate);
+      startTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
+
+      var endTime = new Date(currentDate);
+      endTime.setHours(4, 55, 0, 0); // Set to 4:55 AM
+
+      if (currentDate >= startTime && currentDate <= endTime) {
+        menuType = "pre-order";
+      }
       get(
         {
           name: this.searchItem,
           page: this.page,
           branch_id: this.branch_id,
-          category: this.$store.state.category.selected_category[0]
+          category: this.$store.state.category.selected_category[0],
+          menuType
         },
         this.guest
       ).then((data) => {
@@ -141,7 +158,14 @@ export default {
       });
     },
     getCategories() {
-      getCategoriesApi({}, this.guest).then(({ data }) => {
+      let area_id;
+      const defaultLocation = localStorage.getItem(`default_location`);
+        if(defaultLocation == "area"){
+          area_id = JSON.parse(localStorage.getItem('default_area')).id;
+        }else if(defaultLocation == "address"){
+          area_id = JSON.parse(localStorage.getItem(`default_address`)).area_id;
+        }
+      getCategoriesApi({ area: area_id }, this.guest).then(({ data }) => {
         this.categories = data;
       });
     },

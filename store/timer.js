@@ -19,11 +19,11 @@ export const actions = {
 
 export const mutations = {
   SET_DATA(state, data){
-    state.days = data.days || [];
-    state.hours = data.hours || [];
-    state.minutes = data.minutes || [];
-    state.apmpm = data.apmpm || [];
-    state.payment = data.isPaymentTimeValid;
+    state.days = data?.days || [];
+    state.hours = data?.hours || [];
+    state.minutes = data?.minutes || [];
+    state.apmpm = data?.apmpm || [];
+    state.payment = data?.isPaymentTimeValid;
     console.log(data)
   },
   SET_DAYS(state, days) {

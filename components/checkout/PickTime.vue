@@ -64,12 +64,12 @@ export default {
             if (this.isSameDay) {
                 const isPm = newHour.includes('pm')
                 if (isPm) {
-                    if (new Date().getHours() + (new Date().getMinutes() > 15 ? 1 : 0) == (parseInt(newHour) + 12)) {
-                        this.minutes = timeChecker('asap', new Date).minutes;
+                    if (new Date(this.time).getHours() + (new Date(this.time).getMinutes() > 15 ? 1 : 0) == (parseInt(newHour) + 12)) {
+                        this.minutes = timeChecker('asap', new Date(this.time)).minutes;
                     }
                 } else {
-                    if (new Date().getHours() + (new Date().getMinutes() > 15 ? 1 : 0) == (parseInt(newHour))) {
-                        this.minutes = timeChecker('asap', new Date).minutes;
+                    if (new Date(this.time).getHours() + (new Date(this.time).getMinutes() > 15 ? 1 : 0) == (parseInt(newHour))) {
+                        this.minutes = timeChecker('asap', new Date(this.time)).minutes;
                     }
                 }
                 if (newHour === '8 pm') {
@@ -127,7 +127,7 @@ export default {
         },
     },
     computed: {
-        ...mapState("timer", ["days", "hours", "minutes", "ampm", "payment"]),
+        ...mapState("timer", ["time", "days", "hours", "minutes", "ampm", "payment"]),
         ...mapState("checkout", ["type"]),
         isPreOrder() {
             return this.type == 'pre-order';

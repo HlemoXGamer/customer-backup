@@ -3,8 +3,7 @@
     <v-col cols="12">
       <Banner></Banner>
     </v-col>
-    <v-col class="py-0 px-0 mx-0 mb-0 mt-7">
-      <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("checkout.shipping.shipping_label") }}</p>
+    <v-col class="py-0 px-0 mx-0 mb-0 mt-4">
           <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
             <v-tab value="areas" style="width: 200px" class="font-weight-bold">
               {{ $t("location.select_your_area") }}
@@ -44,7 +43,7 @@
               <v-col v-for="address in addresses" :key="address?.id" cols="12">
                 <v-item v-slot="{ active, toggle }">
                   <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                    :color="active ? '#65382c' : ''" @click="toggle()">
+                    :color="currentAddress !== null && currentAddress !== undefined ? addresses[currentAddress].id == address.id ? '#65382c' : '' : ''" @click="toggle()">
                     <v-card-text>
                       <v-scroll-y-transition>
                         <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
@@ -86,7 +85,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters class="align-center justify-center mt-12">
-          <v-btn @click="$router.replace(localePath('/categories'))" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' && (!currentArea || !currentAddress)" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
+          <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
             {{ $t("checkout.shipping.continue_shopping") }}
           </v-btn>
         </v-row>
@@ -100,6 +99,7 @@ import { get as getAddresses, setDefault } from "@/apis/addresses";
 import { update } from '@/apis/addresses'
 import { get as getAreas } from '@/apis/areas'
 import { mapState } from "vuex";
+import { removeCart } from "~/apis/cart";
 
 export default {
   components: {
@@ -116,7 +116,7 @@ export default {
       currentTab: "areas",
       areas: [],
       addresses: [],
-      currentAddress: "",
+      currentAddress: null,
       loading: false,
       theAddress: null,
       center: { lat: 0, lng: 0 },
@@ -126,10 +126,24 @@ export default {
     };
   },
   methods: {
-    isToggle(value) {
+    async confirm(){
+      const defaultLocation = localStorage.getItem(`default_location`);
+      if(defaultLocation == "area"){
+        const area = JSON.parse(localStorage.getItem('default_area'));
+        await this.$store.dispatch("cart/get", { branch: area.id });
+      }else if(defaultLocation == "address"){
+        const area = JSON.parse(localStorage.getItem(`default_address`));
+        await this.$store.dispatch("cart/get", { branch: area.area_id });
+      }
+      this.$router.replace(this.localePath('/categories'))
+    },
+    async isToggle(value) {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
       }, 100);
+      if(this.id !== null && this.id !== undefined){
+        await removeCart(this.id, this.$auth.loggedIn);        
+      }
     },
     onSetAddress(theAddress, center) {
       this.theAddress = theAddress;
@@ -157,6 +171,9 @@ export default {
       }).finally(() => {
         this.loading = false;
       })
+    },
+    sortAreas(array, locale, key) {
+      return array.sort((a, b) => a[key].localeCompare(b[key], locale));
     },
     sortAreas(array, locale, key) {
       return array.sort((a, b) => a[key].localeCompare(b[key], locale));
@@ -206,7 +223,7 @@ export default {
       localStorage.setItem("default_address", JSON.stringify(address));
       await setDefault({ address_id: address.id });
       // this.$router.replace(this.localePath("/categories"));
-      this.$store.dispatch("cart/get");
+      // this.$store.dispatch("cart/get");
       this.loading = false;
     },
     async setDefaultBranch(area) {  
@@ -245,7 +262,7 @@ export default {
       } else {
         this.$toast.error(this.$t("location.no_branches"));
       }
-      this.$store.dispatch("cart/get", { branch: branches[0] });
+      // this.$store.dispatch("cart/get", { branch: branches[0] }); 
     },
     checkLatLng(address) {
       if (address && !address.lat && !address.lng) {
@@ -267,6 +284,13 @@ export default {
     }
   },
   watch: {
+    currentTab(newValue, oldValue){
+      if(newValue == "areas"){
+        this.currentAddress = null;
+      }else if(newValue == "addresses"){
+        this.currentArea = null;
+      }
+    },
     currentLocale(newLocale, oldLocale) {
       this.areas = this.sortAreas(this.areas, newLocale, `name_${newLocale}`);
     },
@@ -297,9 +321,12 @@ export default {
     currentLocale() {
       return this.$i18n.locale;
     },
+    ...mapState("cart", ["id"]),
     ...mapState("checkout", ["type"]),
+    ...mapState("timer", ["time"]),
     isDeliveryNowDimmed() {
-      const now = new Date();
+      console.log(this.time)
+      const now = new Date(this.time);
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;
@@ -313,7 +340,7 @@ export default {
       return totalMinutes >= startDimMinutes || totalMinutes <= endDimMinutes;
     },
     isLaterTodayDimmed() {
-      const now = new Date();
+      const now = new Date(this.time);
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;

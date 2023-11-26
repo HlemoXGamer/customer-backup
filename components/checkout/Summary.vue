@@ -82,11 +82,16 @@
                             <v-card-text class="pb-4">
                                 <v-row no-gutters class="align-center justify-space-between">
                                     <p class="ma-0 pa-0">
-                                        Price: {{ product.price }} KWD
+                                        Price: {{ hasExtraFlavor(product.product_id) ? Number(product.price) +  Number(getProductPrice(product.product_id)) : product.price }} KWD
                                     </p>
-                                    <v-btn v-if="product.product.has_note == 1" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product, 'note')">
-                                      <v-icon color="#65382c">mdi-draw-pen</v-icon>
-                                    </v-btn>
+                                    <div class="d-flex align-center">
+                                        <v-btn v-if="hasExtraFlavor(product.product_id)" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product.product_id, 'extras_flavors')">
+                                          <v-icon color="#65382c">mdi-candy-outline</v-icon>
+                                        </v-btn>
+                                        <v-btn v-if="product.product.has_note == 1" icon color="#65382c" small class="d-block black--text mx-1" @click="openDialog(product, 'note')">
+                                          <v-icon color="#65382c">mdi-draw-pen</v-icon>
+                                        </v-btn>
+                                    </div>
                                 </v-row>
                             </v-card-text>
                         </v-card>
@@ -118,7 +123,8 @@
                                     {{ item.quantity }}
                                 </span>
                                 <span class="col-4 dropcart__product-price">
-                                    KWD {{ item.price }}</span>
+                                    {{ hasExtraFlavor(item.product_id) ? Number(item.price) +  Number(getProductPrice(item.product_id)) : item.price }} KWD
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -192,6 +198,7 @@
                 </v-btn>
             </v-card-actions>
         </v-card>
+        <commonFlavorsExtras :dialog="dialog.extras_flavors_dialog" :items="dialog.extras_flavors" @close="dialog.extras_flavors_dialog = false" />
     </div>
 </template>
   
@@ -203,6 +210,7 @@ export default {
     computed: {
         ...mapState("cart", [
             "items",
+            "extra_flavors",
             "total",
             "delivery_cost",
             "delivery_fee",
@@ -228,6 +236,7 @@ export default {
             discount_type: "",
             discount_rate: "",
             newSubTotal: "",
+            totalWithExtrasFlavors: this.total,
             user: JSON.parse(localStorage.getItem('shipping_address')),
             authedUser: JSON.parse(localStorage.getItem('user')),
             // quantity: 1,
@@ -260,6 +269,8 @@ export default {
               images: [],
               note_dialog: false,
               notes: [],
+              extras_flavors_dialog: false,
+              extras_flavors: [],
               product_id: "",
               count: 0,
             },
@@ -268,16 +279,27 @@ export default {
     mounted() {
         // this.calculateTotals();
         this.setPicked();
-        this.products = this.$store.state.cart.items
+        this.products = this.items;
+        this.allExtrasFlavors = this.extra_flavors;
         this.get_branch();
     },
     methods: {
         ...mapActions("cart", ["setItemNotes"]),
+        getProductPrice(product_id){
+            const sum = this.extra_flavors.filter(item => item.product_id == product_id).map(item => item.price * item.quantity).reduce((accumulator, currentValue) => accumulator + parseFloat(currentValue), 0);
+            this.totalWithExtrasFlavors = Number(this.total) + Number(sum).toFixed(2);
+            return Number(sum).toFixed(2);
+        },
+        hasExtraFlavor(product_id){
+          return this.extra_flavors.map(item => item.product_id).includes(product_id);
+        },
         openDialog(product, type) {
           if (type === "image") {
             this.openImageDialog(product);
-          } else {
+          } else if(type === "note") {
             this.openNoteDialog(product);
+          } else if(type === "extras_flavors"){
+            this.openExtrasFlavorsDialog(product);
           }
         },
         openImageDialog(product) {
@@ -302,6 +324,10 @@ export default {
             itemNotes: product.notes,
             productId: product.product_id,
           });
+        },
+        openExtrasFlavorsDialog(product) {
+          this.dialog.extras_flavors = this.allExtrasFlavors.filter(item => item.product_id == product);
+          this.dialog.extras_flavors_dialog = true;
         },
         back() {
             this.$store.commit("checkout/SHOW_TIME");

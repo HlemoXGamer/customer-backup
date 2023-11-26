@@ -333,8 +333,10 @@ export default {
     },
     async addToCart(product, data = {}) {
       this.addToCartLoading = true;
-      for(let i = 0; i < data.count; i++){
+      if(this.notes.length !== data.count){
+        for(let i = this.notes.length; i < data.count; i++){
           this.notes.push("");
+        }
       }
       await this.$store.dispatch("cart/add", {
         product_id: product.id,
@@ -342,7 +344,7 @@ export default {
         quantity: data.count || 1,
         images: this.images.map((image) => image.file),
         // notes: this.notes.map((note) => note),
-        notes: [...this.notes.map((note) => note.note)],
+        notes: [...this.notes.map((note) => note)],
         special_request: data.special_request || "",
       });
 

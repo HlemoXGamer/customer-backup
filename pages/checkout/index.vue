@@ -1,11 +1,11 @@
 <template>
   <v-row>
-    <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 7">
-      <v-card elevation="0" outlined rounded="lg">
-        <v-card-text class="text-center py-10">
+    <!-- <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 7"> -->
+      <!-- <v-card elevation="0" outlined rounded="lg"> -->
+        <!-- <v-card-text class="text-center py-10">
           <p class="font-weight-bold text-h6 black--text">
             {{ $t("checkout.no_account") }}
-          </p>
+          </p> -->
           <!-- <p class="text-subtitle-1 grey-text text--lighten-1 my-5">
             {{$t('checkout.no_account_help')}}
           </p>
@@ -31,7 +31,7 @@
           <!-- 
           <v-divider></v-divider> -->
 
-          <p class="text-subtitle-1 grey-text text--lighten-1 my-5">
+          <!-- <p class="text-subtitle-1 grey-text text--lighten-1 my-5">
             {{ $t("checkout.login_help") }}
           </p>
 
@@ -71,7 +71,7 @@
             :loading="loading"
           >
             {{ $t("checkout.continue") }}
-          </v-btn>
+          </v-btn> -->
 
           <!-- <p class="text-h6 my-10 font-weight-bold grey--text text--darken-1">
             {{$t('checkout.social_login')}}
@@ -101,12 +101,12 @@
               <v-icon> mdi-google </v-icon>
             </v-btn>
           </div> -->
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 5">
+        <!-- </v-card-text> -->
+      <!-- </v-card> -->
+    <!-- </v-col> -->
+    <!-- <v-col :cols="$vuetify.breakpoint.mobile ? 12 : 5">
       <OrderSummary></OrderSummary>
-    </v-col>
+    </v-col> -->
   </v-row>
 </template>
 
@@ -182,7 +182,7 @@ export default {
       },
     };
   },
-  created() {
+  mounted() {
     this.$router.replace(this.localePath("/checkout/finalize"));
   },
 };

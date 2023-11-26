@@ -29,3 +29,9 @@ export function removeAll() {
 
   return client.delete(`${url}/all`);
 }
+
+export function removeCart(cart_id, loggedIn) {
+  const url = loggedIn ? "/customer/cart" : "/guest-apis/cart";
+
+  return client.delete(`${url}/${cart_id}`);
+}
