@@ -100,6 +100,7 @@ import { update } from '@/apis/addresses'
 import { get as getAreas } from '@/apis/areas'
 import { mapState } from "vuex";
 import { removeCart } from "~/apis/cart";
+import getServerTime from "~/apis/time"
 
 export default {
   components: {
@@ -340,7 +341,11 @@ export default {
       return totalMinutes >= startDimMinutes || totalMinutes <= endDimMinutes;
     },
     isLaterTodayDimmed() {
-      const now = new Date(this.time);
+      const getTime = async () => {
+        return await getServerTime().timer
+      }
+      const now = new Date(getTime());
+      console.log(now);
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;
