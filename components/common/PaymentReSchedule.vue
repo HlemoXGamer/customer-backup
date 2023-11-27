@@ -15,12 +15,14 @@
                 <v-tab-item key="refund">
                     <v-card class="px-2 pb-2">
                         <v-card-text>
-                            <scroll-picker-group class="flex font-weight-bold" style="color: #65382c; font-size: 23px; width: 100%;" v-if="!$vuetify.breakpoint.xs">
+                            <scroll-picker-group class="flex font-weight-bold"
+                                style="color: #65382c; font-size: 23px; width: 100%;" v-if="!$vuetify.breakpoint.xs">
                                 <scroll-picker :options="days" v-model="currentDay" />
                                 <scroll-picker :options="hours" v-model="currentHour" />
                                 <scroll-picker :options="minutes" v-model="currentMinute" />
                             </scroll-picker-group>
-                            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker" style="color: #65382c; font-size: calc(1em); width: 100%;" v-if="$vuetify.breakpoint.xs">
+                            <scroll-picker-group class="d-flex justify-center align-center font-weight-bold mobile-picker"
+                                style="color: #65382c; font-size: calc(1em); width: 100%;" v-if="$vuetify.breakpoint.xs">
                                 <scroll-picker class="first-layer" :options="days" v-model="currentDay" />
                                 <scroll-picker class="middle-layer" :options="hours" v-model="currentHour" />
                                 <scroll-picker class="last-layer" :options="minutes" v-model="currentMinute" />
@@ -107,67 +109,80 @@ export default {
             return `${year}-${monthss}-${days} ${hours}:${minutes}:${seconds} ${ampm}`;
         },
         async closeDialog(type) {
-            if (type == 'reschedule') {
-                try {
-                    this.loading = true;
-                    await updateDate({ order_id: this.order, delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute || '00')) })
-                    this.$emit("close");
-                } catch (err) {
-                    this.$toast.error("Something went wrong");
-                } finally {
-                    this.loading = false;
+            try {
+                this.loading = true;
+
+                let response;
+                if (type == 'reschedule') {
+                    response = await updateDate({
+                        order_id: this.order,
+                        delivery_date: this.transformDate(this.currentDay + " " + this.currentHour + " " + (this.currentMinute || '00'))
+                    });
+                } else if (type == 'refund') {
+                    response = await refundLatePayment({ order_id: this.order });
                 }
-            } else if (type == 'refund') {
-                try {
-                    this.loading = true;
-                    await refundLatePayment({ order_id: this.order })
-                    this.$emit("close");
-                } catch (err) {
-                    this.$toast.error("Something went wrong");
-                } finally {
-                    this.loading = false;
+
+                if (response && response.url) {
+                    // Redirect to the URL from the response
+                    window.location.href = response.url;
+                } else {
+                    // Reload the current page
+                    window.location.reload();
                 }
+
+                this.$emit("close");
+            } catch (err) {
+                this.$toast.error("Something went wrong");
+            } finally {
+                this.loading = false;
             }
         }
+
     },
 }
 </script>
 
 
 <style scoped lang="scss">
-:deep(.vue-scroll-picker-layer) .top{
+:deep(.vue-scroll-picker-layer) .top {
     height: calc(53% - 1em);
 }
 
-:deep(.vue-scroll-picker-layer) .bottom{
+:deep(.vue-scroll-picker-layer) .bottom {
     height: calc(53% - 1em);
 }
 
 :deep(.last-layer) {
     width: 80px;
+
     .vue-scroll-picker-layer {
         width: 80px;
     }
+
     .vue-scroll-picker-list {
         width: 80px;
     }
 }
 
-:deep(.first-layer){
+:deep(.first-layer) {
     width: 170px;
+
     .vue-scroll-picker-layer {
         width: 170px;
     }
+
     .vue-scroll-picker-list {
         width: 170px;
     }
 }
 
-:deep(.middle-layer){
+:deep(.middle-layer) {
     width: 80px;
+
     .vue-scroll-picker-layer {
         width: 80px;
     }
+
     .vue-scroll-picker-list {
         width: 80px;
     }
