@@ -255,7 +255,7 @@ export default {
         let default_location = localStorage.getItem("default_location");
 
         if(!default_location || !shipping_type){
-          this.$router.push(this.localePath("/pick-service"));
+          // this.$router.push(this.localePath("/pick-service"));
         }
       }
     },
