@@ -1,4 +1,43 @@
 export const timeChecker = (orderType, currentTime) => {
+    // Function to convert 24-hour time to 12-hour format
+    const convertTo12Hour = (time24) => {
+        const [hours, minutes] = time24.split(':').map(Number);
+        const suffix = hours >= 12 ? 'pm' : 'am';
+        const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+        return `${hours12} ${suffix}`;
+    };
+
+    const removeHours = (hoursArray, timeRanges) => {
+        // Convert time ranges to 12-hour format before processing
+        timeRanges.forEach(range => {
+            if (range.status === 0) {
+                const from = convertTo12Hour(range.from);
+                const to = convertTo12Hour(range.to);
+                const fromIndex = hoursArray.indexOf(from);
+                const toIndex = hoursArray.indexOf(to);
+                if (fromIndex !== -1 && toIndex !== -1) {
+                    hoursArray.splice(fromIndex, toIndex - fromIndex + 1);
+                }
+            }
+        });
+    };
+
+    // const timeRanges = [
+    //     { from: "8 am", to: "10 am", status: 0 },
+    //     { from: "10 am",to:"12 pm", status: 1 },
+    //     { from: "12 pm",to:"2 pm", status: 0 },
+    //     { from: "2 pm", to: "4 pm", status: 0 },
+    //     { from: "4 pm", to: "6 pm", status: 0 },
+    //     { from: "6 pm", to: "8 pm", status: 1 },
+    // ];    
+    const timeRanges = [
+        { from: "8:00", to: "10:00", status: 0 },
+        { from: "10:00",to:"12:00", status: 1 },
+        { from: "12:00",to:"14:00", status: 0 },
+        { from: "14:00", to: "16:00", status: 0 },
+        { from: "16:00", to: "18:00", status: 0 },
+        { from: "18:00", to: "20:00", status: 1 },
+    ];    
     switch (orderType) {
         case "asap":
             // Initialization Phase
@@ -76,7 +115,7 @@ export const timeChecker = (orderType, currentTime) => {
                 paymentTimeAsap.getHours() >= 8 ||
                 (paymentTimeAsap.getHours() === 8 &&
                     paymentTimeAsap.getMinutes() >= 0);
-
+            removeHours(hoursAsap, timeRanges);
             return {
                 days: daysAsap,
                 hours: hoursAsap,
@@ -167,7 +206,7 @@ export const timeChecker = (orderType, currentTime) => {
             if(currentDate >= startTime && currentDate <= endTime){
                 isPaymentTimeValidSameDay = true;
             }
-
+            removeHours(hoursSameDay, timeRanges);
             return {
                 days: daysSameDay,
                 hours: hoursSameDay,
@@ -222,7 +261,7 @@ export const timeChecker = (orderType, currentTime) => {
             // Set an arbitrary 'est-time' for pre-order
             const estTimePreOrder = new Date(currentTime); // Modify with your logic for 'est-time'
 
-            // TODO: SET PAYMENT VALIDATION AND ESTIMATION TIME
+            removeHours(hoursPreOrder, timeRanges);
             return {
                 days: daysPreOrder,
                 hours: hoursPreOrder,
