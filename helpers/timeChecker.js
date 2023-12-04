@@ -1,43 +1,68 @@
 export const timeChecker = (orderType, currentTime) => {
     // Function to convert 24-hour time to 12-hour format
-    const convertTo12Hour = (time24) => {
-        const [hours, minutes] = time24.split(':').map(Number);
-        const suffix = hours >= 12 ? 'pm' : 'am';
-        const hours12 = hours % 12 === 0 ? 12 : hours % 12;
-        return `${hours12} ${suffix}`;
-    };
+    // const convertTo12Hour = (time24) => {
+    //     const [hours, minutes] = time24.split(':').map(Number);
+    //     const suffix = hours >= 12 ? 'pm' : 'am';
+    //     const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+    //     return `${hours12} ${suffix}`;
+    // };
 
-    const removeHours = (hoursArray, timeRanges) => {
-        // Convert time ranges to 12-hour format before processing
-        timeRanges.forEach(range => {
-            if (range.status === 0) {
-                const from = convertTo12Hour(range.from);
-                const to = convertTo12Hour(range.to);
-                const fromIndex = hoursArray.indexOf(from);
-                const toIndex = hoursArray.indexOf(to);
-                if (fromIndex !== -1 && toIndex !== -1) {
-                    hoursArray.splice(fromIndex, toIndex - fromIndex + 1);
-                }
+    // const removeHours = (hoursArray, timeRanges) => {
+    //     // Convert time ranges to 12-hour format before processing
+    //     timeRanges.forEach(range => {
+    //         if (range.status === 0) {
+    //             const from = convertTo12Hour(range.from);
+    //             const to = convertTo12Hour(range.to);
+    //             const fromIndex = hoursArray.indexOf(from);
+    //             const toIndex = hoursArray.indexOf(to);
+    //             console.log({hoursArray});
+    //             if (fromIndex !== -1 && toIndex !== -1) {
+    //                 hoursArray.splice(fromIndex, 2);
+    //             }
+    //         }
+    //     });
+    // };
+
+        // Function to convert 24-hour time to 12-hour format
+        const convertTo12Hour = (time24) => {
+            const [hours, minutes] = time24.split(':').map(Number);
+            const suffix = hours >= 12 ? 'pm' : 'am';
+            const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+            return `${hours12} ${suffix}`;
+        };
+    
+        // Function to generate the range of hours between 'from' and 'to'
+        const generateRangeHours = (from, to) => {
+            let hoursArray = [];
+            let start = parseInt(from.split(':')[0]);
+            let end = parseInt(to.split(':')[0]);
+            for (let hour = start; hour < end; hour++) {
+                let hourFormatted = convertTo12Hour(`${hour}:00`);
+                hoursArray.push(hourFormatted);
             }
-        });
-    };
-
+            return hoursArray;
+        };
+    
+        // Function to remove hours based on status
+        const removeHours = (timeRanges) => {
+            let hoursArray = []; // Start with an empty array
+            timeRanges.forEach(range => {
+                if (range.status === 1 && range.is_active === 1) {
+                    const rangeHours = generateRangeHours(range.from, range.to);
+                    hoursArray = [...hoursArray, ...rangeHours];
+                }
+            });
+            return hoursArray;
+        };
+    const timeRanges = localStorage.getItem('default_area') ? JSON.parse(localStorage.getItem('default_area'))?.branches?.[0]?.time_slots : null;
     // const timeRanges = [
-    //     { from: "8 am", to: "10 am", status: 0 },
-    //     { from: "10 am",to:"12 pm", status: 1 },
-    //     { from: "12 pm",to:"2 pm", status: 0 },
-    //     { from: "2 pm", to: "4 pm", status: 0 },
-    //     { from: "4 pm", to: "6 pm", status: 0 },
-    //     { from: "6 pm", to: "8 pm", status: 1 },
-    // ];    
-    const timeRanges = [
-        { from: "8:00", to: "10:00", status: 0 },
-        { from: "10:00",to:"12:00", status: 1 },
-        { from: "12:00",to:"14:00", status: 0 },
-        { from: "14:00", to: "16:00", status: 0 },
-        { from: "16:00", to: "18:00", status: 0 },
-        { from: "18:00", to: "20:00", status: 1 },
-    ];    
+    //     { from: "8:00",  to: "10:00", status: 1, is_active: 0 },
+    //     { from: "10:00", to: "12:00", status: 1, is_active: 0 },
+    //     { from: "12:00", to: "14:00", status: 1, is_active: 0 },
+    //     { from: "14:00", to: "16:00", status: 1, is_active: 1 },
+    //     { from: "16:00", to: "18:00", status: 0, is_active: 1 },
+    //     { from: "18:00", to: "20:00", status: 0, is_active: 1 },
+    // ];
     switch (orderType) {
         case "asap":
             // Initialization Phase
@@ -136,7 +161,7 @@ export const timeChecker = (orderType, currentTime) => {
             const formattedDate = dateFormatter2.format(nowSameDay);
 
             const daysSameDay = [formattedDate];
-            const hoursSameDay = [];
+            const hoursSameDay = removeHours(timeRanges);
             const minutesSameDay = [];
             const ampmSameDay = ["am", "pm"];
 
@@ -156,15 +181,15 @@ export const timeChecker = (orderType, currentTime) => {
             }
 
             // Generating Hours Array
-            for (let hour = startHourSameDay; hour < 21; hour++) {
-                if (hour < 12) {
-                    hoursSameDay.push(`${hour} am`);
-                } else if (hour === 12) {
-                    hoursSameDay.push(`${hour} pm`);
-                } else {
-                    hoursSameDay.push(`${hour - 12} pm`);
-                }
-            }
+            // for (let hour = startHourSameDay; hour < 21; hour++) {
+            //     if (hour < 12) {
+            //         hoursSameDay.push(`${hour} am`);
+            //     } else if (hour === 12) {
+            //         hoursSameDay.push(`${hour} pm`);
+            //     } else {
+            //         hoursSameDay.push(`${hour - 12} pm`);
+            //     }
+            // }
 
             // Generating Minutes Array
             let lastHour = hoursSameDay[hoursSameDay.length - 1];
@@ -206,7 +231,7 @@ export const timeChecker = (orderType, currentTime) => {
             if(currentDate >= startTime && currentDate <= endTime){
                 isPaymentTimeValidSameDay = true;
             }
-            removeHours(hoursSameDay, timeRanges);
+            
             return {
                 days: daysSameDay,
                 hours: hoursSameDay,
@@ -233,7 +258,7 @@ export const timeChecker = (orderType, currentTime) => {
                 nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Move to the next day
             }
 
-            const hoursPreOrder = [];
+            const hoursPreOrder = removeHours(timeRanges);;
             const minutesPreOrder = [];
             const ampmPreOrder = ["am", "pm"];
 
@@ -241,15 +266,15 @@ export const timeChecker = (orderType, currentTime) => {
             const startHour = 8;
             const endHour = 20; // 8:30 PM is the same as 20:30 in 24-hour format
 
-            for (let hour = startHour; hour <= endHour; hour++) {
-                if (hour < 12) {
-                    hoursPreOrder.push(`${hour} am`);
-                } else if (hour === 12) {
-                    hoursPreOrder.push(`${hour} pm`);
-                } else {
-                    hoursPreOrder.push(`${hour - 12} pm`);
-                }
-            }
+            // for (let hour = startHour; hour <= endHour; hour++) {
+            //     if (hour < 12) {
+            //         hoursPreOrder.push(`${hour} am`);
+            //     } else if (hour === 12) {
+            //         hoursPreOrder.push(`${hour} pm`);
+            //     } else {
+            //         hoursPreOrder.push(`${hour - 12} pm`);
+            //     }
+            // }
 
             // Limit minutes to 30 for the latest hour (8:30 PM)
             const latestHour = currentTime.slice(11,13) == 20 ? 30 : 59;
@@ -261,7 +286,6 @@ export const timeChecker = (orderType, currentTime) => {
             // Set an arbitrary 'est-time' for pre-order
             const estTimePreOrder = new Date(currentTime); // Modify with your logic for 'est-time'
 
-            removeHours(hoursPreOrder, timeRanges);
             return {
                 days: daysPreOrder,
                 hours: hoursPreOrder,

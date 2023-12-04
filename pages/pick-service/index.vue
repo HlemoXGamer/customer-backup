@@ -4,20 +4,21 @@
       <Banner></Banner>
     </v-col>
     <v-col class="py-0 px-0 mx-0 mb-0 mt-4">
-          <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
-            <v-tab value="areas" style="width: 200px" class="font-weight-bold">
-              {{ $t("location.select_your_area") }}
-            </v-tab>
-            <v-tab value="addresses" style="width: 200px" :disabled="!$auth.loggedIn" class="font-weight-bold">
-              {{ $t("location.saved_addresses") }}
-            </v-tab>
-          </v-tabs>
-        <v-tabs-items v-model="currentTab">
-          <v-tab-item key="areas">
-            <v-col class="mx-0 mt-5 px-0 py-0">
-              <v-combobox :loading="loading" :items="areas" :item-text="`name_${$i18n.locale}`" item-value="id" height="57" outlined flat class="rounded-lg" placeholder="Pick an Area" color="#65382c" v-model="currentArea" />
-              <!-- Old Address List -->
-              <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
+      <v-tabs color="#65382c" v-model="currentTab" style="width: 100%;" class="align-center justify-start d-flex mt-6">
+        <v-tab value="areas" style="width: 200px" class="font-weight-bold">
+          {{ $t("location.select_your_area") }}
+        </v-tab>
+        <v-tab value="addresses" style="width: 200px" :disabled="!$auth.loggedIn" class="font-weight-bold">
+          {{ $t("location.saved_addresses") }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="currentTab">
+        <v-tab-item key="areas">
+          <v-col class="mx-0 mt-5 px-0 py-0">
+            <v-combobox :loading="loading" :items="areas" :item-text="`name_${$i18n.locale}`" item-value="id" height="57"
+              outlined flat class="rounded-lg" placeholder="Pick an Area" color="#65382c" v-model="currentArea" />
+            <!-- Old Address List -->
+            <!-- <v-card v-for="(area, index) in filteredAreas" @click="setDefaultBranch(area)" :key="area.id" width="100%"
                 height="40px" style="border-bottom: 1px solid gray"
                 class="py-2 px-2 d-flex flex-row align-center justify-space-between rounded-0">
                 <p style="color: #65382c;" class="mb-0">
@@ -27,68 +28,80 @@
                   mdi-chevron-down
                 </v-icon>
               </v-card>  -->
-              <!-- <v-col cols="12" class="d-flex align-center justify-center">
+            <!-- <v-col cols="12" class="d-flex align-center justify-center">
                 <v-progress-circular :size="50" color="#65382c" v-if="loading" indeterminate></v-progress-circular>
               </v-col> -->
-              <!-- <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" /> -->
-              <!-- <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/> -->
+            <!-- <GoogleMap @set-address="onSetAddress" :dialog="gmapDialog" @close="gmapDialog = false" /> -->
+            <!-- <CheckoutShipping :theAddress="theAddress" :center="center" @address-updated="setDefaultBranch" @openGMap="gmapDialog = true"/> -->
+          </v-col>
+        </v-tab-item>
+        <v-tab-item key="addresses">
+          <p v-if="!addresses.length" style="font-size: 20px;" class="font-primary font-weight-bold text-center my-5">
+            {{ $t("common.no_addresses") }}
+          </p>
+          <v-item-group v-model="currentAddress" class="mt-4">
+            <!-- <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLng="updateLatLng" isAddress :address="currentMapAddress" @close="savedAddrMapDialog = false" /> -->
+            <v-col v-for="address in addresses" :key="address?.id" cols="12">
+              <v-item v-slot="{ active, toggle }">
+                <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
+                  :color="currentAddress !== null && currentAddress !== undefined ? addresses[currentAddress].id == address.id ? '#65382c' : '' : ''"
+                  @click="toggle()">
+                  <v-card-text>
+                    <v-scroll-y-transition>
+                      <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
+                        }`">
+                        <p>{{ address?.address }}</p>
+                        <p>
+                          {{ address?.country_name }}
+                          {{ address?.city_name }}
+                          {{ address?.area_name }}
+                        </p>
+                        <p>{{ address?.address_info }}</p>
+                        <p>{{ address?.description }}</p>
+                      </div>
+                    </v-scroll-y-transition>
+                  </v-card-text>
+                </v-card>
+              </v-item>
             </v-col>
-          </v-tab-item>
-          <v-tab-item key="addresses">
-            <p v-if="!addresses.length" style="font-size: 20px;" class="font-primary font-weight-bold text-center my-5">
-              {{ $t("common.no_addresses") }}
-            </p>
-            <v-item-group v-model="currentAddress" class="mt-4">
-              <!-- <GoogleMap @set-address="onSetAddress" :dialog="savedAddrMapDialog" @updateLatLng="updateLatLng" isAddress :address="currentMapAddress" @close="savedAddrMapDialog = false" /> -->
-              <v-col v-for="address in addresses" :key="address?.id" cols="12">
-                <v-item v-slot="{ active, toggle }">
-                  <v-card outlined rounded="lg" class="d-flex align-center" min-height="150"
-                    :color="currentAddress !== null && currentAddress !== undefined ? addresses[currentAddress].id == address.id ? '#65382c' : '' : ''" @click="toggle()">
-                    <v-card-text>
-                      <v-scroll-y-transition>
-                        <div :class="`flex-grow-1 ${active ? 'white--text' : 'black--text'
-                          }`">
-                          <p>{{ address?.address }}</p>
-                          <p>
-                            {{ address?.country_name }}
-                            {{ address?.city_name }}
-                            {{ address?.area_name }}
-                          </p>
-                          <p>{{ address?.address_info }}</p>
-                          <p>{{ address?.description }}</p>
-                        </div>
-                      </v-scroll-y-transition>
-                    </v-card-text>
-                  </v-card>
-                </v-item>
-              </v-col>
-            </v-item-group>
-          </v-tab-item>
-        </v-tabs-items>
-        <v-row no-gutters class="justify-center align-center py-2 flex-wrap mt-3">
-          <v-col cols="12">
-            <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("common.choose_service") }}</p>
-            <v-btn-toggle dense v-model="shipping_type" active-class="isPicked" class="rounded-lg py-0 d-flex align-center justify-center flex-wrap mt-6">
-            <v-btn outlined x-large class="py-0 my-1 me-3 px-4 rounded-lg font-weight-bold" style="text-transform: unset; border-width: 2px;" value="asap"
-              @click="isToggle('asap')" :disabled="isDeliveryNowDimmed" >
+          </v-item-group>
+        </v-tab-item>
+      </v-tabs-items>
+      <v-row no-gutters class="justify-center align-center py-2 flex-wrap mt-3">
+        <v-col cols="12">
+          <p class="text-h5 font-primary text-center font-weight-bold mx-auto mb-0">{{ $t("common.choose_service") }}</p>
+          <v-btn-toggle dense v-model="shipping_type" active-class="isPicked"
+            class="rounded-lg py-0 d-flex align-center justify-center flex-wrap mt-6">
+            <v-btn outlined x-large class="py-0 my-1 me-3 px-4 rounded-lg font-weight-bold"
+              style="text-transform: unset; border-width: 2px;" value="asap" @click="isToggle('asap')"
+              :disabled="isDeliveryNowDimmed || isButtonDimmed('ASAP')">
               Deliver now
             </v-btn>
-            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold" style="text-transform: unset; border-width: 2px" outlined value="same-day"
-              @click="isToggle('same-day')" :disabled="isLaterTodayDimmed" >
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
+              style="text-transform: unset; border-width: 2px" outlined value="same-day" @click="isToggle('same-day')"
+              :disabled="isLaterTodayDimmed || isButtonDimmed('Schedule')">
               Later Today
             </v-btn>
-            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold" style="text-transform: unset; border-width: 2px" outlined value="pre-order"
-              @click="isToggle('pre-order')">
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
+              style="text-transform: unset; border-width: 2px" outlined value="pre-order" @click="isToggle('pre-order')"
+              :disabled="isButtonDimmed('Pre Order')">
               Pre Order
             </v-btn>
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
+              style="text-transform: unset; border-width: 2px" outlined value="pick-up" @click="isToggle('pick-up')"
+              :disabled="isButtonDimmed('Pick Up')">
+              Pick up
+            </v-btn>
           </v-btn-toggle>
-          </v-col>
-        </v-row>
-        <v-row no-gutters class="align-center justify-center mt-12">
-          <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }" :disabled="shipping_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))" height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
-            {{ $t("checkout.shipping.continue_shopping") }}
-          </v-btn>
-        </v-row>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="align-center justify-center mt-12">
+        <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }"
+          :disabled="shipping_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))"
+          height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
+          {{ $t("checkout.shipping.continue_shopping") }}
+        </v-btn>
+      </v-row>
     </v-col>
   </v-row>
 </template>
@@ -124,15 +137,16 @@ export default {
       savedAddrMapDialog: false,
       gmapDialog: true,
       currentMapAddress: "",
+      selectedBranch: null,
     };
   },
   methods: {
-    async confirm(){
+    async confirm() {
       const defaultLocation = localStorage.getItem(`default_location`);
-      if(defaultLocation == "area"){
+      if (defaultLocation == "area") {
         const area = JSON.parse(localStorage.getItem('default_area'));
         await this.$store.dispatch("cart/get", { branch: area.id });
-      }else if(defaultLocation == "address"){
+      } else if (defaultLocation == "address") {
         const area = JSON.parse(localStorage.getItem(`default_address`));
         await this.$store.dispatch("cart/get", { branch: area.area_id });
       }
@@ -142,8 +156,8 @@ export default {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
       }, 100);
-      if(this.id !== null && this.id !== undefined){
-        await removeCart(this.id, this.$auth.loggedIn);        
+      if (this.id !== null && this.id !== undefined) {
+        await removeCart(this.id, this.$auth.loggedIn);
       }
     },
     onSetAddress(theAddress, center) {
@@ -227,7 +241,7 @@ export default {
       // this.$store.dispatch("cart/get");
       this.loading = false;
     },
-    async setDefaultBranch(area) {  
+    async setDefaultBranch(area) {
       const { branches } = area;
       localStorage.setItem("default_location", "area");
       localStorage.setItem("default_area", JSON.stringify(area));
@@ -269,7 +283,7 @@ export default {
       if (address && !address.lat && !address.lng) {
         this.currentMapAddress = address;
         this.savedAddrMapDialog = true;
-      } 
+      }
     },
     async updateLatLng(address, center) {
       localStorage.setItem(
@@ -285,29 +299,31 @@ export default {
     }
   },
   watch: {
-    currentTab(newValue, oldValue){
-      if(newValue == "areas"){
+    currentTab(newValue, oldValue) {
+      if (newValue == "areas") {
         this.currentAddress = null;
-      }else if(newValue == "addresses"){
+      } else if (newValue == "addresses") {
         this.currentArea = null;
       }
     },
     currentLocale(newLocale, oldLocale) {
       this.areas = this.sortAreas(this.areas, newLocale, `name_${newLocale}`);
     },
-    currentArea(newArea, oldArea){
-      if(newArea !== null && newArea !== "" && newArea !== undefined){
+    currentArea(newArea, oldArea) {
+      if (newArea !== null && newArea !== "" && newArea !== undefined) {
         this.setDefaultBranch(this.areas.find(area => area.id == this.currentArea.id));
       }
+      this.selectedBranch = this.areas.find(area => area.id == this.currentArea.id).branches[0];
+      console.log(this.selectedBranch)
     },
     shipping_type(newValue, oldValue) {
-      if(newValue !== undefined){
+      if (newValue !== undefined) {
         this.$store.commit("checkout/SET_TYPE", newValue);
         localStorage.setItem("shipping_type", newValue);
         // this.$router.replace(this.localePath("/categories"));
       }
     },
-    type(newValue, oldValue){
+    type(newValue, oldValue) {
       this.shipping_type = newValue
     },
     currentAddress(newValue, oldValue) {
@@ -357,19 +373,58 @@ export default {
       // Check if current time is between 7:45 PM and 11:59 PM
       // TODO: Delete it Later
       return totalMinutes >= startDimMinutes && totalMinutes <= endDimMinutes;
+    },
+
+    isButtonDimmed() {
+      const currentTime = new Date();
+      const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+
+      return (orderTypeName) => {
+        if (this.selectedBranch && this.selectedBranch.order_types) {
+          const orderType = this.selectedBranch.order_types.find(ot => ot.name === orderTypeName);
+
+          // For "Same-day" and "Pre-order", just check the status
+          if (["Schedule", "Pre Order"].includes(orderTypeName)) {
+            return orderType ? orderType.status !== 1 : true;
+          }
+
+          // For "ASAP" and "Pick up", consider time slots and status
+          if (["ASAP", "Pick Up"].includes(orderTypeName) && this.selectedBranch.time_slots) {
+            if (orderType && orderType.status === 1) {
+              for (const slot of this.selectedBranch.time_slots) {
+                const fromMinutes = this.convertTimeToMinutes(slot.from);
+                const toMinutes = this.convertTimeToMinutes(slot.to);
+
+                if (currentMinutes >= fromMinutes && currentMinutes <= toMinutes) {
+                  return slot.status === 0;
+                }
+              }
+            }
+          }
+        }
+
+        return true; // default to dimmed if data is not available
+      };
+    },
+
+    convertTimeToMinutes() {
+      return (time) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
     }
   },
   mounted() {
-    setTimeout(() => { 
+    setTimeout(() => {
       this.$store.commit("checkout/SET_TYPE", "");
       localStorage.removeItem("default_location");
       localStorage.removeItem("default_address");
       localStorage.removeItem("default_area");
       localStorage.removeItem("shipping_type");
-     }, 100)
+    }, 100)
     this.getAreas();
     this.currentHour = new Date().getHours();
-    if(this.$auth.loggedIn) this.getAddresses();
+    if (this.$auth.loggedIn) this.getAddresses();
   }
 }
 </script>
@@ -381,7 +436,7 @@ export default {
   font-weight: bold;
 }
 
-:deep(.v-slide-group__prev){
+:deep(.v-slide-group__prev) {
   display: none !important;
 }
 </style>
