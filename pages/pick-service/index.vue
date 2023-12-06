@@ -94,6 +94,22 @@
             </v-btn>
           </v-btn-toggle>
         </v-col>
+        <!-- Delivery Order Types-->
+        <v-col cols="12" v-if="shipping_type">
+          <v-btn-toggle dense v-model="order_type" active-class="isPicked"
+            class="rounded-lg py-0 d-flex align-center justify-center flex-wrap mt-6">
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
+              style="text-transform: unset; border-width: 2px" outlined value="pre-order" @click="isToggle('pre-order')"
+              :disabled="isButtonDimmedOrderType('Pre Order')">
+              Delivery
+            </v-btn>
+            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
+              style="text-transform: unset; border-width: 2px" outlined value="pick-up" @click="isToggle('pick-up')"
+              :disabled="isButtonDimmedOrderType('Pick Up')">
+              Pick up
+            </v-btn>
+          </v-btn-toggle>
+        </v-col>
       </v-row>
       <v-row no-gutters class="align-center justify-center mt-12">
         <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }"
@@ -127,6 +143,7 @@ export default {
         1: this.$t("common.choose_service")
       },
       shipping_type: this.$store.state.checkout.type,
+      order_type: "",
       currentTab: "areas",
       areas: [],
       addresses: [],
@@ -323,6 +340,12 @@ export default {
         // this.$router.replace(this.localePath("/categories"));
       }
     },
+    order_type(newValue, oldValue) {
+      if (newValue !== undefined) {
+        localStorage.setItem("order_type", newValue);
+        // this.$router.replace(this.localePath("/categories"));
+      }
+    },
     type(newValue, oldValue) {
       this.shipping_type = newValue
     },
@@ -406,6 +429,34 @@ export default {
         return true; // default to dimmed if data is not available
       };
     },
+    
+    isButtonDimmedOrderType() {
+      const currentTime = new Date();
+      const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+
+      return (orderTypeName) => {
+        if (this.selectedBranch && this.selectedBranch.order_types) {
+          const orderType = this.selectedBranch.order_types.find(ot => ot.name === orderTypeName);
+
+          // For "ASAP" and "Pick up", consider time slots and status
+          if (["Delivery", "Pick Up"].includes(orderTypeName) && this.selectedBranch.time_slots) {
+            if (orderType && orderType.status === 1) {
+              for (const slot of this.selectedBranch.time_slots) {
+                const fromMinutes = this.convertTimeToMinutes(slot.from);
+                const toMinutes = this.convertTimeToMinutes(slot.to);
+
+                if (currentMinutes >= fromMinutes && currentMinutes <= toMinutes) {
+                  return slot.status === 0;
+                }
+              }
+            }
+          }
+        }
+
+        return true; // default to dimmed if data is not available
+      };
+    },
+    
 
     convertTimeToMinutes() {
       return (time) => {
@@ -421,6 +472,7 @@ export default {
       localStorage.removeItem("default_address");
       localStorage.removeItem("default_area");
       localStorage.removeItem("shipping_type");
+      localStorage.removeItem("order_type");
     }, 100)
     this.getAreas();
     this.currentHour = new Date().getHours();
