@@ -38,6 +38,10 @@ export default {
           text: "Bookeey",
         },
         {
+          icon: "credit_card.png",
+          text: "Credit",
+        },
+        {
           icon: "apple_pay.png",
           text: "Apple Pay"
         },
