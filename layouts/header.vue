@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <commonReSchedule :dialog="rescheduleDialog" @close="rescheduleDialog = false" />
+    <commonTimeSlots :dialog="timeSlotDialog" @close="timeSlotDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
         <v-col :cols="$vuetify.breakpoint.mobile ? 1 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
@@ -178,7 +179,8 @@ export default {
       navOpen: false,
       drawer: false,
       items: [],
-      rescheduleDialog: false
+      rescheduleDialog: false,
+      timeSlotDialog: this.$store.state.time_slots.dialog
     };
   },
   computed: {
