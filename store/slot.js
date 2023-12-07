@@ -17,27 +17,28 @@ const mutations = {
   SET_INIT(state, payload) {
     state.init = payload;
   },
-  APPEAR_DIALOG(state) {
-    state.dialog = true;
+  APPEAR_DIALOG(state, payload) {
+    state.dialog = payload;
   },
 };
 
 const actions = {
-  initPusher({ commit, state }) {
+  initPusher({ commit, state, rootState }) {
     if (!state.init) {
       const pusher = new Pusher("269cf0af26cc414b447e", { cluster: "eu" });
-      const user = window.localStorage.getItem("user");
-      if (user) {
-        const data = JSON.parse(user);
-        pusher.subscribe(`customer.${data.id}`);
-        pusher.bind("customer", (notification_data) => {
-            // 
-        });
-        commit("SET_INIT", true);
-      }
+      let cartId = rootState.cart.id;
+      let channel = pusher.subscribe(`timeSlot.${cartId}`);
+
+      channel.bind("timeSlot", (timeSlotData) => {
+        console.log("Received timeSlot data:", timeSlotData);
+        commit('APPEAR_DIALOG', timeSlotData.is_active);  // Commit the mutation to update the dialog state
+      });
+      
+      commit("SET_INIT", true);
     }
   },
 };
+
 
 export default {
   namespaced: true,

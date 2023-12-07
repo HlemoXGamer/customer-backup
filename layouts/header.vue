@@ -180,7 +180,7 @@ export default {
       drawer: false,
       items: [],
       rescheduleDialog: false,
-      timeSlotDialog: this.$store.state.time_slots.dialog
+      timeSlotDialog: this.$store.state.slot.dialog
     };
   },
   computed: {
@@ -314,6 +314,9 @@ export default {
     }
   },
   async mounted() {
+    if (this.$store.state.cart.id) {
+      this.$store.dispatch('slot/initPusher');
+    }
     this.$store.commit("checkout/SET_TYPE", localStorage.getItem("shipping_type"));
     const types = ["same-day", "pre-order", "asap"];
     // if(types.includes(this.type)){

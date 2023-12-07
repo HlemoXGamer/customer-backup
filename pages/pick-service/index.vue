@@ -87,11 +87,6 @@
               :disabled="isButtonDimmed('Pre Order')">
               Pre Order
             </v-btn>
-            <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
-              style="text-transform: unset; border-width: 2px" outlined value="pick-up" @click="isToggle('pick-up')"
-              :disabled="isButtonDimmed('Pick Up')">
-              Pick up
-            </v-btn>
           </v-btn-toggle>
         </v-col>
         <!-- Delivery Order Types-->
@@ -99,8 +94,8 @@
           <v-btn-toggle dense v-model="order_type" active-class="isPicked"
             class="rounded-lg py-0 d-flex align-center justify-center flex-wrap mt-6">
             <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
-              style="text-transform: unset; border-width: 2px" outlined value="pre-order" @click="isToggle('pre-order')"
-              :disabled="isButtonDimmedOrderType('Pre Order')">
+              style="text-transform: unset; border-width: 2px" outlined value="asap" @click="isToggle('asap')"
+              :disabled="isButtonDimmedOrderType('Delivery')">
               Delivery
             </v-btn>
             <v-btn x-large class="ms-3 my-1 rounded-lg px-4 font-weight-bold"
@@ -435,8 +430,8 @@ export default {
       const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
 
       return (orderTypeName) => {
-        if (this.selectedBranch && this.selectedBranch.order_types) {
-          const orderType = this.selectedBranch.order_types.find(ot => ot.name === orderTypeName);
+        if (this.selectedBranch && this.selectedBranch.delivery_types) {
+          const orderType = this.selectedBranch.delivery_types.find(ot => ot.name === orderTypeName);
 
           // For "ASAP" and "Pick up", consider time slots and status
           if (["Delivery", "Pick Up"].includes(orderTypeName) && this.selectedBranch.time_slots) {

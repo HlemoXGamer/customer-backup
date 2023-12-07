@@ -105,7 +105,8 @@ export const actions = {
       ['address_area', address.area_name],
       ["address_building_no", address.building_num],
       ["address_apartment", address.apartment],
-      ['address_street_name', address.street_name],
+      ['address_street_name', address.street_name]
+      ['is_pickedup', localStorage.getItem('order_type') == 'pick-up' ? 1 : 0],
       ['lat', address.lat],
       ['lng', address.lng],
       ["block_no", address.block_no],
@@ -115,6 +116,7 @@ export const actions = {
         ["email", address.email],
       this.$auth.loggedIn ? "" :
         ["branch_id", JSON.parse(localStorage.getItem("guest_branch"))]
+
     ]);
 
     commit('SET_ADDRESS', data)
