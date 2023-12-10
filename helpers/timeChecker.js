@@ -30,31 +30,40 @@ export const timeChecker = (orderType, currentTime) => {
             const hours12 = hours % 12 === 0 ? 12 : hours % 12;
             return `${hours12} ${suffix}`;
         };
-    
+
         // Function to generate the range of hours between 'from' and 'to'
-        const generateRangeHours = (from, to) => {
-            let hoursArray = [];
-            let start = parseInt(from.split(':')[0]);
-            let end = parseInt(to.split(':')[0]);
-            for (let hour = start; hour < end; hour++) {
-                let hourFormatted = convertTo12Hour(`${hour}:00`);
-                hoursArray.push(hourFormatted);
-            }
-            return hoursArray;
-        };
-    
+  const generateRangeHours = (from, to) => {
+    let hoursArray = [];
+    let start = parseInt(from.split(':')[0]);
+    let end = parseInt(to.split(':')[0]);
+    for (let hour = start; hour < end; hour++) {
+      let hourFormatted = convertTo12Hour(`${hour}:00`);
+      hoursArray.push(hourFormatted);
+    }
+    return [...new Set(hoursArray)];
+  };
         // Function to remove hours based on status
-        const removeHours = (timeRanges) => {
-            let hoursArray = []; // Start with an empty array
-            timeRanges.forEach(range => {
-                if (range.status === 1 && range.is_active === 1) {
-                    const rangeHours = generateRangeHours(range.from, range.to);
-                    hoursArray = [...hoursArray, ...rangeHours];
-                }
-            });
-            return hoursArray;
-        };
-    const timeRanges = localStorage.getItem('default_area') ? JSON.parse(localStorage.getItem('default_area'))?.branches?.[0]?.time_slots : null;
+        const removeHours = (timeRanges, orderType) => {
+          let hoursArray = [];
+          const currentTime = new Date().getHours(); // get current hour (0 - 23)
+
+          timeRanges.forEach(range => {
+            const rangeToHour = parseInt(range?.to?.split(':')[0]); // split by ":" and get the hour part
+            console.log(rangeToHour)
+            if (orderType == 'same-day') {
+              if (range.status === 1 && range.is_active === 1 && currentTime < rangeToHour) {
+                const rangeHours = generateRangeHours(range.from, range.to);
+                hoursArray = [...hoursArray, ...rangeHours];
+              }
+            } else {
+              const rangeHours = generateRangeHours(range.from, range.to);
+              hoursArray = [...hoursArray, ...rangeHours];
+            }
+          });
+
+    return hoursArray;
+  };
+    const timeRanges = localStorage.getItem('timeSlots') ? JSON.parse(localStorage.getItem('timeSlots')) : []
     // const timeRanges = [
     //     { from: "8:00",  to: "10:00", status: 1, is_active: 0 },
     //     { from: "10:00", to: "12:00", status: 1, is_active: 0 },
@@ -63,6 +72,7 @@ export const timeChecker = (orderType, currentTime) => {
     //     { from: "16:00", to: "18:00", status: 0, is_active: 1 },
     //     { from: "18:00", to: "20:00", status: 0, is_active: 1 },
     // ];
+  console.log(timeRanges)
     switch (orderType) {
         case "asap":
             // Initialization Phase
@@ -161,7 +171,9 @@ export const timeChecker = (orderType, currentTime) => {
             const formattedDate = dateFormatter2.format(nowSameDay);
 
             const daysSameDay = [formattedDate];
-            const hoursSameDay = removeHours(timeRanges);
+            const today = new Date().toISOString().slice(0, 10); //Current day
+            const todaysTimeSlots = timeRanges.filter(slot => slot.day === today);
+            const hoursSameDay = removeHours(todaysTimeSlots, 'same-day');
             const minutesSameDay = [];
             const ampmSameDay = ["am", "pm"];
 
@@ -231,7 +243,7 @@ export const timeChecker = (orderType, currentTime) => {
             if(currentDate >= startTime && currentDate <= endTime){
                 isPaymentTimeValidSameDay = true;
             }
-            
+
             return {
                 days: daysSameDay,
                 hours: hoursSameDay,
@@ -258,7 +270,7 @@ export const timeChecker = (orderType, currentTime) => {
                 nowPreOrder.setDate(nowPreOrder.getDate() + 1); // Move to the next day
             }
 
-            const hoursPreOrder = removeHours(timeRanges);;
+            const hoursPreOrder = removeHours(timeRanges);
             const minutesPreOrder = [];
             const ampmPreOrder = ["am", "pm"];
 

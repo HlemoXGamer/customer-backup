@@ -108,7 +108,7 @@
       </v-row>
       <v-row no-gutters class="align-center justify-center mt-12">
         <v-btn @click="confirm()" :style="{ flex: $vuetify.breakpoint.mobile ? 1 : 0.5 }"
-          :disabled="shipping_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))"
+          :disabled="shipping_type == '' || order_type == '' || (!currentArea && (currentAddress == undefined || currentAddress == null))"
           height="57" elevation="0" class="rounded-lg white--text" :block="$vuetify.breakpoint.xs" color="#65382c" large>
           {{ $t("checkout.shipping.continue_shopping") }}
         </v-btn>
@@ -122,6 +122,7 @@ import Banner from "@/components/home/Banner";
 import { get as getAddresses, setDefault } from "@/apis/addresses";
 import { update } from '@/apis/addresses'
 import { get as getAreas } from '@/apis/areas'
+import { get as getTimeSlots } from '@/apis/time_slots'; // import the getSlots method
 import { mapState } from "vuex";
 import { removeCart } from "~/apis/cart";
 import getServerTime from "~/apis/time"
@@ -150,6 +151,7 @@ export default {
       gmapDialog: true,
       currentMapAddress: "",
       selectedBranch: null,
+      timeSlots: [],
     };
   },
   methods: {
@@ -164,9 +166,15 @@ export default {
       }
       this.$router.replace(this.localePath('/categories'))
     },
+    async fetchTimeSlots(areaId) {
+      const response = await getTimeSlots(areaId);
+      this.timeSlots = response.data;
+      localStorage.setItem('timeSlots', JSON.stringify(this.timeSlots));
+    },
     async isToggle(value) {
       setTimeout(() => {
         this.shipping_type = this.$store.state.checkout.type;
+        this.order_type = localStorage.getItem('order_type');
       }, 100);
       if (this.id !== null && this.id !== undefined) {
         await removeCart(this.id, this.$auth.loggedIn);
@@ -289,7 +297,7 @@ export default {
       } else {
         this.$toast.error(this.$t("location.no_branches"));
       }
-      // this.$store.dispatch("cart/get", { branch: branches[0] }); 
+      // this.$store.dispatch("cart/get", { branch: branches[0] });
     },
     checkLatLng(address) {
       if (address && !address.lat && !address.lng) {
@@ -324,6 +332,7 @@ export default {
     currentArea(newArea, oldArea) {
       if (newArea !== null && newArea !== "" && newArea !== undefined) {
         this.setDefaultBranch(this.areas.find(area => area.id == this.currentArea.id));
+        this.fetchTimeSlots(newArea.id);
       }
       this.selectedBranch = this.areas.find(area => area.id == this.currentArea.id).branches[0];
       console.log(this.selectedBranch)
@@ -394,37 +403,20 @@ export default {
     },
 
     isButtonDimmed() {
-      const currentTime = new Date();
-      const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-
       return (orderTypeName) => {
         if (this.selectedBranch && this.selectedBranch.order_types) {
           const orderType = this.selectedBranch.order_types.find(ot => ot.name === orderTypeName);
 
           // For "Same-day" and "Pre-order", just check the status
-          if (["Schedule", "Pre Order"].includes(orderTypeName)) {
+          if (["Schedule", "Pre Order", "ASAP"].includes(orderTypeName)) {
             return orderType ? orderType.status !== 1 : true;
-          }
-
-          // For "ASAP" and "Pick up", consider time slots and status
-          if (["ASAP", "Pick Up"].includes(orderTypeName) && this.selectedBranch.time_slots) {
-            if (orderType && orderType.status === 1) {
-              for (const slot of this.selectedBranch.time_slots) {
-                const fromMinutes = this.convertTimeToMinutes(slot.from);
-                const toMinutes = this.convertTimeToMinutes(slot.to);
-
-                if (currentMinutes >= fromMinutes && currentMinutes <= toMinutes) {
-                  return slot.status === 0;
-                }
-              }
-            }
           }
         }
 
         return true; // default to dimmed if data is not available
       };
     },
-    
+
     isButtonDimmedOrderType() {
       const currentTime = new Date();
       const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
@@ -434,24 +426,32 @@ export default {
           const orderType = this.selectedBranch.delivery_types.find(ot => ot.name === orderTypeName);
 
           // For "ASAP" and "Pick up", consider time slots and status
-          if (["Delivery", "Pick Up"].includes(orderTypeName) && this.selectedBranch.time_slots) {
+          if (this.timeSlots) {
             if (orderType && orderType.status === 1) {
-              for (const slot of this.selectedBranch.time_slots) {
-                const fromMinutes = this.convertTimeToMinutes(slot.from);
-                const toMinutes = this.convertTimeToMinutes(slot.to);
 
-                if (currentMinutes >= fromMinutes && currentMinutes <= toMinutes) {
-                  return slot.status === 0;
+              if (orderTypeName === 'Pick Up') {
+                return false;
+              } else if (orderTypeName === 'Delivery') {
+                const today = new Date().toISOString().slice(0, 10); //Current day
+                const todaysTimeSlots = this.timeSlots.filter(slot => slot.day === today);
+                for (const slot of todaysTimeSlots) {
+                  const fromMinutes = this.convertTimeToMinutes(slot.from);
+                  const toMinutes = this.convertTimeToMinutes(slot.to);
+                  if (currentMinutes >= fromMinutes && currentMinutes <= toMinutes) {
+                    return slot.status === 0;
+                  }
                 }
               }
             }
           }
+
+          return false;
         }
 
         return true; // default to dimmed if data is not available
       };
     },
-    
+
 
     convertTimeToMinutes() {
       return (time) => {

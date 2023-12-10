@@ -30,7 +30,7 @@ export const state = () => ({
     },
     payment_method_code: 0,
     delivery_date: null,
-    // pickup_time: null,
+    isPickup: localStorage.getItem('order_type') === 'pick-up' ? 1 : 0,
     notes: "",
     tipping: 0,
     is_separate: 0,
@@ -131,14 +131,14 @@ export const actions = {
     if (_to_send.address_phone && _to_send.address_phone.length === 8) {
       _to_send.address_phone = '965' + _to_send.address_phone
     }
-    const to_send = { ..._to_send, payment_method: methods[state.form.payment_method_code || 0], v_code: state.form.user_data.v_code }
+    const to_send = { ..._to_send, payment_method: methods[state.form.payment_method_code || 0], v_code: state.form.user_data.v_code, isPickup: state.form.isPickup }
     if (state.form.delivery_date && state.form.delivery_date !== null) {
       to_send.delivery_date = state.form.delivery_date;
     }
     return completeCheckout.call(this, to_send).then(({ data }) => {
       commit("cart/CLEAR_ALL", null, { root: true });
       commit('SET_LOADING', false)
-      // 
+      //
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       }
