@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <commonReSchedule :dialog="rescheduleDialog" @close="rescheduleDialog = false" />
+    <commonTimeSlots :dialog="timeSlotDialog" @close="timeSlotDialog = false" />
     <v-app-bar app class="elevation-0 px-0 mx-0" :height="$route.path.includes('/pick-service') ? '110px' : ''">
       <v-row class="align-center justify-space-between pb-0 mb-0">
         <v-col :cols="$vuetify.breakpoint.mobile ? 1 : 2" class="d-flex align-center justify-start px-0 pb-0 mb-0">
@@ -178,7 +179,8 @@ export default {
       navOpen: false,
       drawer: false,
       items: [],
-      rescheduleDialog: false
+      rescheduleDialog: false,
+      timeSlotDialog: this.$store.state.slot.dialog
     };
   },
   computed: {
@@ -255,7 +257,7 @@ export default {
         let default_location = localStorage.getItem("default_location");
 
         if(!default_location || !shipping_type){
-          this.$router.push(this.localePath("/pick-service"));
+          // this.$router.push(this.localePath("/pick-service"));
         }
       }
     },
@@ -312,6 +314,9 @@ export default {
     }
   },
   async mounted() {
+    if (this.$store.state.cart.id) {
+      this.$store.dispatch('slot/initPusher');
+    }
     this.$store.commit("checkout/SET_TYPE", localStorage.getItem("shipping_type"));
     const types = ["same-day", "pre-order", "asap"];
     // if(types.includes(this.type)){

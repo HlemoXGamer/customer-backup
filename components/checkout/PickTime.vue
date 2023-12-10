@@ -12,9 +12,14 @@
                 <scroll-picker class="last-layer" :options="minutes" v-model="currentMinute" />
             </scroll-picker-group>
         </v-row>
-        <v-row v-if="isAsap" class="align-center justify-center text-h6">
+        <v-row v-if="isAsap && !isPickup" class="align-center justify-center text-h6">
             <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
                 {{ $t("checkout.time.delivery")}}
+            </p>
+        </v-row>
+        <v-row v-else-if="isAsap && isPickup" class="align-center justify-center text-h6">
+            <p class="font-primary font-weight-bold py-5" style="font-size: 18px;">
+                You Can Pick up the order after 40 min of the paid time
             </p>
         </v-row>
         <v-card>
@@ -137,6 +142,9 @@ export default {
         },
         isAsap() {
             return this.type == 'asap';
+        },
+        isPickup() {
+            return localStorage.getItem('order_type') == 'pick-up'
         }
     },
 }
